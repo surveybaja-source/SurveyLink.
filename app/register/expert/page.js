@@ -80,7 +80,7 @@ export default function ExpertRegister() {
   )
 
   const chk = (items, selected, toggle, cols=2) => (
-    <div style={{display:'grid',gridTemplateColumns:repeat(${cols},1fr),gap:6,marginBottom:16}}>
+    <div style={{display:'grid',gridTemplateColumns:'repeat(${cols},1fr)',gap:6,marginBottom:16}}>
       {items.map(item => {
         const active = selected.includes(item)
         return (
