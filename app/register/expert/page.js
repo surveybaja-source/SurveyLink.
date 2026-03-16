@@ -117,8 +117,8 @@ style={{background:active?'rgba(46,125,50,0.15)':'#0f1e2e',border:active?'1px so
           {STEPS.map((s,i) => (
             <div key={i} style={{display:'flex',alignItems:'center',flex:i<STEPS.length-1?1:0}}>
               <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:4}}>
-                <div style={{width:28,height:28,borderRadius:'50%',background:i<step?'#2e7d32':i===step?'#dd2e1e':'#132030',border:2px solid ${i<step?'#2e7d32':i===step?'#dd2e1e':'#1e3a52'},display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:800,color:'#fff'}}>
-                  {i<step?'✓':i+1}
+border:i<step?'2px solid #2e7d32':i===step?'2px solid #dd2e1e':'2px solid #1e3a52',
+                     {i<step?'✓':i+1}
                 </div>
                 <span style={{fontSize:9,color:i===step?'#dd2e1e':'#4a6880',textTransform:'uppercase',whiteSpace:'nowrap'}}>{s}</span>
               </div>
