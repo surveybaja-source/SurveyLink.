@@ -85,8 +85,8 @@ export default function ExpertRegister() {
         const active = selected.includes(item)
         return (
           <div key={item} onClick={()=>toggle(item)}
-            style={{background:active?'rgba(46,125,50,0.15)':'#0f1e2e',border:'1px solid ${active?'#2e7d32':'#1e3a52'}',borderRadius:6,padding:'7px 10px',cursor:'pointer',color:active?'#a5d6a7':'#8fa8c0',fontSize:11,display:'flex',alignItems:'center',gap:6,userSelect:'none'}}>
-            <span style={{fontSize:10,color:active?'#2e7d32':'#4a6880'}}>✓</span>{item}
+style={{background:active?'rgba(46,125,50,0.15)':'#0f1e2e',border:active?'1px solid #2e7d32':'1px solid #1e3a52',borderRadius:6,padding:'7px 10px',cursor:'pointer',color:active?'#a5d6a7':'#8fa8c0',fontSize:11,display:'flex',alignItems:'center',gap:6,userSelect:'none'}}>
+                 <span style={{fontSize:10,color:active?'#2e7d32':'#4a6880'}}>✓</span>{item}
           </div>
         )
       })}
