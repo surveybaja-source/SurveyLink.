@@ -77,7 +77,10 @@ export default function AuthPage() {
               {loading ? 'Creation...' : 'Creer mon compte'}
             </button>
             <div style={{textAlign:'center',marginTop:12}}>
-              <span onClick={()=>setMode('login')} style={{color:'#4a6880',fontSize:12,cursor:'pointer'}}>Retour connexion</span>
+              <span onClick={()=>router.push('/register/expert')} style={{color:'#dd2e1e',fontSize:12,cursor:'pointer',fontWeight:700}}>Creer un compte Surveyor</span>
+<div style={{textAlign:'center',marginTop:8}}>
+  <span onClick={()=>router.push('/register/insurer')} style={{color:'#5a9eff',fontSize:12,cursor:'pointer',fontWeight:700}}>Creer un compte Insurer</span>
+</div>
             </div>
           </div>
         )}
