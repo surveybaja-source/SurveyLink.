@@ -22,7 +22,7 @@ export default function AuthPage() {
   }
 
   const handleRegister = async () => {
-    if (!role) { setError('Veuillez choisir un role'); return }
+    if (!role) { setError('Please select a role'); return }
     setLoading(true)
     setError(null)
     const { data, error } = await supabase.auth.signUp({ email, password })
@@ -44,20 +44,23 @@ export default function AuthPage() {
           <div>
             <input id="email" name="email" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)}
               style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:'#fff',marginBottom:12,boxSizing:'border-box'}}/>
-            <input id="password" name="password" type="password" placeholder="Mot de passe" value={password} onChange={e=>setPassword(e.target.value)}
+            <input id="password" name="password" type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)}
               style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:'#fff',marginBottom:16,boxSizing:'border-box'}}/>
             <button onClick={handleLogin} disabled={loading}
               style={{width:'100%',background:'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'11px',marginBottom:8,cursor:'pointer',fontWeight:700}}>
-              {loading ? 'Chargement...' : 'Se connecter'}
+              {loading ? 'Loading...' : 'Sign In'}
             </button>
             <div style={{textAlign:'center',marginTop:16}}>
-              <span style={{color:'#4a6880',fontSize:12}}>Pas de compte ? </span>
-              <span onClick={()=>setMode('register')} style={{color:'#dd2e1e',fontSize:12,cursor:'pointer',fontWeight:700}}>Creer un compte</span>
+              <span style={{color:'#4a6880',fontSize:12}}>No account? </span>
+              <span onClick={()=>router.push('/register/expert')} style={{color:'#dd2e1e',fontSize:12,cursor:'pointer',fontWeight:700}}>Create Surveyor Account</span>
+            </div>
+            <div style={{textAlign:'center',marginTop:8}}>
+              <span onClick={()=>router.push('/register/insurer')} style={{color:'#5a9eff',fontSize:12,cursor:'pointer',fontWeight:700}}>Create Insurer Account</span>
             </div>
           </div>
         ) : (
           <div>
-            <p style={{color:'#8fa8c0',fontSize:13,marginBottom:16}}>Je rejoins en tant que...</p>
+            <p style={{color:'#8fa8c0',fontSize:13,marginBottom:16}}>I am joining as a...</p>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:16}}>
               <div onClick={()=>setRole('insurer')} style={{background:role==='insurer'?'rgba(221,46,30,0.1)':'#0f1e2e',border:role==='insurer'?'2px solid #dd2e1e':'2px solid #1e3a52',borderRadius:10,padding:16,cursor:'pointer',textAlign:'center'}}>
                 <div style={{fontSize:28,marginBottom:8}}>🏢</div>
@@ -70,17 +73,14 @@ export default function AuthPage() {
             </div>
             <input id="email2" name="email" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)}
               style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:'#fff',marginBottom:12,boxSizing:'border-box'}}/>
-            <input id="password2" name="password" type="password" placeholder="Mot de passe" value={password} onChange={e=>setPassword(e.target.value)}
+            <input id="password2" name="password" type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)}
               style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:'#fff',marginBottom:16,boxSizing:'border-box'}}/>
             <button onClick={handleRegister} disabled={loading}
               style={{width:'100%',background:'#2e7d32',color:'#fff',border:'none',borderRadius:7,padding:'11px',cursor:'pointer',fontWeight:700}}>
-              {loading ? 'Creation...' : 'Creer mon compte'}
+              {loading ? 'Creating...' : 'Create Account'}
             </button>
             <div style={{textAlign:'center',marginTop:12}}>
-              <span onClick={()=>router.push('/register/expert')} style={{color:'#dd2e1e',fontSize:12,cursor:'pointer',fontWeight:700}}>Creer un compte Surveyor</span>
-<div style={{textAlign:'center',marginTop:8}}>
-  <span onClick={()=>router.push('/register/insurer')} style={{color:'#5a9eff',fontSize:12,cursor:'pointer',fontWeight:700}}>Creer un compte Insurer</span>
-</div>
+              <span onClick={()=>setMode('login')} style={{color:'#4a6880',fontSize:12,cursor:'pointer'}}>Back to Sign In</span>
             </div>
           </div>
         )}
