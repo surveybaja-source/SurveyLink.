@@ -12,22 +12,34 @@ export default function NewMission() {
   const [cargo, setCargo] = useState('')
   const [damages, setDamages] = useState([])
   const [client, setClient] = useState('')
+  const [contact, setContact] = useState('')
+  const [contactPhone, setContactPhone] = useState('')
   const [location, setLocation] = useState('')
   const [urgency, setUrgency] = useState('normal')
   const [notes, setNotes] = useState('')
 
-  const STEPS = ['Cargo','Localisation','Details','Confirmation']
+  const STEPS = ['Cargo','Location','Details','Review']
 
   const CARGO_TYPES = [
-    {id:'bulk_grain',label:'Bulk Grain',icon:'🌾',sub:'Ble, mais, soja, riz'},
-    {id:'bulk_liquid',label:'Bulk Liquide',icon:'🛢️',sub:'Petrole, chimique, carburant'},
-    {id:'bulk_mineral',label:'Bulk Mineral',icon:'⛏️',sub:'Charbon, minerai, sable'},
+    {id:'bulk_grain',label:'Bulk — Grain',icon:'🌾',sub:'Wheat, corn, soybean, rice'},
+    {id:'bulk_liquid',label:'Bulk — Liquid',icon:'🛢️',sub:'Oil, chemicals, fuel'},
+    {id:'bulk_mineral',label:'Bulk — Mineral',icon:'⛏️',sub:'Coal, ore, sand, cement'},
     {id:'container_fcl',label:'Container FCL',icon:'📦',sub:'Full container load'},
-    {id:'container_lcl',label:'Container LCL',icon:'🗃️',sub:'Less than container'},
-    {id:'reefer',label:'Reefer',icon:'❄️',sub:'Temperature controlee'},
+    {id:'container_lcl',label:'Container LCL',icon:'🗃️',sub:'Less than container load'},
+    {id:'reefer',label:'Reefer',icon:'❄️',sub:'Temperature-controlled cargo'},
+    {id:'breakbulk',label:'Breakbulk',icon:'🚢',sub:'Non-containerised cargo'},
+    {id:'roro',label:'RoRo',icon:'🚗',sub:'Roll-on / Roll-off vehicles'},
+    {id:'tanker',label:'Tanker',icon:'🛳️',sub:'Liquid bulk / chemical tanker'},
+    {id:'project',label:'Project Cargo',icon:'🏗️',sub:'Heavy lift / oversized cargo'},
   ]
 
-  const DMG_TYPES = ['Degats des eaux','Incendie','Contamination','Degats mecaniques','Manquant','Collision','Surchauffe','Condensation']
+  const DMG_TYPES = ['Water damage','Fire damage','Contamination','Mechanical damage','Shortage / Missing','Collision damage','Overheating','Condensation','Theft','Packaging damage']
+
+  const URGENCY = [
+    {id:'normal',label:'Normal',time:'Response within 4 hours',color:'#2e7d32',bg:'rgba(46,125,50,0.1)',border:'#2e7d32'},
+    {id:'urgent',label:'Urgent',time:'Response within 1 hour',color:'#f0a500',bg:'rgba(240,165,0,0.1)',border:'#f0a500'},
+    {id:'critical',label:'Critical',time:'Response within 15 min',color:'#dd2e1e',bg:'rgba(221,46,30,0.15)',border:'#dd2e1e'},
+  ]
 
   const togDmg = d => setDamages(p => p.includes(d)?p.filter(x=>x!==d):[...p,d])
 
@@ -63,11 +75,11 @@ export default function NewMission() {
         <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:28}}>
           <button onClick={()=>step>0?setStep(s=>s-1):router.push('/dashboard')}
             style={{background:'none',border:'1px solid #1e3a52',borderRadius:6,padding:'6px 12px',color:'#8fa8c0',cursor:'pointer',fontSize:11}}>
-            Retour
+            Back
           </button>
           <div>
-            <div style={{color:'#4a6880',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase'}}>Portail Insurer</div>
-            <div style={{color:'#fff',fontWeight:800,fontSize:22}}>Nouvelle Demande d Expertise</div>
+            <div style={{color:'#4a6880',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase'}}>Insurer Portal</div>
+            <div style={{color:'#fff',fontWeight:800,fontSize:22}}>New Survey Request</div>
           </div>
         </div>
 
@@ -88,8 +100,8 @@ export default function NewMission() {
         <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:12,padding:28}}>
           {step===0&&(
             <div>
-              <h2 style={{color:'#fff',fontWeight:800,fontSize:22,marginBottom:6,marginTop:0}}>Type de Cargaison</h2>
-              <p style={{color:'#8fa8c0',fontSize:12,marginBottom:20}}>Selectionnez le type de cargaison concernee.</p>
+              <h2 style={{color:'#fff',fontWeight:800,fontSize:22,marginBottom:6,marginTop:0}}>Cargo Type & Damage</h2>
+              <p style={{color:'#8fa8c0',fontSize:12,marginBottom:20}}>Select the type of cargo involved in this survey request.</p>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:20}}>
                 {CARGO_TYPES.map(c=>(
                   <div key={c.id} onClick={()=>setCargo(c.id)}
@@ -102,7 +114,7 @@ export default function NewMission() {
                   </div>
                 ))}
               </div>
-              <SecT text="Type de Dommage"/>
+              <SecT text="Type of Damage"/>
               <div style={{display:'flex',flexWrap:'wrap',gap:8,marginBottom:20}}>
                 {DMG_TYPES.map(d=>(
                   <div key={d} onClick={()=>togDmg(d)}
@@ -114,7 +126,7 @@ export default function NewMission() {
               <div style={{display:'flex',justifyContent:'flex-end'}}>
                 <button onClick={()=>setStep(1)} disabled={!cargo}
                   style={{background:!cargo?'rgba(221,46,30,0.45)':'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'11px 28px',cursor:'pointer',fontWeight:700}}>
-                  Suivant
+                  Next
                 </button>
               </div>
             </div>
@@ -122,25 +134,26 @@ export default function NewMission() {
 
           {step===1&&(
             <div>
-              <h2 style={{color:'#fff',fontWeight:800,fontSize:22,marginBottom:16,marginTop:0}}>Localisation de la Cargaison</h2>
+              <h2 style={{color:'#fff',fontWeight:800,fontSize:22,marginBottom:16,marginTop:0}}>Cargo Location</h2>
               <div style={{marginBottom:12}}>
-                <input id="location" placeholder="Port / Terminal / Adresse" value={location} onChange={e=>setLocation(e.target.value)}
+                <input id="location" placeholder="Port / Terminal / Address" value={location} onChange={e=>setLocation(e.target.value)}
                   style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:'#fff',boxSizing:'border-box',fontSize:13}}/>
               </div>
-              <SecT text="Urgence"/>
-              <div style={{display:'flex',gap:8,marginBottom:20}}>
-                {['normal','urgent','critical'].map(u=>(
-                  <div key={u} onClick={()=>setUrgency(u)}
-                    style={{flex:1,background:urgency===u?(u==='critical'?'rgba(221,46,30,0.15)':u==='urgent'?'rgba(240,165,0,0.1)':'rgba(46,125,50,0.1)'):'transparent',border:urgency===u?(u==='critical'?'1px solid #dd2e1e':u==='urgent'?'1px solid #f0a500':'1px solid #2e7d32'):'1px solid #1e3a52',borderRadius:6,padding:'8px 4px',cursor:'pointer',textAlign:'center',color:urgency===u?(u==='critical'?'#dd2e1e':u==='urgent'?'#f0a500':'#2e7d32'):'#8fa8c0',fontSize:11,textTransform:'uppercase'}}>
-                    {u}
+              <SecT text="Urgency Level"/>
+              <div style={{display:'flex',gap:10,marginBottom:20}}>
+                {URGENCY.map(u=>(
+                  <div key={u.id} onClick={()=>setUrgency(u.id)}
+                    style={{flex:1,background:urgency===u.id?u.bg:'transparent',border:urgency===u.id?`1px solid ${u.border}`:'1px solid #1e3a52',borderRadius:8,padding:'12px 8px',cursor:'pointer',textAlign:'center'}}>
+                    <div style={{color:urgency===u.id?u.color:'#8fa8c0',fontWeight:700,fontSize:13,textTransform:'uppercase'}}>{u.label}</div>
+                    <div style={{color:urgency===u.id?u.color:'#4a6880',fontSize:10,marginTop:4}}>{u.time}</div>
                   </div>
                 ))}
               </div>
               <div style={{display:'flex',justifyContent:'space-between'}}>
-                <button onClick={()=>setStep(0)} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 24px',cursor:'pointer',fontWeight:700}}>Retour</button>
+                <button onClick={()=>setStep(0)} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 24px',cursor:'pointer',fontWeight:700}}>Back</button>
                 <button onClick={()=>setStep(2)} disabled={!location}
                   style={{background:!location?'rgba(221,46,30,0.45)':'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'11px 28px',cursor:'pointer',fontWeight:700}}>
-                  Suivant
+                  Next
                 </button>
               </div>
             </div>
@@ -148,20 +161,27 @@ export default function NewMission() {
 
           {step===2&&(
             <div>
-              <h2 style={{color:'#fff',fontWeight:800,fontSize:22,marginBottom:16,marginTop:0}}>Details de la Mission</h2>
+              <h2 style={{color:'#fff',fontWeight:800,fontSize:22,marginBottom:16,marginTop:0}}>Mission Details</h2>
               <div style={{marginBottom:12}}>
-                <input id="client" placeholder="Nom du client / assure" value={client} onChange={e=>setClient(e.target.value)}
+                <input id="client" placeholder="Client / Assured Name" value={client} onChange={e=>setClient(e.target.value)}
+                  style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:'#fff',boxSizing:'border-box',fontSize:13}}/>
+              </div>
+              <SecT text="On-Site Contact"/>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:12}}>
+                <input id="contact" placeholder="Contact Name" value={contact} onChange={e=>setContact(e.target.value)}
+                  style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:'#fff',boxSizing:'border-box',fontSize:13}}/>
+                <input id="contactPhone" placeholder="Contact Phone / WhatsApp" value={contactPhone} onChange={e=>setContactPhone(e.target.value)}
                   style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:'#fff',boxSizing:'border-box',fontSize:13}}/>
               </div>
               <div style={{marginBottom:12}}>
-                <textarea id="notes" placeholder="Decrivez les circonstances, l etendue des dommages, conditions d acces..." value={notes} onChange={e=>setNotes(e.target.value)} rows={4}
+                <textarea id="notes" placeholder="Describe the circumstances, extent of damage, access conditions, special instructions..." value={notes} onChange={e=>setNotes(e.target.value)} rows={4}
                   style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:'#fff',boxSizing:'border-box',fontSize:13,resize:'vertical'}}/>
               </div>
               <div style={{display:'flex',justifyContent:'space-between',marginTop:16}}>
-                <button onClick={()=>setStep(1)} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 24px',cursor:'pointer',fontWeight:700}}>Retour</button>
+                <button onClick={()=>setStep(1)} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 24px',cursor:'pointer',fontWeight:700}}>Back</button>
                 <button onClick={()=>setStep(3)} disabled={!client}
                   style={{background:!client?'rgba(221,46,30,0.45)':'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'11px 28px',cursor:'pointer',fontWeight:700}}>
-                  Verifier
+                  Review
                 </button>
               </div>
             </div>
@@ -169,14 +189,16 @@ export default function NewMission() {
 
           {step===3&&(
             <div>
-              <h2 style={{color:'#fff',fontWeight:800,fontSize:22,marginBottom:16,marginTop:0}}>Confirmation</h2>
+              <h2 style={{color:'#fff',fontWeight:800,fontSize:22,marginBottom:16,marginTop:0}}>Review & Submit</h2>
               {[
-                ['Type de Cargo',CARGO_TYPES.find(c=>c.id===cargo)?.label||''],
-                ['Dommages',damages.join(', ')||'Non specifie'],
-                ['Localisation',location],
-                ['Urgence',urgency.toUpperCase()],
-                ['Client',client],
-                ['Notes',notes||'Aucune'],
+                ['Cargo Type',CARGO_TYPES.find(c=>c.id===cargo)?.label||''],
+                ['Damage Types',damages.join(', ')||'Not specified'],
+                ['Location',location],
+                ['Urgency',urgency.toUpperCase()],
+                ['Client / Assured',client],
+                ['On-Site Contact',contact||'Not specified'],
+                ['Contact Phone',contactPhone||'Not specified'],
+                ['Notes',notes||'None'],
               ].map(([k,v])=>(
                 <div key={k} style={{display:'flex',justifyContent:'space-between',padding:'9px 0',borderBottom:'1px solid #1e3a52'}}>
                   <span style={{color:'#8fa8c0',fontSize:12}}>{k}</span>
@@ -186,16 +208,16 @@ export default function NewMission() {
               <div style={{marginTop:14,padding:'12px 16px',background:'rgba(240,165,0,0.12)',border:'1px solid #f0a500',borderRadius:8,display:'flex',gap:10}}>
                 <span>⚡</span>
                 <div>
-                  <div style={{color:'#f0a500',fontWeight:700,fontSize:13}}>Experts disponibles a proximite</div>
-                  <div style={{color:'#8fa8c0',fontSize:11,marginTop:3}}>Premier devis attendu dans {urgency==='critical'?'15 min':urgency==='urgent'?'1 heure':'4 heures'}.</div>
+                  <div style={{color:'#f0a500',fontWeight:700,fontSize:13}}>Surveyors available nearby</div>
+                  <div style={{color:'#8fa8c0',fontSize:11,marginTop:3}}>First quote expected {urgency==='critical'?'within 15 min':urgency==='urgent'?'within 1 hour':'within 4 hours'}.</div>
                 </div>
               </div>
               {error&&<p style={{color:'#dd2e1e',fontSize:12,marginTop:12}}>{error}</p>}
               <div style={{display:'flex',justifyContent:'space-between',marginTop:14}}>
-                <button onClick={()=>setStep(2)} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 24px',cursor:'pointer',fontWeight:700}}>Retour</button>
+                <button onClick={()=>setStep(2)} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 24px',cursor:'pointer',fontWeight:700}}>Back</button>
                 <button onClick={handleSubmit} disabled={loading}
                   style={{background:loading?'rgba(221,46,30,0.45)':'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'14px 32px',cursor:'pointer',fontWeight:700,fontSize:14}}>
-                  {loading?'Envoi...':'Envoyer la Demande'}
+                  {loading?'Sending...':'Send Request'}
                 </button>
               </div>
             </div>
