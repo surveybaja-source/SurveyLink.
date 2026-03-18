@@ -17,9 +17,9 @@ export default function InsurerRegister() {
 
   const u = k => v => setF(p => ({...p,[k]:v}))
 
-  const STEPS = ['Societe','Contact','Documents','Banque']
-  const COUNTRIES = ['France','Belgique','Pays-Bas','Allemagne','Royaume-Uni','Espagne','Italie','Singapour','Autre']
-  const ACTIVITIES = ['Assureur Marine','P&I Club','Syndicat Lloyds','Courtier Assurance','Reassureur','Dispacheur','Autre']
+  const STEPS = ['Company','Contact','Documents','Banking']
+  const COUNTRIES = ['France','Belgium','Netherlands','Germany','United Kingdom','Spain','Italy','Singapore','UAE','China','United States','Other']
+  const ACTIVITIES = ['Marine Insurer','P&I Club','Lloyd\'s Syndicate','Insurance Broker','Reinsurer','Average Adjuster','Other']
 
   const handleSubmit = async () => {
     setLoading(true)
@@ -47,7 +47,7 @@ export default function InsurerRegister() {
     <div style={{marginBottom:12}}>
       <select id={id} value={val} onChange={e=>set(e.target.value)}
         style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:val?'#fff':'#4a6880',boxSizing:'border-box',fontSize:13}}>
-        <option value="">Selectionner...</option>
+        <option value="">Select...</option>
         {opts.map(o=><option key={o} value={o}>{o}</option>)}
       </select>
     </div>
@@ -63,11 +63,11 @@ export default function InsurerRegister() {
         <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:28}}>
           <button onClick={()=>step>0?setStep(s=>s-1):router.push('/auth')}
             style={{background:'none',border:'1px solid #1e3a52',borderRadius:6,padding:'6px 12px',color:'#8fa8c0',cursor:'pointer',fontSize:11}}>
-            Retour
+            Back
           </button>
           <div>
-            <div style={{color:'#4a6880',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase'}}>Inscription - Insurer / Broker</div>
-            <div style={{color:'#fff',fontWeight:800,fontSize:22}}>Creer votre compte entreprise</div>
+            <div style={{color:'#4a6880',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase'}}>Registration - Insurer / Broker</div>
+            <div style={{color:'#fff',fontWeight:800,fontSize:22}}>Create your company account</div>
           </div>
         </div>
 
@@ -88,26 +88,26 @@ export default function InsurerRegister() {
         <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:12,padding:28}}>
           {step===0&&(
             <div>
-              <SecT text="Informations Societe"/>
-              <Inp id="company" ph="Nom de la societe" val={f.company} set={u('company')}/>
+              <SecT text="Company Information"/>
+              <Inp id="company" ph="Company / Firm Name" val={f.company} set={u('company')}/>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
                 <Sel id="country" opts={COUNTRIES} val={f.country} set={u('country')}/>
-                <Inp id="city" ph="Ville" val={f.city} set={u('city')}/>
+                <Inp id="city" ph="City" val={f.city} set={u('city')}/>
               </div>
               <div style={{display:'grid',gridTemplateColumns:'120px 1fr',gap:12}}>
-                <Inp id="zip" ph="Code postal" val={f.zip} set={u('zip')}/>
-                <Inp id="address" ph="Adresse" val={f.address} set={u('address')}/>
+                <Inp id="zip" ph="Postal Code" val={f.zip} set={u('zip')}/>
+                <Inp id="address" ph="Street Address" val={f.address} set={u('address')}/>
               </div>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-                <Inp id="regNum" ph="No. Enregistrement" val={f.regNum} set={u('regNum')}/>
-                <Inp id="vatNum" ph="Numero TVA" val={f.vatNum} set={u('vatNum')}/>
+                <Inp id="regNum" ph="Company Registration No." val={f.regNum} set={u('regNum')}/>
+                <Inp id="vatNum" ph="VAT Number" val={f.vatNum} set={u('vatNum')}/>
               </div>
-              <Inp id="website" ph="Site web (ex: https://www.societe.com)" val={f.website} set={u('website')}/>
+              <Inp id="website" ph="Website (e.g. https://www.company.com)" val={f.website} set={u('website')}/>
               <Sel id="activity" opts={ACTIVITIES} val={f.activityType} set={u('activityType')}/>
               <div style={{display:'flex',justifyContent:'flex-end',marginTop:16}}>
                 <button onClick={()=>setStep(1)} disabled={!f.company||!f.country||!f.city}
                   style={{background:(!f.company||!f.country||!f.city)?'rgba(221,46,30,0.45)':'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'11px 28px',cursor:'pointer',fontWeight:700}}>
-                  Suivant
+                  Next
                 </button>
               </div>
             </div>
@@ -115,27 +115,27 @@ export default function InsurerRegister() {
 
           {step===1&&(
             <div>
-              <SecT text="Personne de Contact"/>
+              <SecT text="Contact Person"/>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-                <Inp id="firstName" ph="Prenom" val={f.firstName} set={u('firstName')}/>
-                <Inp id="lastName" ph="Nom" val={f.lastName} set={u('lastName')}/>
+                <Inp id="firstName" ph="First Name" val={f.firstName} set={u('firstName')}/>
+                <Inp id="lastName" ph="Last Name" val={f.lastName} set={u('lastName')}/>
               </div>
-              <Inp id="jobTitle" ph="Fonction (ex: Responsable Sinistres)" val={f.jobTitle} set={u('jobTitle')}/>
-              <Inp id="email" ph="Email professionnel" val={f.email} set={u('email')} type="email"/>
-              <Inp id="phone" ph="Telephone" val={f.phone} set={u('phone')}/>
-              <SecT text="Securite"/>
+              <Inp id="jobTitle" ph="Job Title (e.g. Claims Manager)" val={f.jobTitle} set={u('jobTitle')}/>
+              <Inp id="email" ph="Professional Email" val={f.email} set={u('email')} type="email"/>
+              <Inp id="phone" ph="Phone Number" val={f.phone} set={u('phone')}/>
+              <SecT text="Account Security"/>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-                <Inp id="pw" ph="Mot de passe" val={f.password} set={u('password')} type="password"/>
-                <Inp id="pw2" ph="Confirmer" val={f.password2} set={u('password2')} type="password"/>
+                <Inp id="pw" ph="Password (min. 6 chars)" val={f.password} set={u('password')} type="password"/>
+                <Inp id="pw2" ph="Confirm Password" val={f.password2} set={u('password2')} type="password"/>
               </div>
               {f.password&&f.password2&&f.password!==f.password2&&(
-                <p style={{color:'#dd2e1e',fontSize:11,marginBottom:12}}>Les mots de passe ne correspondent pas</p>
+                <p style={{color:'#dd2e1e',fontSize:11,marginBottom:12}}>Passwords do not match</p>
               )}
               <div style={{display:'flex',justifyContent:'space-between',marginTop:16}}>
-                <button onClick={()=>setStep(0)} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 24px',cursor:'pointer',fontWeight:700}}>Retour</button>
+                <button onClick={()=>setStep(0)} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 24px',cursor:'pointer',fontWeight:700}}>Back</button>
                 <button onClick={()=>setStep(2)} disabled={!f.firstName||!f.lastName||!f.email||!f.password||f.password!==f.password2}
                   style={{background:(!f.firstName||!f.lastName||!f.email||!f.password||f.password!==f.password2)?'rgba(221,46,30,0.45)':'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'11px 28px',cursor:'pointer',fontWeight:700}}>
-                  Suivant
+                  Next
                 </button>
               </div>
             </div>
@@ -143,43 +143,43 @@ export default function InsurerRegister() {
 
           {step===2&&(
             <div>
-              <SecT text="Documents Legaux"/>
+              <SecT text="Legal Documents"/>
               <p style={{color:'#8fa8c0',fontSize:12,marginBottom:16,lineHeight:1.6}}>
-                Documents requis pour la verification du compte. PDF, JPG, PNG - max 5 Mo.
+                Required for account verification. PDF, JPG, PNG - max 5 MB each.
               </p>
-              {['Extrait Kbis / Registre du Commerce','Licence Assurance / Autorisation Reglementaire','Piece d identite du Contact'].map(doc=>(
+              {['Company Registration Certificate','Insurance License / Regulatory Authorization','ID / Passport of Contact Person'].map(doc=>(
                 <div key={doc} style={{marginBottom:10,background:'#0f1e2e',border:'2px dashed #1e3a52',borderRadius:8,padding:'12px 16px',display:'flex',alignItems:'center',gap:12,cursor:'pointer'}}>
                   <span style={{fontSize:18}}>📎</span>
                   <div>
                     <div style={{color:'#8fa8c0',fontSize:12}}>{doc}</div>
-                    <div style={{color:'#4a6880',fontSize:10,marginTop:2}}>PDF, JPG ou PNG - max 5 Mo</div>
+                    <div style={{color:'#4a6880',fontSize:10,marginTop:2}}>PDF, JPG or PNG - max 5 MB</div>
                   </div>
                 </div>
               ))}
               <div style={{background:'rgba(221,46,30,0.08)',border:'1px solid #700300',borderRadius:8,padding:'11px 14px',marginTop:8,display:'flex',gap:10}}>
-                <span>i</span>
-                <span style={{color:'#8fa8c0',fontSize:11,lineHeight:1.5}}>Documents examines par notre equipe sous 24 a 48 heures.</span>
+                <span>ℹ️</span>
+                <span style={{color:'#8fa8c0',fontSize:11,lineHeight:1.5}}>Documents reviewed by our compliance team within 24 to 48 hours.</span>
               </div>
               <div style={{display:'flex',justifyContent:'space-between',marginTop:16}}>
-                <button onClick={()=>setStep(1)} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 24px',cursor:'pointer',fontWeight:700}}>Retour</button>
-                <button onClick={()=>setStep(3)} style={{background:'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'11px 28px',cursor:'pointer',fontWeight:700}}>Suivant</button>
+                <button onClick={()=>setStep(1)} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 24px',cursor:'pointer',fontWeight:700}}>Back</button>
+                <button onClick={()=>setStep(3)} style={{background:'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'11px 28px',cursor:'pointer',fontWeight:700}}>Next</button>
               </div>
             </div>
           )}
 
           {step===3&&(
             <div>
-              <SecT text="Coordonnees Bancaires"/>
-              <Inp id="holder" ph="Titulaire du compte" val={f.accountHolder} set={u('accountHolder')}/>
+              <SecT text="Banking Information"/>
+              <Inp id="holder" ph="Account Holder Name" val={f.accountHolder} set={u('accountHolder')}/>
               <Inp id="iban" ph="IBAN" val={f.iban} set={u('iban')}/>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-                <Inp id="bic" ph="BIC / SWIFT" val={f.bic} set={u('bic')}/>
-                <Inp id="bankName" ph="Nom de la banque" val={f.bankName} set={u('bankName')}/>
+                <Inp id="bic" ph="BIC / SWIFT Code" val={f.bic} set={u('bic')}/>
+                <Inp id="bankName" ph="Bank Name" val={f.bankName} set={u('bankName')}/>
               </div>
               <div style={{background:'rgba(221,46,30,0.08)',border:'1px solid #700300',borderRadius:8,padding:'11px 14px',marginBottom:14,display:'flex',gap:10}}>
                 <span>🔒</span>
                 <span style={{color:'#8fa8c0',fontSize:11,lineHeight:1.5}}>
-                  Une commission de 1% est appliquee a chaque mission validee. Paiements via Stripe Connect.
+                  A 1% platform commission is applied to each validated mission. Payments via Stripe Connect.
                 </span>
               </div>
               <div onClick={()=>setF(p=>({...p,agreed:!p.agreed}))}
@@ -188,15 +188,15 @@ export default function InsurerRegister() {
                   {f.agreed&&<span style={{color:'#fff',fontSize:11,fontWeight:900}}>v</span>}
                 </div>
                 <span style={{color:'#8fa8c0',fontSize:11,lineHeight:1.6}}>
-                  J accepte les Conditions Generales de SurveyLink et reconnais la commission de 1% par mission.
+                  I agree to the SurveyLink Terms of Service and Privacy Policy, and acknowledge the 1% platform commission.
                 </span>
               </div>
               {error&&<p style={{color:'#dd2e1e',fontSize:12,marginBottom:12}}>{error}</p>}
               <div style={{display:'flex',justifyContent:'space-between'}}>
-                <button onClick={()=>setStep(2)} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 24px',cursor:'pointer',fontWeight:700}}>Retour</button>
+                <button onClick={()=>setStep(2)} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 24px',cursor:'pointer',fontWeight:700}}>Back</button>
                 <button onClick={handleSubmit} disabled={!f.iban||!f.bic||!f.accountHolder||!f.agreed||loading}
                   style={{background:(!f.iban||!f.bic||!f.accountHolder||!f.agreed||loading)?'rgba(46,125,50,0.45)':'#2e7d32',color:'#fff',border:'none',borderRadius:7,padding:'11px 28px',cursor:'pointer',fontWeight:700}}>
-                  {loading?'Envoi...':'Creer mon compte'}
+                  {loading?'Creating...':'Create Account'}
                 </button>
               </div>
             </div>
