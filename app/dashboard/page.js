@@ -633,12 +633,20 @@ function ExpertDashboard({user}) {
                   </div>
 
                   <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:16}}>
-                    {[
-                      ['Full Address',q.missions?.location_text||'—'],
-                      ['Client',q.missions?.client_name||'—'],
-                      ['Damage Types',q.missions?.damage_types?.join(', ')||'—'],
-                      ['Your Fee',`EUR ${q.amount?.toLocaleString()}`],
-                    ].map(([k,v])=>(
+  {[
+    ['Full Address',q.missions?.location_text||'—'],
+    ['Client / Assured',q.missions?.client_name||'—'],
+    ['Expertise Type',q.missions?.expertise_type==='cargo'?`Cargo - ${q.missions?.expertise_subtype||''}`:q.missions?.expertise_subtype||'—'],
+    ['Loading Unit',q.missions?.loading_unit?(q.missions.loading_unit+(q.missions.tc_type?` - ${q.missions.tc_type}`:'')):'—'],
+    ['Quantity',q.missions?.loading_quantity||'—'],
+    ['Cargo Category',q.missions?.cargo_category||'—'],
+    ['Subcategory',q.missions?.cargo_subcategory||q.missions?.oog_description||'—'],
+    ['Damage Types',q.missions?.damage_types?.join(', ')||'—'],
+    ['On-Site Contact',q.missions?.contact_name||'—'],
+    ['Contact Phone',q.missions?.contact_phone||'—'],
+    ['Contact Job',q.missions?.contact_job||'—'],
+    ['Your Fee',`EUR ${q.amount?.toLocaleString()}`],
+  ].map(([k,v])=>(
                       <div key={k} style={{background:'#0f1e2e',borderRadius:7,padding:'8px 12px'}}>
                         <div style={{color:'#4a6880',fontSize:9,marginBottom:2}}>{k}</div>
                         <div style={{color:'#e8edf5',fontSize:11}}>{v}</div>
