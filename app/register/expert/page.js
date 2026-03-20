@@ -33,7 +33,8 @@ export default function ExpertRegister() {
   const SPECIALTIES = ['Bulk Cargo Surveys','Container FCL Surveys','Container LCL Surveys','Reefer / Cold Chain Surveys','Tanker / Liquid Bulk Surveys','Petroleum & Oil Surveys','Chemical Tanker Surveys','Heavy Lift Surveys','Project Cargo Surveys','Dangerous Goods (IMDG)','RoRo Cargo Surveys','Breakbulk Surveys','Fumigation Supervision','Sampling & Analysis','Draft / Weight Surveys','On-Hire / Off-Hire Surveys']
   const COMMODITIES = ['Wheat','Corn / Maize','Soybean','Rice','Sugar','Coffee & Cocoa','Vegetable Oils','Fertilizers','Coal','Iron Ore & Steel','Cement','Petroleum Products','Fresh Produce','Frozen Meat & Poultry','Dairy Products','Pharmaceuticals','Chemicals','Cotton & Natural Fibres','Timber & Lumber','Scrap Metal']
   const EQUIPMENT = ['Digital Thermometer','Infrared Thermometer','Temperature Data Logger','Brix Refractometer','Digital Hygrometer','Silver Nitrate Test Kit','pH Meter','Grain Moisture Meter','Drager Gas Detector','Portable O2 Analyser','Photographic Drone','Reefer Data Retriever','Ultrasonic Thickness Gauge','Lux Meter','UV Lamp','Portable Microscope']
-  const GEO = ['Northwest Europe','Mediterranean & Black Sea','West Africa','East & South Africa','Middle East & Gulf','South Asia','Southeast Asia','Far East / China','North America','South America','Caribbean','Oceania']
+const GEO = COUNTRIES
+
 
   const handleSubmit = async () => {
     setLoading(true)
