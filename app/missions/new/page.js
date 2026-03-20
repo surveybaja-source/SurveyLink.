@@ -96,7 +96,7 @@ export default function NewMission() {
   const nextStep = () => setStep(s => s + 1)
   const prevStep = () => setStep(s => s - 1)
 
-  const handleSubmit = async () => {
+ const handleSubmit = async () => {
     setLoading(true)
     setError(null)
     const { data: { user } } = await supabase.auth.getUser()
@@ -105,14 +105,30 @@ export default function NewMission() {
     const { error } = await supabase.from('missions').insert({
       reference: ref,
       insurer_id: user.id,
+      expertise_type: expertiseType,
+      expertise_subtype: expertiseSubtype,
+      loading_unit: loadingUnit,
+      loading_quantity: quantity,
+      tc_type: tcType,
       cargo_type: expertiseType === 'vessel' ? expertiseSubtype : cargoCategory,
+      cargo_category: cargoCategory,
+      cargo_subcategory: cargoSubcategory,
+      oog_description: oogDescription,
       damage_types: damages,
       client_name: client,
       location_text: location,
+      contact_name: contactName,
+      contact_phone: contactPhone,
+      contact_job: contactJob,
       urgency: urgency,
       status: 'searching',
-      notes: notes
+      notes: notes,
+      cancelled: false
     })
+    if (error) { setError(error.message); setLoading(false); return }
+    router.push('/dashboard')
+    setLoading(false)
+  }
     if (error) { setError(error.message); setLoading(false); return }
     router.push('/dashboard')
     setLoading(false)
