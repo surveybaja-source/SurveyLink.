@@ -9,31 +9,20 @@ export default function NewMission() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  // Step 1
   const [expertiseType, setExpertiseType] = useState('')
   const [expertiseSubtype, setExpertiseSubtype] = useState('')
-
-  // Step 2 - Loading units (cargo only)
   const [loadingUnit, setLoadingUnit] = useState('')
   const [tcType, setTcType] = useState('')
   const [quantity, setQuantity] = useState('')
-
-  // Step 3 - Cargo category
   const [cargoCategory, setCargoCategory] = useState('')
   const [cargoSubcategory, setCargoSubcategory] = useState('')
   const [oogDescription, setOogDescription] = useState('')
-
-  // Step 4 - Damage
   const [damages, setDamages] = useState([])
-
-  // Step 5 - Location
   const [location, setLocation] = useState('')
   const [urgency, setUrgency] = useState('normal')
   const [contactName, setContactName] = useState('')
   const [contactPhone, setContactPhone] = useState('')
   const [contactJob, setContactJob] = useState('')
-
-  // Step 6 - Details
   const [client, setClient] = useState('')
   const [notes, setNotes] = useState('')
   const [docs, setDocs] = useState([])
@@ -41,8 +30,6 @@ export default function NewMission() {
   const STEPS = expertiseType === 'vessel'
     ? ['Expertise','Location','Details','Review']
     : ['Expertise','Loading Unit','Cargo','Damage','Location','Details','Review']
-
-  const totalSteps = STEPS.length
 
   const VESSEL_TYPES = [
     {id:'pre_purchase',label:'Pre-Purchase Survey',icon:'🔍',sub:'Vessel condition before purchase'},
@@ -65,20 +52,15 @@ export default function NewMission() {
     {id:'other',label:'Other',icon:'📋'},
   ]
 
-  const TC_TYPES = ['20\'','40\'','40\'HC','Open Top (OT)']
+  const TC_TYPES = ["20'","40'","40'HC","Open Top (OT)"]
 
   const CARGO_CATEGORIES = [
-    {id:'general',label:'General Cargo',icon:'📦',
-     subs:['Clothing / Textiles','Mechanical Parts','Electronic Components','Electrical / Electronic Appliances','Furniture / Objects','Other']},
-    {id:'bulk',label:'Bulk Cargo',icon:'⛏️',
-     subs:['Dry Bulk — Coal','Dry Bulk — Grain','Dry Bulk — Ore','Dry Bulk — Fertilizers','Dry Bulk — Other','Liquid Bulk — Petroleum','Liquid Bulk — Chemicals','Liquid Bulk — Other']},
-    {id:'perishable',label:'Perishable',icon:'❄️',
-     subs:['Meat / Fish','Fruits / Vegetables','Pharmaceuticals','Other']},
-    {id:'adr',label:'ADR — Dangerous Goods',icon:'☢️',
-     subs:['Class 1 — Explosives','Class 2 — Gases','Class 3 — Flammable Liquids','Class 4 — Flammable Solids','Class 5 — Oxidizing / Peroxides','Class 6 — Toxic / Infectious','Class 7 — Radioactive','Class 8 — Corrosives','Class 9 — Miscellaneous Dangerous Goods']},
+    {id:'general',label:'General Cargo',icon:'📦',subs:['Clothing / Textiles','Mechanical Parts','Electronic Components','Electrical / Electronic Appliances','Furniture / Objects','Other']},
+    {id:'bulk',label:'Bulk Cargo',icon:'⛏️',subs:['Dry Bulk - Coal','Dry Bulk - Grain','Dry Bulk - Ore','Dry Bulk - Fertilizers','Dry Bulk - Other','Liquid Bulk - Petroleum','Liquid Bulk - Chemicals','Liquid Bulk - Other']},
+    {id:'perishable',label:'Perishable',icon:'❄️',subs:['Meat / Fish','Fruits / Vegetables','Pharmaceuticals','Other']},
+    {id:'adr',label:'ADR - Dangerous Goods',icon:'☢️',subs:['Class 1 - Explosives','Class 2 - Gases','Class 3 - Flammable Liquids','Class 4 - Flammable Solids','Class 5 - Oxidizing / Peroxides','Class 6 - Toxic / Infectious','Class 7 - Radioactive','Class 8 - Corrosives','Class 9 - Miscellaneous']},
     {id:'oog',label:'Out of Gauge',icon:'🏗️',subs:[]},
-    {id:'roro',label:'RoRo',icon:'🚗',
-     subs:['Car(s)','Truck(s)','Heavy Equipment']},
+    {id:'roro',label:'RoRo',icon:'🚗',subs:['Car(s)','Truck(s)','Heavy Equipment']},
   ]
 
   const DMG_TYPES = ['Wetting','Contamination','Mechanical Damage','Shortage / Theft','Accident','Temperature','Other']
@@ -91,12 +73,10 @@ export default function NewMission() {
 
   const togDmg = d => setDamages(p => p.includes(d)?p.filter(x=>x!==d):[...p,d])
 
-  const getStepIndex = (name) => STEPS.indexOf(name)
+  const nextStep = () => setStep(s => s+1)
+  const prevStep = () => setStep(s => s-1)
 
-  const nextStep = () => setStep(s => s + 1)
-  const prevStep = () => setStep(s => s - 1)
-
- const handleSubmit = async () => {
+  const handleSubmit = async () => {
     setLoading(true)
     setError(null)
     const { data: { user } } = await supabase.auth.getUser()
@@ -129,10 +109,6 @@ export default function NewMission() {
     router.push('/dashboard')
     setLoading(false)
   }
-    if (error) { setError(error.message); setLoading(false); return }
-    router.push('/dashboard')
-    setLoading(false)
-  }
 
   const SecT = ({text}) => (
     <div style={{color:'#fff',fontWeight:700,fontSize:13,letterSpacing:'0.08em',textTransform:'uppercase',margin:'20px 0 12px',paddingBottom:8,borderBottom:'1px solid #1e3a52'}}>{text}</div>
@@ -140,9 +116,7 @@ export default function NewMission() {
 
   const selectedCategory = CARGO_CATEGORIES.find(c => c.id === cargoCategory)
 
-  // Determine actual step content based on expertiseType
   const getContent = () => {
-    // Step 0 — always Expertise Type
     if (step === 0) return 'expertise'
     if (expertiseType === 'vessel') {
       if (step === 1) return 'location'
@@ -214,7 +188,7 @@ export default function NewMission() {
                   <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:20}}>
                     {CARGO_EXPERTISE.map(c=>(
                       <div key={c.id} onClick={()=>setExpertiseSubtype(c.id)}
-                        style={{background:expertiseSubtype===c.id?'rgba(221,46,30,0.1)':'#0f1e2e',border:expertiseSubtype===c.id?'2px solid #dd2e1e':'2px solid #1e3a52',borderRadius:10,padding:'14px',cursor:'pointer'}}>
+                        style={{background:expertiseSubtype===c.id?'rgba(221,46,30,0.1)':'#0f1e2e',border:expertiseSubtype===c.id?'2px solid #dd2e1e':'2px solid #1e3a52',borderRadius:10,padding:14,cursor:'pointer'}}>
                         <div style={{color:expertiseSubtype===c.id?'#dd2e1e':'#fff',fontWeight:800,fontSize:18}}>{c.label}</div>
                         <div style={{color:'#4a6880',fontSize:11,marginTop:3}}>{c.sub}</div>
                       </div>
@@ -229,7 +203,7 @@ export default function NewMission() {
                   <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:20}}>
                     {VESSEL_TYPES.map(v=>(
                       <div key={v.id} onClick={()=>setExpertiseSubtype(v.id)}
-                        style={{background:expertiseSubtype===v.id?'rgba(221,46,30,0.1)':'#0f1e2e',border:expertiseSubtype===v.id?'2px solid #dd2e1e':'2px solid #1e3a52',borderRadius:10,padding:'14px',cursor:'pointer',display:'flex',alignItems:'center',gap:12}}>
+                        style={{background:expertiseSubtype===v.id?'rgba(221,46,30,0.1)':'#0f1e2e',border:expertiseSubtype===v.id?'2px solid #dd2e1e':'2px solid #1e3a52',borderRadius:10,padding:14,cursor:'pointer',display:'flex',alignItems:'center',gap:12}}>
                         <span style={{fontSize:22}}>{v.icon}</span>
                         <div>
                           <div style={{color:expertiseSubtype===v.id?'#dd2e1e':'#fff',fontWeight:700,fontSize:13}}>{v.label}</div>
@@ -257,7 +231,7 @@ export default function NewMission() {
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:20}}>
                 {LOADING_UNITS.map(u=>(
                   <div key={u.id} onClick={()=>{setLoadingUnit(u.id);setTcType('');setQuantity('');}}
-                    style={{background:loadingUnit===u.id?'rgba(221,46,30,0.1)':'#0f1e2e',border:loadingUnit===u.id?'2px solid #dd2e1e':'2px solid #1e3a52',borderRadius:10,padding:'14px',cursor:'pointer',display:'flex',alignItems:'center',gap:12}}>
+                    style={{background:loadingUnit===u.id?'rgba(221,46,30,0.1)':'#0f1e2e',border:loadingUnit===u.id?'2px solid #dd2e1e':'2px solid #1e3a52',borderRadius:10,padding:14,cursor:'pointer',display:'flex',alignItems:'center',gap:12}}>
                     <span style={{fontSize:22}}>{u.icon}</span>
                     <div style={{color:loadingUnit===u.id?'#dd2e1e':'#fff',fontWeight:700,fontSize:14}}>{u.label}</div>
                   </div>
@@ -281,7 +255,7 @@ export default function NewMission() {
               {loadingUnit&&(
                 <>
                   <SecT text="Quantity"/>
-                  <input placeholder="e.g. 3, 150, 500 MT..." value={quantity} onChange={e=>setQuantity(e.target.value)}
+                  <input placeholder="e.g. 3 containers, 150 pallets, 500 MT..." value={quantity} onChange={e=>setQuantity(e.target.value)}
                     style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:'#fff',boxSizing:'border-box',fontSize:13,marginBottom:16}}/>
                 </>
               )}
@@ -356,9 +330,7 @@ export default function NewMission() {
               </div>
               <div style={{display:'flex',justifyContent:'space-between'}}>
                 <button onClick={prevStep} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 24px',cursor:'pointer',fontWeight:700}}>Back</button>
-                <button onClick={nextStep} style={{background:'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'11px 28px',cursor:'pointer',fontWeight:700}}>
-                  Next
-                </button>
+                <button onClick={nextStep} style={{background:'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'11px 28px',cursor:'pointer',fontWeight:700}}>Next</button>
               </div>
             </div>
           )}
@@ -366,7 +338,7 @@ export default function NewMission() {
           {content==='location'&&(
             <div>
               <h2 style={{color:'#fff',fontWeight:800,fontSize:22,marginBottom:16,marginTop:0}}>Location & Urgency</h2>
-              <input placeholder="Port / Terminal / Address" value={location} onChange={e=>setLocation(e.target.value)}
+              <input placeholder="Port / Terminal / Full Address" value={location} onChange={e=>setLocation(e.target.value)}
                 style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:'#fff',boxSizing:'border-box',fontSize:13,marginBottom:16}}/>
 
               <SecT text="On-Site Contact"/>
@@ -448,16 +420,16 @@ export default function NewMission() {
                 ['Expertise Type', expertiseType==='cargo'?'Cargo Survey':'Vessel Survey'],
                 ['Survey Subtype', expertiseType==='cargo'?expertiseSubtype:VESSEL_TYPES.find(v=>v.id===expertiseSubtype)?.label||''],
                 ...(expertiseType==='cargo'?[
-                  ['Loading Unit', loadingUnit+(tcType?` — ${tcType}`:'')],
+                  ['Loading Unit', loadingUnit+(tcType?` - ${tcType}`:'')],
                   ['Quantity', quantity],
                   ['Cargo Category', selectedCategory?.label||''],
-                  ['Subcategory', cargoSubcategory||oogDescription||'—'],
+                  ['Subcategory', cargoSubcategory||oogDescription||'Not specified'],
                   ['Damage Types', damages.join(', ')||'Not specified'],
                 ]:[]),
                 ['Location', location],
                 ['Urgency', urgency.toUpperCase()],
                 ['Client / Assured', client],
-                ['On-Site Contact', contactName?`${contactName} — ${contactJob} — ${contactPhone}`:'Not specified'],
+                ['On-Site Contact', contactName?`${contactName} - ${contactJob} - ${contactPhone}`:'Not specified'],
                 ['Documents', `${docs.length} file(s) attached`],
                 ['Notes', notes||'None'],
               ].map(([k,v])=>(
