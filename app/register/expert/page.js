@@ -45,7 +45,9 @@ const GEO = COUNTRIES
       id:data.user.id,role:'expert',email:f.email,
       company:f.company,first_name:f.firstName,last_name:f.lastName,
       phone:f.phone,country:f.country,city:f.city,
-      iban:f.iban,bic:f.bic,bank_name:f.bankName,verified:false
+      iban:f.iban,bic:f.bic,bank_name:f.bankName,
+      coverage_countries:coverage,
+      verified:false
     })
     router.push('/pending')
     setLoading(false)
