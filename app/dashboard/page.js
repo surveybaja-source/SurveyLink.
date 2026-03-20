@@ -363,13 +363,28 @@ function ExpertDashboard({user}) {
   }, [])
 
   const loadAll = async () => {
-    const { data: avail } = await supabase
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('coverage_countries')
+      .eq('id', user.id)
+      .single()
+
+    const countries = profile?.coverage_countries || []
+
+    let query = supabase
       .from('missions')
       .select('*')
       .in('status', ['searching','quoting'])
       .eq('cancelled', false)
       .order('created_at', {ascending: false})
+
+    if (countries.length > 0) {
+      query = query.in('location_country', countries)
+    }
+
+    const { data: avail } = await query
     setMissions(avail || [])
+
 
     const { data: myQ } = await supabase
       .from('quotes')
