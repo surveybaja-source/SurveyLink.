@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { useRouter } from 'next/navigation'
+import LocationPicker from '../../components/LocationPicker'
 
 export default function NewMission() {
   const router = useRouter()
@@ -18,7 +19,7 @@ export default function NewMission() {
   const [cargoSubcategory, setCargoSubcategory] = useState('')
   const [oogDescription, setOogDescription] = useState('')
   const [damages, setDamages] = useState([])
-  const [location, setLocation] = useState('')
+  const [locationData, setLocationData] = useState(null)
   const [urgency, setUrgency] = useState('normal')
   const [contactName, setContactName] = useState('')
   const [contactPhone, setContactPhone] = useState('')
@@ -72,7 +73,6 @@ export default function NewMission() {
   ]
 
   const togDmg = d => setDamages(p => p.includes(d)?p.filter(x=>x!==d):[...p,d])
-
   const nextStep = () => setStep(s => s+1)
   const prevStep = () => setStep(s => s-1)
 
@@ -96,7 +96,12 @@ export default function NewMission() {
       oog_description: oogDescription,
       damage_types: damages,
       client_name: client,
-      location_text: location,
+      location_text: locationData?.locationText || '',
+      location_country: locationData?.country || '',
+      location_city: locationData?.place || '',
+      location_type: locationData?.type || '',
+      location_place: locationData?.place || '',
+      location_detail: locationData?.detail || '',
       contact_name: contactName,
       contact_phone: contactPhone,
       contact_job: contactJob,
@@ -133,6 +138,7 @@ export default function NewMission() {
   }
 
   const content = getContent()
+  const locationValid = locationData?.country && (locationData?.place || locationData?.type === 'warehouse')
 
   return (
     <div style={{background:'#0c1a27',minHeight:'100vh',padding:'32px 24px'}}>
@@ -338,8 +344,11 @@ export default function NewMission() {
           {content==='location'&&(
             <div>
               <h2 style={{color:'#fff',fontWeight:800,fontSize:22,marginBottom:16,marginTop:0}}>Location & Urgency</h2>
-              <input placeholder="Port / Terminal / Full Address" value={location} onChange={e=>setLocation(e.target.value)}
-                style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:'#fff',boxSizing:'border-box',fontSize:13,marginBottom:16}}/>
+
+              <LocationPicker
+                value={locationData}
+                onChange={(data)=>setLocationData(data)}
+              />
 
               <SecT text="On-Site Contact"/>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:12}}>
@@ -364,8 +373,8 @@ export default function NewMission() {
 
               <div style={{display:'flex',justifyContent:'space-between',marginTop:16}}>
                 <button onClick={prevStep} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 24px',cursor:'pointer',fontWeight:700}}>Back</button>
-                <button onClick={nextStep} disabled={!location}
-                  style={{background:!location?'rgba(221,46,30,0.45)':'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'11px 28px',cursor:'pointer',fontWeight:700}}>
+                <button onClick={nextStep} disabled={!locationValid}
+                  style={{background:!locationValid?'rgba(221,46,30,0.45)':'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'11px 28px',cursor:'pointer',fontWeight:700}}>
                   Next
                 </button>
               </div>
@@ -426,7 +435,8 @@ export default function NewMission() {
                   ['Subcategory', cargoSubcategory||oogDescription||'Not specified'],
                   ['Damage Types', damages.join(', ')||'Not specified'],
                 ]:[]),
-                ['Location', location],
+                ['Country', locationData?.country||''],
+                ['Location', locationData?.locationText||''],
                 ['Urgency', urgency.toUpperCase()],
                 ['Client / Assured', client],
                 ['On-Site Contact', contactName?`${contactName} - ${contactJob} - ${contactPhone}`:'Not specified'],
