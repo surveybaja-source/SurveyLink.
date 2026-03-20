@@ -1,8 +1,8 @@
 'use client'
-import { sendEmail, emailTemplates } from '../../lib/emails'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useRouter } from 'next/navigation'
+import { sendEmail, emailTemplates } from '../../lib/emails'
 
 export default function Dashboard() {
   const [user, setUser] = useState(null)
@@ -35,7 +35,6 @@ export default function Dashboard() {
   return <ExpertDashboard user={user}/>
 }
 
-// ─── INSURER DASHBOARD ────────────────────────────────────────────────────────
 function InsurerDashboard({user}) {
   const router = useRouter()
   const [missions, setMissions] = useState([])
@@ -89,26 +88,50 @@ function InsurerDashboard({user}) {
     await supabase.from('quotes').update({status:'accepted'}).eq('id', quoteId)
     await supabase.from('quotes').update({status:'declined'}).neq('id', quoteId).eq('mission_id', missionId)
     await supabase.from('missions').update({status:'accepted'}).eq('id', missionId)
+    const quote = quotes.find(q=>q.id===quoteId)
+    if (quote) {
+      const { data: expertProfile } = await supabase.from('profiles').select('email').eq('id', quote.expert_id).single()
+      if (expertProfile?.email) {
+        const tmpl = emailTemplates.quoteAccepted(selected.reference, selected.cargo_type, selected.location_text)
+        await sendEmail(expertProfile.email, tmpl.subject, tmpl.html)
+      }
+    }
     loadQuotes(missionId)
     getMissions()
-    showToast('Quote accepted — surveyor has been notified')
+    showToast('Quote accepted — surveyor notified by email')
   }
 
   const declineQuote = async (quoteId, reason) => {
     await supabase.from('quotes').update({status:'declined', decline_reason: reason}).eq('id', quoteId)
+    const quote = quotes.find(q=>q.id===quoteId)
+    if (quote) {
+      const { data: expertProfile } = await supabase.from('profiles').select('email').eq('id', quote.expert_id).single()
+      if (expertProfile?.email) {
+        const tmpl = emailTemplates.quoteDeclined(selected.reference, reason)
+        await sendEmail(expertProfile.email, tmpl.subject, tmpl.html)
+      }
+    }
     setDeclineId(null)
     loadQuotes(selected.id)
-    showToast('Quote declined')
+    showToast('Quote declined — surveyor notified by email')
   }
 
   const sendCounter = async (quoteId, missionId) => {
     if (!counterText) return
     await supabase.from('quotes').update({status:'negotiating', counter_proposal: counterText}).eq('id', quoteId)
     await supabase.from('missions').update({status:'quoting'}).eq('id', missionId)
+    const quote = quotes.find(q=>q.id===quoteId)
+    if (quote) {
+      const { data: expertProfile } = await supabase.from('profiles').select('email').eq('id', quote.expert_id).single()
+      if (expertProfile?.email) {
+        const tmpl = emailTemplates.counterProposal(selected.reference, counterText, quote.amount)
+        await sendEmail(expertProfile.email, tmpl.subject, tmpl.html)
+      }
+    }
     setNegotiateId(null)
     setCounterText('')
     loadQuotes(missionId)
-    showToast('Counter-proposal sent to surveyor')
+    showToast('Counter-proposal sent by email')
   }
 
   const cancelMission = async (missionId, reason) => {
@@ -120,7 +143,6 @@ function InsurerDashboard({user}) {
 
   const sLabel = {searching:'Searching...',quoting:'Quotes received',accepted:'Surveyor assigned',completed:'Completed',cancelled:'Cancelled'}
   const sColor = {searching:'#8fa8c0',quoting:'#f0a500',accepted:'#2e7d32',completed:'#5a9eff',cancelled:'#dd2e1e'}
-
   const DECLINE_REASONS = ['Mission cancelled','Price too high','Quote already validated with another provider']
 
   return (
@@ -199,10 +221,9 @@ function InsurerDashboard({user}) {
                 <h2 style={{color:'#fff',fontSize:20,fontWeight:800,margin:0}}>Quotes — {selected.reference}</h2>
                 <div style={{display:'flex',gap:8}}>
                   {!selected.cancelled&&selected.status!=='completed'&&(
-                    <button onClick={()=>{
-                      if(window.confirm('Cancel this mission?')) cancelMission(selected.id, 'Cancelled by insurer')
-                    }} style={{background:'transparent',color:'#dd2e1e',border:'1px solid #dd2e1e',borderRadius:6,padding:'5px 12px',cursor:'pointer',fontSize:11,fontWeight:700}}>
-                      Cancel Mission
+                    <button onClick={()=>{if(window.confirm('Cancel this mission?'))cancelMission(selected.id,'Cancelled by insurer')}}
+                      style={{background:'transparent',color:'#dd2e1e',border:'1px solid #dd2e1e',borderRadius:6,padding:'5px 12px',cursor:'pointer',fontSize:11,fontWeight:700}}>
+                      Cancel
                     </button>
                   )}
                   <button onClick={()=>setSelected(null)} style={{background:'none',border:'none',color:'#8fa8c0',cursor:'pointer',fontSize:20}}>x</button>
@@ -218,7 +239,7 @@ function InsurerDashboard({user}) {
                 <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:12,padding:36,textAlign:'center'}}>
                   <div style={{fontSize:32,marginBottom:12}}>⏳</div>
                   <div style={{color:'#8fa8c0',fontSize:13}}>Notifying nearby surveyors...</div>
-                  <div style={{color:'#4a6880',fontSize:11,marginTop:6}}>First quote expected within 15 min</div>
+                  <div style={{color:'#4a6880',fontSize:11,marginTop:6}}>First quote expected soon</div>
                 </div>
               )}
 
@@ -273,15 +294,9 @@ function InsurerDashboard({user}) {
 
                     {q.status==='pending'&&negotiateId!==q.id&&declineId!==q.id&&(
                       <div style={{display:'flex',gap:8}}>
-                        <button onClick={()=>{setDeclineId(q.id);setNegotiateId(null)}} style={{flex:1,background:'transparent',color:'#dd2e1e',border:'1px solid #dd2e1e',borderRadius:7,padding:'9px',cursor:'pointer',fontWeight:700,fontSize:12}}>
-                          Decline
-                        </button>
-                        <button onClick={()=>{setNegotiateId(q.id);setDeclineId(null)}} style={{flex:1,background:'transparent',color:'#f0a500',border:'1px solid #f0a500',borderRadius:7,padding:'9px',cursor:'pointer',fontWeight:700,fontSize:12}}>
-                          Negotiate
-                        </button>
-                        <button onClick={()=>acceptQuote(q.id, selected.id)} style={{flex:1,background:'#2e7d32',color:'#fff',border:'none',borderRadius:7,padding:'9px',cursor:'pointer',fontWeight:700,fontSize:12}}>
-                          Accept
-                        </button>
+                        <button onClick={()=>{setDeclineId(q.id);setNegotiateId(null)}} style={{flex:1,background:'transparent',color:'#dd2e1e',border:'1px solid #dd2e1e',borderRadius:7,padding:'9px',cursor:'pointer',fontWeight:700,fontSize:12}}>Decline</button>
+                        <button onClick={()=>{setNegotiateId(q.id);setDeclineId(null)}} style={{flex:1,background:'transparent',color:'#f0a500',border:'1px solid #f0a500',borderRadius:7,padding:'9px',cursor:'pointer',fontWeight:700,fontSize:12}}>Negotiate</button>
+                        <button onClick={()=>acceptQuote(q.id, selected.id)} style={{flex:1,background:'#2e7d32',color:'#fff',border:'none',borderRadius:7,padding:'9px',cursor:'pointer',fontWeight:700,fontSize:12}}>Accept</button>
                       </div>
                     )}
 
@@ -301,7 +316,7 @@ function InsurerDashboard({user}) {
                     {negotiateId===q.id&&(
                       <div style={{marginTop:8}}>
                         <div style={{color:'#8fa8c0',fontSize:11,marginBottom:8,fontWeight:700}}>Your counter-proposal:</div>
-                        <textarea placeholder="Explain your counter-proposal (e.g. We can offer EUR 1,500 for this survey...)" value={counterText} onChange={e=>setCounterText(e.target.value)} rows={3}
+                        <textarea placeholder="Explain your counter-proposal..." value={counterText} onChange={e=>setCounterText(e.target.value)} rows={3}
                           style={{width:'100%',background:'#0f1e2e',border:'1px solid #f0a500',borderRadius:6,padding:'10px 14px',color:'#fff',boxSizing:'border-box',fontSize:12,resize:'vertical',marginBottom:8}}/>
                         <div style={{display:'flex',gap:8}}>
                           <button onClick={()=>{setNegotiateId(null);setCounterText('')}} style={{flex:1,background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:6,padding:'8px',cursor:'pointer',fontSize:12}}>Cancel</button>
@@ -323,13 +338,11 @@ function InsurerDashboard({user}) {
   )
 }
 
-// ─── EXPERT DASHBOARD ─────────────────────────────────────────────────────────
 function ExpertDashboard({user}) {
   const router = useRouter()
   const [missions, setMissions] = useState([])
   const [loading, setLoading] = useState(true)
   const [myQuotes, setMyQuotes] = useState([])
-  const [selectedMission, setSelectedMission] = useState(null)
   const [quoting, setQuoting] = useState(null)
   const [amount, setAmount] = useState('')
   const [proposedDatetime, setProposedDatetime] = useState('')
@@ -364,7 +377,6 @@ function ExpertDashboard({user}) {
       .eq('expert_id', user.id)
       .order('created_at', {ascending: false})
     setMyQuotes(myQ || [])
-
     setLoading(false)
   }
 
@@ -381,11 +393,21 @@ function ExpertDashboard({user}) {
     })
     if (!error) {
       await supabase.from('missions').update({status:'quoting'}).eq('id', missionId)
+      const mission = missions.find(m=>m.id===missionId)
+      if (mission) {
+        const { data: insurerProfile } = await supabase.from('profiles').select('email').eq('id', mission.insurer_id).single()
+        const { data: expertProfile } = await supabase.from('profiles').select('email, first_name, last_name').eq('id', user.id).single()
+        if (insurerProfile?.email && expertProfile) {
+          const surveyorName = `${expertProfile.first_name} ${expertProfile.last_name}`
+          const tmpl = emailTemplates.newQuoteReceived(mission.reference, surveyorName, parseFloat(amount))
+          await sendEmail(insurerProfile.email, tmpl.subject, tmpl.html)
+        }
+      }
       setQuoting(null)
       setAmount('')
       setProposedDatetime('')
       setNote('')
-      showToast('Quote submitted successfully!')
+      showToast('Quote submitted — insurer notified by email!')
       loadAll()
     }
   }
@@ -421,8 +443,8 @@ function ExpertDashboard({user}) {
           <div style={{display:'flex',gap:4}}>
             {[
               {k:'available',l:'Available Missions'},
-              {k:'myquotes',l:`My Quotes ${pendingQuotes.length>0?`(${pendingQuotes.length})`:''}`.trim()},
-              {k:'active',l:`Active Missions ${acceptedQuotes.length>0?`(${acceptedQuotes.length})`:''}`.trim()},
+              {k:'myquotes',l:pendingQuotes.length>0?`My Quotes (${pendingQuotes.length})`:'My Quotes'},
+              {k:'active',l:acceptedQuotes.length>0?`Active Missions (${acceptedQuotes.length})`:'Active Missions'},
             ].map(tab=>(
               <button key={tab.k} onClick={()=>setActiveTab(tab.k)}
                 style={{background:activeTab===tab.k?'#dd2e1e':'transparent',color:activeTab===tab.k?'#fff':'#8fa8c0',border:`1px solid ${activeTab===tab.k?'#dd2e1e':'#1e3a52'}`,borderRadius:6,padding:'5px 12px',fontSize:11,cursor:'pointer',fontWeight:700}}>
@@ -484,16 +506,14 @@ function ExpertDashboard({user}) {
                         <div style={{color:'#e8edf5',fontSize:11}}>{m.location_text?.split(',')[0]||m.location_text}</div>
                       </div>
                       <div style={{background:'#0f1e2e',borderRadius:7,padding:'8px 12px'}}>
-                        <div style={{color:'#4a6880',fontSize:9,marginBottom:2}}>URGENCY</div>
-                        <div style={{color:m.urgency==='critical'?'#dd2e1e':m.urgency==='urgent'?'#f0a500':'#2e7d32',fontSize:11,fontWeight:700,textTransform:'uppercase'}}>{m.urgency}</div>
+                        <div style={{color:'#4a6880',fontSize:9,marginBottom:2}}>LOADING UNIT</div>
+                        <div style={{color:'#e8edf5',fontSize:11}}>{m.loading_unit?`${m.loading_unit}${m.tc_type?` - ${m.tc_type}`:''}${m.loading_quantity?` — ${m.loading_quantity}`:''}` : '—'}</div>
                       </div>
                     </div>
-                    <div style={{display:'flex',gap:10}}>
-                      <button onClick={()=>{setQuoting(m);setAmount('');setProposedDatetime('');setNote('');}}
-                        style={{flex:1,background:'#2e7d32',color:'#fff',border:'none',borderRadius:7,padding:'10px',cursor:'pointer',fontWeight:700}}>
-                        Submit a Quote
-                      </button>
-                    </div>
+                    <button onClick={()=>{setQuoting(m);setAmount('');setProposedDatetime('');setNote('');}}
+                      style={{width:'100%',background:'#2e7d32',color:'#fff',border:'none',borderRadius:7,padding:'10px',cursor:'pointer',fontWeight:700}}>
+                      Submit a Quote
+                    </button>
                   </div>
                 ))}
               </div>
@@ -520,7 +540,7 @@ function ExpertDashboard({user}) {
                     </div>
                   </div>
                   <div style={{marginBottom:12}}>
-                    <div style={{color:'#8fa8c0',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>Proposed Date & Time of Intervention *</div>
+                    <div style={{color:'#8fa8c0',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>Proposed Date & Time *</div>
                     <input type="datetime-local" value={proposedDatetime} onChange={e=>setProposedDatetime(e.target.value)}
                       style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:'#fff',boxSizing:'border-box',fontSize:13}}/>
                   </div>
@@ -634,20 +654,20 @@ function ExpertDashboard({user}) {
                   </div>
 
                   <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:16}}>
-  {[
-    ['Full Address',q.missions?.location_text||'—'],
-    ['Client / Assured',q.missions?.client_name||'—'],
-    ['Expertise Type',q.missions?.expertise_type==='cargo'?`Cargo - ${q.missions?.expertise_subtype||''}`:q.missions?.expertise_subtype||'—'],
-    ['Loading Unit',q.missions?.loading_unit?(q.missions.loading_unit+(q.missions.tc_type?` - ${q.missions.tc_type}`:'')):'—'],
-    ['Quantity',q.missions?.loading_quantity||'—'],
-    ['Cargo Category',q.missions?.cargo_category||'—'],
-    ['Subcategory',q.missions?.cargo_subcategory||q.missions?.oog_description||'—'],
-    ['Damage Types',q.missions?.damage_types?.join(', ')||'—'],
-    ['On-Site Contact',q.missions?.contact_name||'—'],
-    ['Contact Phone',q.missions?.contact_phone||'—'],
-    ['Contact Job',q.missions?.contact_job||'—'],
-    ['Your Fee',`EUR ${q.amount?.toLocaleString()}`],
-  ].map(([k,v])=>(
+                    {[
+                      ['Full Address',q.missions?.location_text||'—'],
+                      ['Client / Assured',q.missions?.client_name||'—'],
+                      ['Expertise Type',q.missions?.expertise_type==='cargo'?`Cargo - ${q.missions?.expertise_subtype||''}`:q.missions?.expertise_subtype||'—'],
+                      ['Loading Unit',q.missions?.loading_unit?(q.missions.loading_unit+(q.missions.tc_type?` - ${q.missions.tc_type}`:'')):'—'],
+                      ['Quantity',q.missions?.loading_quantity||'—'],
+                      ['Cargo Category',q.missions?.cargo_category||'—'],
+                      ['Subcategory',q.missions?.cargo_subcategory||q.missions?.oog_description||'—'],
+                      ['Damage Types',q.missions?.damage_types?.join(', ')||'—'],
+                      ['On-Site Contact',q.missions?.contact_name||'—'],
+                      ['Contact Phone',q.missions?.contact_phone||'—'],
+                      ['Contact Job',q.missions?.contact_job||'—'],
+                      ['Your Fee',`EUR ${q.amount?.toLocaleString()}`],
+                    ].map(([k,v])=>(
                       <div key={k} style={{background:'#0f1e2e',borderRadius:7,padding:'8px 12px'}}>
                         <div style={{color:'#4a6880',fontSize:9,marginBottom:2}}>{k}</div>
                         <div style={{color:'#e8edf5',fontSize:11}}>{v}</div>
