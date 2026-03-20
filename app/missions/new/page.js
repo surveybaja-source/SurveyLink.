@@ -1,9 +1,9 @@
 'use client'
-import FileUpload from '../../components/FileUpload'
 import { useState } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { useRouter } from 'next/navigation'
 import LocationPicker from '../../components/LocationPicker'
+import FileUpload from '../../components/FileUpload'
 
 export default function NewMission() {
   const router = useRouter()
@@ -109,7 +109,8 @@ export default function NewMission() {
       urgency: urgency,
       status: 'searching',
       notes: notes,
-      cancelled: false
+      cancelled: false,
+      documents: docs.map(d=>d.path)
     })
     if (error) { setError(error.message); setLoading(false); return }
     router.push('/dashboard')
@@ -345,12 +346,7 @@ export default function NewMission() {
           {content==='location'&&(
             <div>
               <h2 style={{color:'#fff',fontWeight:800,fontSize:22,marginBottom:16,marginTop:0}}>Location & Urgency</h2>
-
-              <LocationPicker
-                value={locationData}
-                onChange={(data)=>setLocationData(data)}
-              />
-
+              <LocationPicker value={locationData} onChange={(data)=>setLocationData(data)}/>
               <SecT text="On-Site Contact"/>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:12}}>
                 <input placeholder="Contact Name" value={contactName} onChange={e=>setContactName(e.target.value)}
@@ -360,7 +356,6 @@ export default function NewMission() {
               </div>
               <input placeholder="Phone / WhatsApp" value={contactPhone} onChange={e=>setContactPhone(e.target.value)}
                 style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:'#fff',boxSizing:'border-box',fontSize:13,marginBottom:16}}/>
-
               <SecT text="Urgency Level"/>
               <div style={{display:'flex',gap:10,marginBottom:8}}>
                 {URGENCY.map(u=>(
@@ -371,7 +366,6 @@ export default function NewMission() {
                   </div>
                 ))}
               </div>
-
               <div style={{display:'flex',justifyContent:'space-between',marginTop:16}}>
                 <button onClick={prevStep} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 24px',cursor:'pointer',fontWeight:700}}>Back</button>
                 <button onClick={nextStep} disabled={!locationValid}
@@ -387,20 +381,15 @@ export default function NewMission() {
               <h2 style={{color:'#fff',fontWeight:800,fontSize:22,marginBottom:16,marginTop:0}}>Mission Details</h2>
               <input placeholder="Client / Assured Name" value={client} onChange={e=>setClient(e.target.value)}
                 style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:'#fff',boxSizing:'border-box',fontSize:13,marginBottom:12}}/>
-
-              <SecT text="Documents"/>
-<FileUpload
-  bucket="mission-docs"
-  folder="missions"
-  label="Attach Documents"
-  hint="Packing List, Bill of Lading, CMR, Photos, Other"
-  onUpload={(files)=>setDocs(files)}
-/>
-
-
+              <FileUpload
+                bucket="mission-docs"
+                folder="missions"
+                label="Attach Documents"
+                hint="Packing List, Bill of Lading, CMR, Photos, Other"
+                onUpload={(files)=>setDocs(files)}
+              />
               <textarea placeholder="Additional notes, access conditions, special instructions..." value={notes} onChange={e=>setNotes(e.target.value)} rows={3}
                 style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:'#fff',boxSizing:'border-box',fontSize:13,resize:'vertical',marginBottom:16}}/>
-
               <div style={{display:'flex',justifyContent:'space-between'}}>
                 <button onClick={prevStep} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 24px',cursor:'pointer',fontWeight:700}}>Back</button>
                 <button onClick={nextStep} disabled={!client}
