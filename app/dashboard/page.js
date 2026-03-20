@@ -473,10 +473,15 @@ function ExpertDashboard({user}) {
             ))}
           </div>
         </div>
-        <button onClick={()=>supabase.auth.signOut().then(()=>router.push('/auth'))}
-          style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:6,padding:'6px 16px',cursor:'pointer'}}>
-          Sign Out
-        </button>
+        <div style={{display:'flex',gap:8}}>
+  <button onClick={()=>router.push('/profile')} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:6,padding:'6px 16px',cursor:'pointer',fontSize:12}}>
+    My Profile
+  </button>
+  <button onClick={()=>supabase.auth.signOut().then(()=>router.push('/auth'))} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:6,padding:'6px 16px',cursor:'pointer'}}>
+    Sign Out
+  </button>
+</div>
+
       </nav>
 
       <div style={{maxWidth:1200,margin:'0 auto',padding:'32px 24px'}}>
