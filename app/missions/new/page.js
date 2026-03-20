@@ -389,26 +389,14 @@ export default function NewMission() {
                 style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:'#fff',boxSizing:'border-box',fontSize:13,marginBottom:12}}/>
 
               <SecT text="Documents"/>
-              <div style={{background:'#0f1e2e',border:'2px dashed #1e3a52',borderRadius:8,padding:20,textAlign:'center',cursor:'pointer',marginBottom:12}}
-                onMouseEnter={e=>e.currentTarget.style.borderColor='#2a4f6e'}
-                onMouseLeave={e=>e.currentTarget.style.borderColor='#1e3a52'}
-                onClick={()=>setDocs(p=>[...p,{name:`document_${p.length+1}.pdf`,size:'1.2 MB'}])}>
-                <div style={{fontSize:24,marginBottom:6}}>📎</div>
-                <div style={{color:'#8fa8c0',fontSize:12}}>Drop files or <span style={{color:'#dd2e1e'}}>click to attach</span></div>
-                <div style={{color:'#4a6880',fontSize:10,marginTop:4}}>Packing List, Bill of Lading, CMR, Photos, Other</div>
-              </div>
-              {docs.length>0&&(
-                <div style={{display:'flex',flexDirection:'column',gap:6,marginBottom:12}}>
-                  {docs.map((d,i)=>(
-                    <div key={i} style={{display:'flex',alignItems:'center',gap:10,background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'8px 12px'}}>
-                      <span>📄</span>
-                      <span style={{color:'#fff',fontSize:12,flex:1}}>{d.name}</span>
-                      <span style={{color:'#4a6880',fontSize:11}}>{d.size}</span>
-                      <button onClick={()=>setDocs(p=>p.filter((_,idx)=>idx!==i))} style={{background:'none',border:'none',color:'#dd2e1e',cursor:'pointer',fontSize:16}}>x</button>
-                    </div>
-                  ))}
-                </div>
-              )}
+<FileUpload
+  bucket="mission-docs"
+  folder="missions"
+  label="Attach Documents"
+  hint="Packing List, Bill of Lading, CMR, Photos, Other"
+  onUpload={(files)=>setDocs(files)}
+/>
+
 
               <textarea placeholder="Additional notes, access conditions, special instructions..." value={notes} onChange={e=>setNotes(e.target.value)} rows={3}
                 style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:'#fff',boxSizing:'border-box',fontSize:13,resize:'vertical',marginBottom:16}}/>
