@@ -1,4 +1,5 @@
 'use client'
+import FileUpload from '../components/FileUpload'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useRouter } from 'next/navigation'
