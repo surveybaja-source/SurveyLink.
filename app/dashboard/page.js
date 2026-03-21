@@ -1,9 +1,9 @@
 'use client'
-import FileUpload from '../components/FileUpload'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useRouter } from 'next/navigation'
 import { sendEmail, emailTemplates } from '../../lib/emails'
+import FileUpload from '../components/FileUpload'
 
 export default function Dashboard() {
   const [user, setUser] = useState(null)
@@ -135,8 +135,8 @@ function InsurerDashboard({user}) {
     showToast('Counter-proposal sent by email')
   }
 
-  const cancelMission = async (missionId, reason) => {
-    await supabase.from('missions').update({cancelled: true, cancel_reason: reason, status: 'cancelled'}).eq('id', missionId)
+  const cancelMission = async (missionId) => {
+    await supabase.from('missions').update({cancelled: true, status: 'cancelled'}).eq('id', missionId)
     setSelected(null)
     getMissions()
     showToast('Mission cancelled')
@@ -158,14 +158,14 @@ function InsurerDashboard({user}) {
           </button>
         </div>
         <div style={{display:'flex',gap:8}}>
-  <button onClick={()=>router.push('/profile')} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:6,padding:'6px 16px',cursor:'pointer',fontSize:12}}>
-    My Profile
-  </button>
-  <button onClick={()=>supabase.auth.signOut().then(()=>router.push('/auth'))} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:6,padding:'6px 16px',cursor:'pointer'}}>
-    Sign Out
-  </button>
-</div>
-
+          <button onClick={()=>router.push('/profile')} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:6,padding:'6px 16px',cursor:'pointer',fontSize:12}}>
+            My Profile
+          </button>
+          <button onClick={()=>supabase.auth.signOut().then(()=>router.push('/auth'))}
+            style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:6,padding:'6px 16px',cursor:'pointer'}}>
+            Sign Out
+          </button>
+        </div>
       </nav>
 
       <div style={{maxWidth:1200,margin:'0 auto',padding:'32px 24px'}}>
@@ -211,7 +211,7 @@ function InsurerDashboard({user}) {
                         <span style={{background:'#1e3a52',color:sColor[m.status]||'#8fa8c0',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700}}>{sLabel[m.status]||m.status}</span>
                       </div>
                       <div style={{color:'#fff',fontWeight:700,fontSize:18}}>{m.cargo_type}</div>
-                      <div style={{color:'#8fa8c0',fontSize:12,marginTop:2}}>{m.damage_types?.join(', ')} — {m.client_name}</div>
+                      <div style={{color:'#8fa8c0',fontSize:12,marginTop:2}}>{m.damage_types?.join(', ')} - {m.client_name}</div>
                     </div>
                     <span style={{color:'#4a6880',fontSize:11}}>{new Date(m.created_at).toLocaleDateString('en-GB')}</span>
                   </div>
@@ -224,10 +224,10 @@ function InsurerDashboard({user}) {
           {selected&&(
             <div>
               <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
-                <h2 style={{color:'#fff',fontSize:20,fontWeight:800,margin:0}}>Quotes — {selected.reference}</h2>
+                <h2 style={{color:'#fff',fontSize:20,fontWeight:800,margin:0}}>Quotes - {selected.reference}</h2>
                 <div style={{display:'flex',gap:8}}>
                   {!selected.cancelled&&selected.status!=='completed'&&(
-                    <button onClick={()=>{if(window.confirm('Cancel this mission?'))cancelMission(selected.id,'Cancelled by insurer')}}
+                    <button onClick={()=>{if(window.confirm('Cancel this mission?'))cancelMission(selected.id)}}
                       style={{background:'transparent',color:'#dd2e1e',border:'1px solid #dd2e1e',borderRadius:6,padding:'5px 12px',cursor:'pointer',fontSize:11,fontWeight:700}}>
                       Cancel
                     </button>
@@ -240,6 +240,24 @@ function InsurerDashboard({user}) {
                 <div style={{color:'#4a6880',fontSize:9,marginBottom:2}}>LOCATION</div>
                 <div style={{color:'#8fa8c0',fontSize:12}}>📍 {selected.location_text}</div>
               </div>
+
+              {selected.documents&&selected.documents.length>0&&(
+                <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:8,padding:'10px 14px',marginBottom:14}}>
+                  <div style={{color:'#4a6880',fontSize:9,marginBottom:8,letterSpacing:'0.1em',textTransform:'uppercase'}}>MISSION DOCUMENTS</div>
+                  <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                    {selected.documents.map((path,i)=>(
+                      <div key={i} style={{display:'flex',alignItems:'center',gap:8,cursor:'pointer'}}
+                        onClick={async()=>{
+                          const {data} = await supabase.storage.from('mission-docs').createSignedUrl(path,3600)
+                          if(data?.signedUrl) window.open(data.signedUrl,'_blank')
+                        }}>
+                        <span>📄</span>
+                        <span style={{color:'#5a9eff',fontSize:12,textDecoration:'underline'}}>{path.split('/').pop()}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {quotes.length===0&&(
                 <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:12,padding:36,textAlign:'center'}}>
@@ -391,10 +409,9 @@ function ExpertDashboard({user}) {
     const { data: avail } = await query
     setMissions(avail || [])
 
-
     const { data: myQ } = await supabase
       .from('quotes')
-      .select('*, missions(*)')
+      .select('*, missions(*, survey_reports(*))')
       .eq('expert_id', user.id)
       .order('created_at', {ascending: false})
     setMyQuotes(myQ || [])
@@ -475,14 +492,14 @@ function ExpertDashboard({user}) {
           </div>
         </div>
         <div style={{display:'flex',gap:8}}>
-  <button onClick={()=>router.push('/profile')} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:6,padding:'6px 16px',cursor:'pointer',fontSize:12}}>
-    My Profile
-  </button>
-  <button onClick={()=>supabase.auth.signOut().then(()=>router.push('/auth'))} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:6,padding:'6px 16px',cursor:'pointer'}}>
-    Sign Out
-  </button>
-</div>
-
+          <button onClick={()=>router.push('/profile')} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:6,padding:'6px 16px',cursor:'pointer',fontSize:12}}>
+            My Profile
+          </button>
+          <button onClick={()=>supabase.auth.signOut().then(()=>router.push('/auth'))}
+            style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:6,padding:'6px 16px',cursor:'pointer'}}>
+            Sign Out
+          </button>
+        </div>
       </nav>
 
       <div style={{maxWidth:1200,margin:'0 auto',padding:'32px 24px'}}>
@@ -529,11 +546,11 @@ function ExpertDashboard({user}) {
                     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:14}}>
                       <div style={{background:'#0f1e2e',borderRadius:7,padding:'8px 12px'}}>
                         <div style={{color:'#4a6880',fontSize:9,marginBottom:2}}>PORT / CITY</div>
-                        <div style={{color:'#e8edf5',fontSize:11}}>{m.location_text?.split(',')[0]||m.location_text}</div>
+                        <div style={{color:'#e8edf5',fontSize:11}}>{m.location_place||m.location_text?.split(',')[0]||m.location_text}</div>
                       </div>
                       <div style={{background:'#0f1e2e',borderRadius:7,padding:'8px 12px'}}>
                         <div style={{color:'#4a6880',fontSize:9,marginBottom:2}}>LOADING UNIT</div>
-                        <div style={{color:'#e8edf5',fontSize:11}}>{m.loading_unit?`${m.loading_unit}${m.tc_type?` - ${m.tc_type}`:''}${m.loading_quantity?` — ${m.loading_quantity}`:''}` : '—'}</div>
+                        <div style={{color:'#e8edf5',fontSize:11}}>{m.loading_unit?`${m.loading_unit}${m.tc_type?` - ${m.tc_type}`:''}${m.loading_quantity?` - ${m.loading_quantity}`:''}` : '-'}</div>
                       </div>
                     </div>
                     <button onClick={()=>{setQuoting(m);setAmount('');setProposedDatetime('');setNote('');}}
@@ -555,7 +572,7 @@ function ExpertDashboard({user}) {
                   <div style={{background:'#0f1e2e',borderRadius:7,padding:'10px 14px',marginBottom:18}}>
                     <div style={{color:'#4a6880',fontSize:9,marginBottom:3}}>MISSION</div>
                     <div style={{color:'#dd2e1e',fontWeight:700}}>{quoting.reference}</div>
-                    <div style={{color:'#8fa8c0',fontSize:12,marginTop:2}}>{quoting.cargo_type} — {quoting.location_text?.split(',')[0]}</div>
+                    <div style={{color:'#8fa8c0',fontSize:12,marginTop:2}}>{quoting.cargo_type} - {quoting.location_place||quoting.location_text?.split(',')[0]}</div>
                   </div>
                   <div style={{marginBottom:16}}>
                     <div style={{color:'#8fa8c0',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>Lump Sum Fee (EUR) *</div>
@@ -581,7 +598,7 @@ function ExpertDashboard({user}) {
                         <span style={{color:'#f0a500',fontWeight:800,fontSize:20}}>EUR {parseInt(amount).toLocaleString()}</span>
                       </div>
                       <div style={{color:'#4a6880',fontSize:10,marginTop:3}}>
-                        Platform fee (1%): EUR {Math.round(parseInt(amount)*0.01).toLocaleString()} — You receive: EUR {Math.round(parseInt(amount)*0.99).toLocaleString()}
+                        Platform fee (1%): EUR {Math.round(parseInt(amount)*0.01).toLocaleString()} - You receive: EUR {Math.round(parseInt(amount)*0.99).toLocaleString()}
                       </div>
                     </div>
                   )}
@@ -611,7 +628,7 @@ function ExpertDashboard({user}) {
                     <div>
                       <div style={{color:'#4a6880',fontSize:10,marginBottom:4}}>{q.missions?.reference}</div>
                       <div style={{color:'#fff',fontWeight:700,fontSize:16}}>{q.missions?.cargo_type}</div>
-                      <div style={{color:'#8fa8c0',fontSize:12,marginTop:2}}>{q.missions?.location_text?.split(',')[0]}</div>
+                      <div style={{color:'#8fa8c0',fontSize:12,marginTop:2}}>{q.missions?.location_place||q.missions?.location_text?.split(',')[0]}</div>
                     </div>
                     <span style={{background:'#1e3a52',color:statusColor[q.status]||'#8fa8c0',padding:'3px 12px',borderRadius:4,fontSize:10,fontWeight:700,textTransform:'uppercase'}}>
                       {statusLabel[q.status]||q.status}
@@ -681,17 +698,17 @@ function ExpertDashboard({user}) {
 
                   <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:16}}>
                     {[
-                      ['Full Address',q.missions?.location_text||'—'],
-                      ['Client / Assured',q.missions?.client_name||'—'],
-                      ['Expertise Type',q.missions?.expertise_type==='cargo'?`Cargo - ${q.missions?.expertise_subtype||''}`:q.missions?.expertise_subtype||'—'],
+                      ['Full Address',q.missions?.location_text||'-'],
+                      ['Client / Assured',q.missions?.client_name||'-'],
+                      ['Expertise Type',q.missions?.expertise_type==='cargo'?`Cargo - ${q.missions?.expertise_subtype||''}`:q.missions?.expertise_subtype||'-'],
                       ['Loading Unit',q.missions?.loading_unit?(q.missions.loading_unit+(q.missions.tc_type?` - ${q.missions.tc_type}`:'')):'—'],
-                      ['Quantity',q.missions?.loading_quantity||'—'],
-                      ['Cargo Category',q.missions?.cargo_category||'—'],
-                      ['Subcategory',q.missions?.cargo_subcategory||q.missions?.oog_description||'—'],
-                      ['Damage Types',q.missions?.damage_types?.join(', ')||'—'],
-                      ['On-Site Contact',q.missions?.contact_name||'—'],
-                      ['Contact Phone',q.missions?.contact_phone||'—'],
-                      ['Contact Job',q.missions?.contact_job||'—'],
+                      ['Quantity',q.missions?.loading_quantity||'-'],
+                      ['Cargo Category',q.missions?.cargo_category||'-'],
+                      ['Subcategory',q.missions?.cargo_subcategory||q.missions?.oog_description||'-'],
+                      ['Damage Types',q.missions?.damage_types?.join(', ')||'-'],
+                      ['On-Site Contact',q.missions?.contact_name||'-'],
+                      ['Contact Phone',q.missions?.contact_phone||'-'],
+                      ['Contact Job',q.missions?.contact_job||'-'],
                       ['Your Fee',`EUR ${q.amount?.toLocaleString()}`],
                     ].map(([k,v])=>(
                       <div key={k} style={{background:'#0f1e2e',borderRadius:7,padding:'8px 12px'}}>
@@ -700,6 +717,24 @@ function ExpertDashboard({user}) {
                       </div>
                     ))}
                   </div>
+
+                  {q.missions?.documents&&q.missions.documents.length>0&&(
+                    <div style={{background:'#0f1e2e',borderRadius:7,padding:'10px 14px',marginBottom:16}}>
+                      <div style={{color:'#4a6880',fontSize:9,marginBottom:8,letterSpacing:'0.1em',textTransform:'uppercase'}}>MISSION DOCUMENTS</div>
+                      <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                        {q.missions.documents.map((path,i)=>(
+                          <div key={i} style={{display:'flex',alignItems:'center',gap:8,cursor:'pointer'}}
+                            onClick={async()=>{
+                              const {data} = await supabase.storage.from('mission-docs').createSignedUrl(path,3600)
+                              if(data?.signedUrl) window.open(data.signedUrl,'_blank')
+                            }}>
+                            <span>📄</span>
+                            <span style={{color:'#5a9eff',fontSize:12,textDecoration:'underline'}}>{path.split('/').pop()}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {q.missions?.notes&&(
                     <div style={{background:'#0f1e2e',borderRadius:7,padding:'10px 14px',marginBottom:16}}>
@@ -710,36 +745,53 @@ function ExpertDashboard({user}) {
 
                   <div style={{borderTop:'1px solid #1e3a52',paddingTop:16}}>
                     <div style={{color:'#fff',fontWeight:700,fontSize:12,letterSpacing:'0.08em',textTransform:'uppercase',marginBottom:12}}>Survey Reports</div>
-                    <div style={{display:'flex',flexDirection:'column',gap:8}}>
+                    <div style={{display:'flex',flexDirection:'column',gap:12}}>
                       {[
-  {type:'memo',label:'Memo Report',sub:'Within 24h — photos, observations, preliminary findings',color:'#f0a500'},
-  {type:'preliminary',label:'Preliminary Report',sub:'Detailed preliminary assessment',color:'#5a9eff'},
-  {type:'final',label:'Final Report',sub:'Closes the file',color:'#2e7d32'},
-].map(r=>(
-  <div key={r.type} style={{background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:8,padding:'12px 16px',marginBottom:8}}>
-    <div style={{marginBottom:8}}>
-      <div style={{color:r.color,fontWeight:700,fontSize:13}}>{r.label}</div>
-      <div style={{color:'#4a6880',fontSize:11,marginTop:2}}>{r.sub}</div>
-    </div>
-    <FileUpload
-      bucket="survey-reports"
-      folder={`${q.missions?.reference}/${r.type}`}
-      label=""
-      hint="PDF, DOC, JPG — max 10 MB"
-      multiple={false}
-      onUpload={async (files)=>{
-        if (files.length > 0) {
-          await supabase.from('survey_reports').upsert({
-            mission_id: q.mission_id,
-            expert_id: user.id,
-            report_type: r.type,
-            file_url: files[0].path,
-          })
-        }
-      }}
-    />
-  </div>
-))}
+                        {type:'memo',label:'Memo Report',sub:'Within 24h — photos, observations, preliminary findings',color:'#f0a500'},
+                        {type:'preliminary',label:'Preliminary Report',sub:'Detailed preliminary assessment',color:'#5a9eff'},
+                        {type:'final',label:'Final Report',sub:'Closes the file',color:'#2e7d32'},
+                      ].map(r=>{
+                        const existingReport = q.missions?.survey_reports?.find(sr=>sr.report_type===r.type)
+                        return (
+                          <div key={r.type} style={{background:'#0f1e2e',border:`1px solid ${existingReport?r.color:'#1e3a52'}`,borderRadius:8,padding:'12px 16px'}}>
+                            <div style={{marginBottom:8}}>
+                              <div style={{display:'flex',alignItems:'center',gap:8}}>
+                                <div style={{color:r.color,fontWeight:700,fontSize:13}}>{r.label}</div>
+                                {existingReport&&<span style={{background:`rgba(46,125,50,0.12)`,border:'1px solid #2e7d32',color:'#81c784',padding:'1px 8px',borderRadius:4,fontSize:9,fontWeight:700}}>UPLOADED</span>}
+                              </div>
+                              <div style={{color:'#4a6880',fontSize:11,marginTop:2}}>{r.sub}</div>
+                            </div>
+                            {existingReport&&(
+                              <div style={{marginBottom:8,display:'flex',alignItems:'center',gap:8,cursor:'pointer'}}
+                                onClick={async()=>{
+                                  const {data} = await supabase.storage.from('survey-reports').createSignedUrl(existingReport.file_url,3600)
+                                  if(data?.signedUrl) window.open(data.signedUrl,'_blank')
+                                }}>
+                                <span>📄</span>
+                                <span style={{color:'#5a9eff',fontSize:12,textDecoration:'underline'}}>View uploaded report</span>
+                              </div>
+                            )}
+                            <FileUpload
+                              bucket="survey-reports"
+                              folder={`${q.missions?.reference}/${r.type}`}
+                              label=""
+                              hint="PDF, DOC, JPG — max 10 MB"
+                              multiple={false}
+                              onUpload={async(files)=>{
+                                if(files.length>0){
+                                  await supabase.from('survey_reports').upsert({
+                                    mission_id: q.mission_id,
+                                    expert_id: user.id,
+                                    report_type: r.type,
+                                    file_url: files[0].path,
+                                  })
+                                  loadAll()
+                                }
+                              }}
+                            />
+                          </div>
+                        )
+                      })}
                     </div>
                   </div>
                 </div>
