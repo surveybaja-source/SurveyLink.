@@ -712,20 +712,34 @@ function ExpertDashboard({user}) {
                     <div style={{color:'#fff',fontWeight:700,fontSize:12,letterSpacing:'0.08em',textTransform:'uppercase',marginBottom:12}}>Survey Reports</div>
                     <div style={{display:'flex',flexDirection:'column',gap:8}}>
                       {[
-                        {type:'memo',label:'Memo Report',sub:'Within 24h — photos, observations, preliminary findings',color:'#f0a500'},
-                        {type:'preliminary',label:'Preliminary Report',sub:'Detailed preliminary assessment',color:'#5a9eff'},
-                        {type:'final',label:'Final Report',sub:'Closes the file',color:'#2e7d32'},
-                      ].map(r=>(
-                        <div key={r.type} style={{background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:8,padding:'12px 16px',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-                          <div>
-                            <div style={{color:r.color,fontWeight:700,fontSize:13}}>{r.label}</div>
-                            <div style={{color:'#4a6880',fontSize:11,marginTop:2}}>{r.sub}</div>
-                          </div>
-                          <button style={{background:'transparent',color:r.color,border:`1px solid ${r.color}`,borderRadius:6,padding:'6px 14px',cursor:'pointer',fontSize:11,fontWeight:700}}>
-                            Upload
-                          </button>
-                        </div>
-                      ))}
+  {type:'memo',label:'Memo Report',sub:'Within 24h — photos, observations, preliminary findings',color:'#f0a500'},
+  {type:'preliminary',label:'Preliminary Report',sub:'Detailed preliminary assessment',color:'#5a9eff'},
+  {type:'final',label:'Final Report',sub:'Closes the file',color:'#2e7d32'},
+].map(r=>(
+  <div key={r.type} style={{background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:8,padding:'12px 16px',marginBottom:8}}>
+    <div style={{marginBottom:8}}>
+      <div style={{color:r.color,fontWeight:700,fontSize:13}}>{r.label}</div>
+      <div style={{color:'#4a6880',fontSize:11,marginTop:2}}>{r.sub}</div>
+    </div>
+    <FileUpload
+      bucket="survey-reports"
+      folder={`${q.missions?.reference}/${r.type}`}
+      label=""
+      hint="PDF, DOC, JPG — max 10 MB"
+      multiple={false}
+      onUpload={async (files)=>{
+        if (files.length > 0) {
+          await supabase.from('survey_reports').upsert({
+            mission_id: q.mission_id,
+            expert_id: user.id,
+            report_type: r.type,
+            file_url: files[0].path,
+          })
+        }
+      }}
+    />
+  </div>
+))}
                     </div>
                   </div>
                 </div>
