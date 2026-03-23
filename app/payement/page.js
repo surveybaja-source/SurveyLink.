@@ -14,6 +14,11 @@ export default function PaymentPage() {
   const searchParams = useSearchParams()
   const quoteId = searchParams.get('quote')
 
+  const deposit = quote ? Math.round(quote.amount * 0.20) : 0
+  const commission = quote ? Math.round(quote.amount * 0.01) : 0
+  const surveyorDeposit = deposit - commission
+  const balance = quote ? quote.amount - deposit : 0
+
   useEffect(() => {
     if (!quoteId) return
     const load = async () => {
@@ -22,10 +27,7 @@ export default function PaymentPage() {
         .select('*, missions(*), profiles(first_name, last_name, email, city, country)')
         .eq('id', quoteId)
         .single()
-      if (q) {
-        setQuote(q)
-        setMission(q.missions)
-      }
+      if (q) { setQuote(q); setMission(q.missions) }
       setLoading(false)
     }
     load()
@@ -45,7 +47,7 @@ export default function PaymentPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: quote.amount,
+          amount: deposit,
           currency: quote.currency?.toLowerCase() || 'eur',
           missionRef: mission.reference,
           insurerEmail: insurerProfile?.email,
@@ -54,22 +56,21 @@ export default function PaymentPage() {
       })
 
       const data = await response.json()
-
-      if (data.error) {
-        setError(data.error)
-        setPaying(false)
-        return
-      }
+      if (data.error) { setError(data.error); setPaying(false); return }
 
       await supabase.from('transactions').insert({
         mission_id: mission.id,
         quote_id: quote.id,
-        total_amount: quote.amount,
-        commission_amount: Math.round(quote.amount * 0.01),
-        expert_payout: Math.round(quote.amount * 0.99),
+        total_amount: deposit,
+        commission_amount: commission,
+        expert_payout: surveyorDeposit,
         stripe_payment_intent: data.paymentIntentId,
-        status: 'pending'
+        status: 'paid',
+        payment_type: 'deposit',
+        percentage: 20
       })
+
+      await supabase.from('quotes').update({deposit_paid: true}).eq('id', quote.id)
 
       setPaid(true)
       setPaying(false)
@@ -98,10 +99,21 @@ export default function PaymentPage() {
         <div style={{width:80,height:80,borderRadius:'50%',background:'rgba(46,125,50,0.1)',border:'2px solid #2e7d32',display:'flex',alignItems:'center',justifyContent:'center',fontSize:36,margin:'0 auto 24px'}}>
           ✓
         </div>
-        <h2 style={{color:'#fff',fontSize:36,fontWeight:900,marginBottom:12}}>Payment Confirmed!</h2>
-        <p style={{color:'#8fa8c0',fontSize:14,lineHeight:1.75,marginBottom:32}}>
-          Your payment of EUR {quote.amount?.toLocaleString()} for mission {mission.reference} has been processed successfully.
+        <h2 style={{color:'#fff',fontSize:36,fontWeight:900,marginBottom:12}}>Deposit Paid!</h2>
+        <p style={{color:'#8fa8c0',fontSize:14,lineHeight:1.75,marginBottom:16}}>
+          Your deposit of EUR {deposit.toLocaleString()} for mission {mission.reference} has been processed.
         </p>
+        <div style={{background:'rgba(240,165,0,0.1)',border:'1px solid #f0a500',borderRadius:10,padding:'14px 20px',marginBottom:24,textAlign:'left'}}>
+          <div style={{color:'#f0a500',fontWeight:700,fontSize:13,marginBottom:8}}>Payment Schedule</div>
+          <div style={{display:'flex',justifyContent:'space-between',marginBottom:6}}>
+            <span style={{color:'#8fa8c0',fontSize:12}}>Deposit paid (20%)</span>
+            <span style={{color:'#2e7d32',fontSize:12,fontWeight:700}}>EUR {deposit.toLocaleString()} ✓</span>
+          </div>
+          <div style={{display:'flex',justifyContent:'space-between'}}>
+            <span style={{color:'#8fa8c0',fontSize:12}}>Balance due on final report (80%)</span>
+            <span style={{color:'#f0a500',fontSize:12,fontWeight:700}}>EUR {balance.toLocaleString()}</span>
+          </div>
+        </div>
         <button onClick={()=>router.push('/dashboard')}
           style={{background:'#2e7d32',color:'#fff',border:'none',borderRadius:7,padding:'14px 32px',cursor:'pointer',fontWeight:700,fontSize:14}}>
           Back to Dashboard
@@ -120,7 +132,7 @@ export default function PaymentPage() {
           </button>
           <div>
             <div style={{color:'#4a6880',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase'}}>Insurer Portal</div>
-            <div style={{color:'#fff',fontWeight:800,fontSize:22}}>Payment</div>
+            <div style={{color:'#fff',fontWeight:800,fontSize:22}}>Pay Deposit</div>
           </div>
         </div>
 
@@ -142,27 +154,48 @@ export default function PaymentPage() {
         </div>
 
         <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:12,padding:28,marginBottom:20}}>
-          <div style={{color:'#8fa8c0',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:16}}>Payment Breakdown</div>
-          {[
-            ['Survey Fee', `EUR ${quote.amount?.toLocaleString()}`],
-            ['Platform Commission (1%)', `EUR ${Math.round(quote.amount*0.01).toLocaleString()}`],
-            ['Surveyor Payout', `EUR ${Math.round(quote.amount*0.99).toLocaleString()}`],
-          ].map(([k,v])=>(
-            <div key={k} style={{display:'flex',justifyContent:'space-between',padding:'9px 0',borderBottom:'1px solid #1e3a52'}}>
-              <span style={{color:'#8fa8c0',fontSize:12}}>{k}</span>
-              <span style={{color:k==='Survey Fee'?'#f0a500':'#8fa8c0',fontSize:12,fontWeight:k==='Survey Fee'?800:400}}>{v}</span>
+          <div style={{color:'#8fa8c0',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:16}}>Payment Schedule</div>
+
+          <div style={{background:'rgba(221,46,30,0.08)',border:'1px solid #dd2e1e',borderRadius:8,padding:'14px 16px',marginBottom:12}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <div>
+                <div style={{color:'#dd2e1e',fontWeight:700,fontSize:13}}>Deposit — Due Now (20%)</div>
+                <div style={{color:'#4a6880',fontSize:11,marginTop:3}}>Paid to surveyor upon mission start</div>
+              </div>
+              <div style={{color:'#f0a500',fontWeight:900,fontSize:20}}>EUR {deposit.toLocaleString()}</div>
             </div>
-          ))}
-          <div style={{display:'flex',justifyContent:'space-between',padding:'16px 0 0',marginTop:8}}>
-            <span style={{color:'#fff',fontSize:16,fontWeight:800}}>Total to Pay</span>
-            <span style={{color:'#f0a500',fontSize:24,fontWeight:900}}>EUR {quote.amount?.toLocaleString()}</span>
+            <div style={{marginTop:10,paddingTop:10,borderTop:'1px solid rgba(221,46,30,0.2)'}}>
+              <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
+                <span style={{color:'#4a6880',fontSize:11}}>Platform commission (1% of total)</span>
+                <span style={{color:'#4a6880',fontSize:11}}>- EUR {commission.toLocaleString()}</span>
+              </div>
+              <div style={{display:'flex',justifyContent:'space-between'}}>
+                <span style={{color:'#8fa8c0',fontSize:11,fontWeight:700}}>Surveyor receives</span>
+                <span style={{color:'#2e7d32',fontSize:11,fontWeight:700}}>EUR {surveyorDeposit.toLocaleString()}</span>
+              </div>
+            </div>
+          </div>
+
+          <div style={{background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:8,padding:'14px 16px',marginBottom:16}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <div>
+                <div style={{color:'#8fa8c0',fontWeight:700,fontSize:13}}>Balance — Due on Final Report (80%)</div>
+                <div style={{color:'#4a6880',fontSize:11,marginTop:3}}>Charged automatically when final report is uploaded</div>
+              </div>
+              <div style={{color:'#8fa8c0',fontWeight:900,fontSize:20}}>EUR {balance.toLocaleString()}</div>
+            </div>
+          </div>
+
+          <div style={{display:'flex',justifyContent:'space-between',padding:'12px 0 0',borderTop:'1px solid #1e3a52'}}>
+            <span style={{color:'#fff',fontSize:14,fontWeight:700}}>Total Quote</span>
+            <span style={{color:'#f0a500',fontSize:20,fontWeight:900}}>EUR {quote.amount?.toLocaleString()}</span>
           </div>
         </div>
 
         <div style={{background:'rgba(221,46,30,0.08)',border:'1px solid #700300',borderRadius:8,padding:'11px 14px',marginBottom:20,display:'flex',gap:10}}>
           <span>🔒</span>
           <span style={{color:'#8fa8c0',fontSize:11,lineHeight:1.5}}>
-            Secure payment via Stripe. Your card details are never stored on our servers.
+            Secure payment via Stripe. The 80% balance will be charged automatically when the surveyor uploads the final report.
           </span>
         </div>
 
@@ -170,7 +203,7 @@ export default function PaymentPage() {
 
         <button onClick={handlePayment} disabled={paying}
           style={{width:'100%',background:paying?'rgba(221,46,30,0.45)':'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'16px',cursor:'pointer',fontWeight:700,fontSize:16,marginBottom:12}}>
-          {paying?'Processing...':'Pay EUR ' + quote.amount?.toLocaleString()}
+          {paying?'Processing...':'Pay Deposit — EUR ' + deposit.toLocaleString()}
         </button>
 
         <p style={{color:'#4a6880',fontSize:11,textAlign:'center'}}>
