@@ -778,16 +778,30 @@ function ExpertDashboard({user}) {
                               hint="PDF, DOC, JPG — max 10 MB"
                               multiple={false}
                               onUpload={async(files)=>{
-                                if(files.length>0){
-                                  await supabase.from('survey_reports').upsert({
-                                    mission_id: q.mission_id,
-                                    expert_id: user.id,
-                                    report_type: r.type,
-                                    file_url: files[0].path,
-                                  })
-                                  loadAll()
-                                }
-                              }}
+  if(files.length>0){
+    await supabase.from('survey_reports').upsert({
+      mission_id: q.mission_id,
+      expert_id: user.id,
+      report_type: r.type,
+      file_url: files[0].path,
+    })
+    const { data: expertProfile } = await supabase.from('profiles').select('first_name, last_name').eq('id', user.id).single()
+    const { data: insurerProfile } = await supabase.from('profiles').select('email').eq('id', q.missions?.insurer_id).single()
+    const surveyorName = `${expertProfile?.first_name} ${expertProfile?.last_name}`
+    if(insurerProfile?.email){
+      if(r.type==='final'){
+        await supabase.from('missions').update({status:'completed'}).eq('id', q.mission_id)
+        const tmpl = emailTemplates.finalReportUploaded(q.missions?.reference, surveyorName)
+        await sendEmail(insurerProfile.email, tmpl.subject, tmpl.html)
+      } else {
+        const tmpl = emailTemplates.reportUploaded(q.missions?.reference, r.label, surveyorName)
+        await sendEmail(insurerProfile.email, tmpl.subject, tmpl.html)
+      }
+    }
+    loadAll()
+  }
+}}
+
                             />
                           </div>
                         )
