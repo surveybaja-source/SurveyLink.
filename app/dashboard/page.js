@@ -278,7 +278,20 @@ function InsurerDashboard({user}) {
                         <div style={{color:'#fff',fontWeight:700}}>{q.profiles?.first_name} {q.profiles?.last_name}</div>
                         <div style={{color:'#4a6880',fontSize:11}}>{q.profiles?.city}, {q.profiles?.country}</div>
                       </div>
-                      {q.status==='accepted'&&<span style={{background:'rgba(46,125,50,0.12)',border:'1px solid #2e7d32',color:'#81c784',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700}}>ACCEPTED</span>}
+                      {q.status==='accepted'&&(
+                        <div style={{display:'flex',alignItems:'center',gap:8}}>
+                          <span style={{background:'rgba(46,125,50,0.12)',border:'1px solid #2e7d32',color:'#81c784',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700}}>ACCEPTED</span>
+                          {!q.deposit_paid&&(
+                            <button onClick={(e)=>{e.stopPropagation();router.push(`/payment?quote=${q.id}`)}}
+                              style={{background:'#f0a500',color:'#000',border:'none',borderRadius:6,padding:'4px 12px',cursor:'pointer',fontSize:11,fontWeight:700}}>
+                              Pay Deposit 20%
+                            </button>
+                          )}
+                          {q.deposit_paid&&(
+                            <span style={{background:'rgba(240,165,0,0.12)',border:'1px solid #f0a500',color:'#f0a500',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700}}>DEPOSIT PAID</span>
+                          )}
+                        </div>
+                      )}
                       {q.status==='declined'&&<span style={{background:'rgba(221,46,30,0.12)',border:'1px solid #dd2e1e',color:'#ef9a9a',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700}}>DECLINED</span>}
                       {q.status==='negotiating'&&<span style={{background:'rgba(240,165,0,0.12)',border:'1px solid #f0a500',color:'#f0a500',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700}}>NEGOTIATING</span>}
                       {q.status==='pending'&&<span style={{background:'rgba(107,127,163,0.1)',border:'1px solid #1e3a52',color:'#8fa8c0',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700}}>PENDING</span>}
@@ -294,6 +307,19 @@ function InsurerDashboard({user}) {
                         <div style={{color:'#fff',fontSize:13,fontWeight:700}}>{q.proposed_datetime?new Date(q.proposed_datetime).toLocaleString('en-GB'):'Not specified'}</div>
                       </div>
                     </div>
+
+                    {q.status==='accepted'&&q.deposit_paid&&(
+                      <div style={{background:'rgba(240,165,0,0.08)',border:'1px solid #f0a500',borderRadius:8,padding:'10px 14px',marginBottom:10}}>
+                        <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
+                          <span style={{color:'#f0a500',fontSize:11,fontWeight:700}}>Deposit paid (20%)</span>
+                          <span style={{color:'#2e7d32',fontSize:11,fontWeight:700}}>EUR {Math.round(q.amount*0.20).toLocaleString()} ✓</span>
+                        </div>
+                        <div style={{display:'flex',justifyContent:'space-between'}}>
+                          <span style={{color:'#8fa8c0',fontSize:11}}>Balance on final report (80%)</span>
+                          <span style={{color:'#8fa8c0',fontSize:11}}>EUR {Math.round(q.amount*0.80).toLocaleString()}</span>
+                        </div>
+                      </div>
+                    )}
 
                     {q.note&&(
                       <div style={{background:'#0f1e2e',borderRadius:6,padding:'8px 12px',marginBottom:10}}>
@@ -508,7 +534,7 @@ function ExpertDashboard({user}) {
             ['Available',availableMissions.length,'new requests','#f0a500'],
             ['Quotes Sent',myQuotes.filter(q=>q.status==='pending').length,'awaiting response','#5a9eff'],
             ['Active Missions',acceptedQuotes.length,'in progress','#2e7d32'],
-            ['Completed','0','all time','#8fa8c0']
+            ['Completed',myQuotes.filter(q=>q.missions?.status==='completed').length,'all time','#8fa8c0']
           ].map(([label,val,sub,color])=>(
             <div key={label} style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:12,padding:'16px 20px'}}>
               <div style={{color:'#8fa8c0',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>{label}</div>
@@ -550,7 +576,7 @@ function ExpertDashboard({user}) {
                       </div>
                       <div style={{background:'#0f1e2e',borderRadius:7,padding:'8px 12px'}}>
                         <div style={{color:'#4a6880',fontSize:9,marginBottom:2}}>LOADING UNIT</div>
-                        <div style={{color:'#e8edf5',fontSize:11}}>{m.loading_unit?`${m.loading_unit}${m.tc_type?` - ${m.tc_type}`:''}${m.loading_quantity?` - ${m.loading_quantity}`:''}` : '-'}</div>
+                        <div style={{color:'#e8edf5',fontSize:11}}>{m.loading_unit?`${m.loading_unit}${m.tc_type?` - ${m.tc_type}`:''}${m.loading_quantity?` - ${m.loading_quantity}`:''}`:'-'}</div>
                       </div>
                     </div>
                     <button onClick={()=>{setQuoting(m);setAmount('');setProposedDatetime('');setNote('');}}
@@ -593,12 +619,21 @@ function ExpertDashboard({user}) {
                   </div>
                   {amount&&(
                     <div style={{marginBottom:14,padding:'10px 14px',background:'rgba(240,165,0,0.12)',border:'1px solid #f0a500',borderRadius:7}}>
-                      <div style={{display:'flex',justifyContent:'space-between'}}>
+                      <div style={{display:'flex',justifyContent:'space-between',marginBottom:6}}>
                         <span style={{color:'#8fa8c0',fontSize:12}}>Total Quote</span>
                         <span style={{color:'#f0a500',fontWeight:800,fontSize:20}}>EUR {parseInt(amount).toLocaleString()}</span>
                       </div>
-                      <div style={{color:'#4a6880',fontSize:10,marginTop:3}}>
-                        Platform fee (1%): EUR {Math.round(parseInt(amount)*0.01).toLocaleString()} - You receive: EUR {Math.round(parseInt(amount)*0.99).toLocaleString()}
+                      <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
+                        <span style={{color:'#4a6880',fontSize:11}}>Deposit (20%) — on acceptance</span>
+                        <span style={{color:'#4a6880',fontSize:11}}>EUR {Math.round(parseInt(amount)*0.20).toLocaleString()}</span>
+                      </div>
+                      <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
+                        <span style={{color:'#4a6880',fontSize:11}}>Balance (80%) — on final report</span>
+                        <span style={{color:'#4a6880',fontSize:11}}>EUR {Math.round(parseInt(amount)*0.80).toLocaleString()}</span>
+                      </div>
+                      <div style={{display:'flex',justifyContent:'space-between'}}>
+                        <span style={{color:'#4a6880',fontSize:11}}>Platform fee (1%)</span>
+                        <span style={{color:'#4a6880',fontSize:11}}>- EUR {Math.round(parseInt(amount)*0.01).toLocaleString()}</span>
                       </div>
                     </div>
                   )}
@@ -644,6 +679,21 @@ function ExpertDashboard({user}) {
                       <div style={{color:'#fff',fontSize:11}}>{q.proposed_datetime?new Date(q.proposed_datetime).toLocaleString('en-GB'):'Not specified'}</div>
                     </div>
                   </div>
+
+                  {q.status==='accepted'&&(
+                    <div style={{background:'rgba(240,165,0,0.08)',border:'1px solid #f0a500',borderRadius:8,padding:'10px 14px',marginBottom:10}}>
+                      <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
+                        <span style={{color:'#f0a500',fontSize:11,fontWeight:700}}>Deposit (20%)</span>
+                        <span style={{color:q.deposit_paid?'#2e7d32':'#f0a500',fontSize:11,fontWeight:700}}>
+                          EUR {Math.round(q.amount*0.20).toLocaleString()} {q.deposit_paid?'✓ Received':'— Pending'}
+                        </span>
+                      </div>
+                      <div style={{display:'flex',justifyContent:'space-between'}}>
+                        <span style={{color:'#8fa8c0',fontSize:11}}>Balance (80%)</span>
+                        <span style={{color:'#8fa8c0',fontSize:11}}>EUR {Math.round(q.amount*0.80).toLocaleString()} — on final report</span>
+                      </div>
+                    </div>
+                  )}
 
                   {q.status==='negotiating'&&q.counter_proposal&&(
                     <div style={{background:'rgba(240,165,0,0.08)',border:'1px solid #f0a500',borderRadius:8,padding:'12px 14px',marginBottom:12}}>
@@ -749,7 +799,7 @@ function ExpertDashboard({user}) {
                       {[
                         {type:'memo',label:'Memo Report',sub:'Within 24h — photos, observations, preliminary findings',color:'#f0a500'},
                         {type:'preliminary',label:'Preliminary Report',sub:'Detailed preliminary assessment',color:'#5a9eff'},
-                        {type:'final',label:'Final Report',sub:'Closes the file',color:'#2e7d32'},
+                        {type:'final',label:'Final Report',sub:'Closes the file — triggers final payment',color:'#2e7d32'},
                       ].map(r=>{
                         const existingReport = q.missions?.survey_reports?.find(sr=>sr.report_type===r.type)
                         return (
@@ -757,7 +807,7 @@ function ExpertDashboard({user}) {
                             <div style={{marginBottom:8}}>
                               <div style={{display:'flex',alignItems:'center',gap:8}}>
                                 <div style={{color:r.color,fontWeight:700,fontSize:13}}>{r.label}</div>
-                                {existingReport&&<span style={{background:`rgba(46,125,50,0.12)`,border:'1px solid #2e7d32',color:'#81c784',padding:'1px 8px',borderRadius:4,fontSize:9,fontWeight:700}}>UPLOADED</span>}
+                                {existingReport&&<span style={{background:'rgba(46,125,50,0.12)',border:'1px solid #2e7d32',color:'#81c784',padding:'1px 8px',borderRadius:4,fontSize:9,fontWeight:700}}>UPLOADED</span>}
                               </div>
                               <div style={{color:'#4a6880',fontSize:11,marginTop:2}}>{r.sub}</div>
                             </div>
@@ -778,30 +828,58 @@ function ExpertDashboard({user}) {
                               hint="PDF, DOC, JPG — max 10 MB"
                               multiple={false}
                               onUpload={async(files)=>{
-  if(files.length>0){
-    await supabase.from('survey_reports').upsert({
-      mission_id: q.mission_id,
-      expert_id: user.id,
-      report_type: r.type,
-      file_url: files[0].path,
-    })
-    const { data: expertProfile } = await supabase.from('profiles').select('first_name, last_name').eq('id', user.id).single()
-    const { data: insurerProfile } = await supabase.from('profiles').select('email').eq('id', q.missions?.insurer_id).single()
-    const surveyorName = `${expertProfile?.first_name} ${expertProfile?.last_name}`
-    if(insurerProfile?.email){
-      if(r.type==='final'){
-        await supabase.from('missions').update({status:'completed'}).eq('id', q.mission_id)
-        const tmpl = emailTemplates.finalReportUploaded(q.missions?.reference, surveyorName)
-        await sendEmail(insurerProfile.email, tmpl.subject, tmpl.html)
-      } else {
-        const tmpl = emailTemplates.reportUploaded(q.missions?.reference, r.label, surveyorName)
-        await sendEmail(insurerProfile.email, tmpl.subject, tmpl.html)
-      }
-    }
-    loadAll()
-  }
-}}
-
+                                if(files.length>0){
+                                  await supabase.from('survey_reports').upsert({
+                                    mission_id: q.mission_id,
+                                    expert_id: user.id,
+                                    report_type: r.type,
+                                    file_url: files[0].path,
+                                  })
+                                  const { data: expertProfile } = await supabase.from('profiles').select('first_name, last_name').eq('id', user.id).single()
+                                  const { data: insurerProfile } = await supabase.from('profiles').select('email').eq('id', q.missions?.insurer_id).single()
+                                  const surveyorName = `${expertProfile?.first_name} ${expertProfile?.last_name}`
+                                  if(insurerProfile?.email){
+                                    if(r.type==='final'){
+                                      await supabase.from('missions').update({status:'completed'}).eq('id', q.mission_id)
+                                      const { data: quoteData } = await supabase.from('quotes').select('amount, currency').eq('id', q.id).single()
+                                      if(quoteData){
+                                        const balance = Math.round(quoteData.amount * 0.80)
+                                        const response = await fetch('/api/stripe/create-payment', {
+                                          method: 'POST',
+                                          headers: { 'Content-Type': 'application/json' },
+                                          body: JSON.stringify({
+                                            amount: balance,
+                                            currency: quoteData.currency?.toLowerCase() || 'eur',
+                                            missionRef: q.missions?.reference,
+                                            insurerEmail: insurerProfile.email,
+                                            expertEmail: null,
+                                          })
+                                        })
+                                        const paymentData = await response.json()
+                                        if(!paymentData.error){
+                                          await supabase.from('transactions').insert({
+                                            mission_id: q.mission_id,
+                                            quote_id: q.id,
+                                            total_amount: balance,
+                                            commission_amount: 0,
+                                            expert_payout: balance,
+                                            stripe_payment_intent: paymentData.paymentIntentId,
+                                            status: 'paid',
+                                            payment_type: 'balance',
+                                            percentage: 80
+                                          })
+                                        }
+                                      }
+                                      const tmpl = emailTemplates.finalReportUploaded(q.missions?.reference, surveyorName)
+                                      await sendEmail(insurerProfile.email, tmpl.subject, tmpl.html)
+                                    } else {
+                                      const tmpl = emailTemplates.reportUploaded(q.missions?.reference, r.label, surveyorName)
+                                      await sendEmail(insurerProfile.email, tmpl.subject, tmpl.html)
+                                    }
+                                  }
+                                  loadAll()
+                                }
+                              }}
                             />
                           </div>
                         )
