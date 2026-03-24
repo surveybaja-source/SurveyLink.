@@ -82,7 +82,10 @@ export default function Convocation({ quote, user }) {
   }
 
   const handlePrint = () => {
-    const printContent = document.getElementById('convocation-preview')
+    const today = new Date().toLocaleDateString('en-GB', {day:'2-digit',month:'long',year:'numeric'})
+    const surveyDateFormatted = surveyDate ? new Date(surveyDate).toLocaleString('en-GB', {
+      weekday:'long',day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'
+    }) : 'To be confirmed'
     const w = window.open('', '_blank')
     w.document.write(`
       <html>
@@ -94,12 +97,64 @@ export default function Convocation({ quote, user }) {
             table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
             th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
             th { background: #f0f0f0; }
-            .header-table td { border: none; }
+            .no-border td { border: none; }
             p { line-height: 1.8; }
             .center { text-align: center; font-weight: bold; font-size: 15px; margin: 16px 0; }
           </style>
         </head>
-        <body>${printContent.innerHTML}</body>
+        <body>
+          <h2>NOTIFICATION TO SURVEY MEETING</h2>
+          <table class="no-border">
+            <tr>
+              <td style="width:50%;vertical-align:top;padding-right:20px;">
+                <p><strong>Date:</strong> ${today}</p>
+                <p><strong>Case:</strong> ${caseDesc}</p>
+                <p><strong>Goods:</strong> ${goodsDesc}</p>
+                <p><strong>Surveyor:</strong> (auto)</p>
+                <p><strong>Reference:</strong> ${quote.missions?.reference}</p>
+              </td>
+              <td style="width:50%;vertical-align:top;">
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p><strong>Email:</strong> (auto)</p>
+                <p><strong>Tel:</strong> (auto)</p>
+              </td>
+            </tr>
+          </table>
+          <table>
+            <thead>
+              <tr>
+                <th style="width:80px;"></th>
+                <th>Company</th>
+                <th>Contact</th>
+                <th>E-mail</th>
+                <th>Reference</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${recipients.filter(r=>r.company||r.contact||r.email).map((r,i)=>`
+                <tr>
+                  <td style="font-weight:bold;">${i===0?'To':''}</td>
+                  <td>${r.company||''}</td>
+                  <td>${r.contact||''}</td>
+                  <td>${r.email||''}</td>
+                  <td>${r.reference||''}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          <p>Dear Sirs,</p>
+          <p>Following the above-mentioned case, we inform you that we have been appointed, without prejudice to the right of the parties, on the request of the company <strong>${quote.missions?.client_name}</strong> and their insurer.</p>
+          <p>We inform you that we will proceed to survey operations, on:</p>
+          <p class="center">${surveyDateFormatted}</p>
+          <p>In the premises of the company:</p>
+          <p class="center">${surveyLocation}</p>
+          <p>We invite you to be present and/or represented to this survey and to convoke to this meeting your subcontractors or any other third party implied. Failing that, the conclusions of the survey will be considered as effective against parties.</p>
+          <br/>
+          <p>Kind regards.</p>
+          <p><em>Issued without prejudice to the right of the parties.</em></p>
+        </body>
       </html>
     `)
     w.document.close()
@@ -107,15 +162,20 @@ export default function Convocation({ quote, user }) {
   }
 
   const C = '#5a6a8a'
-  const today = new Date().toLocaleDateString('en-GB', {day:'2-digit',month:'long',year:'numeric'})
-  const surveyDateFormatted = surveyDate ? new Date(surveyDate).toLocaleString('en-GB', {
-    weekday:'long',day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'
-  }) : 'To be confirmed'
 
   const inp = {
-    width:'100%',background:'#0a1520',border:'1px solid #2a3a52',borderRadius:6,
-    padding:'8px 12px',color:'#fff',boxSizing:'border-box',fontSize:12,outline:'none'
+    width:'100%',
+    background:'#0a1520',
+    border:'1px solid #2a3a52',
+    borderRadius:6,
+    padding:'8px 12px',
+    color:'#fff',
+    boxSizing:'border-box',
+    fontSize:12,
+    outline:'none'
   }
+
+  const isValid = caseDesc && goodsDesc && surveyDate && surveyLocation && recipients.some(r=>r.email)
 
   return (
     <div style={{background:'#0f1e2e',border:`1px solid ${C}`,borderRadius:8,padding:'12px 16px',marginTop:8}}>
@@ -125,14 +185,14 @@ export default function Convocation({ quote, user }) {
           <div style={{color:C,fontWeight:700,fontSize:13}}>Survey Meeting Notice</div>
           <div style={{color:'#4a6880',fontSize:11,marginTop:2}}>Send formal convocation to all parties</div>
         </div>
-        <span style={{color:C,fontSize:18}}>{open?'▲':'▼'}</span>
+        <span style={{color:C,fontSize:18}}>{open?'v':'^'}</span>
       </div>
 
       {open&&(
         <div style={{marginTop:16}}>
           {sent&&(
             <div style={{background:'rgba(46,125,50,0.1)',border:'1px solid #2e7d32',borderRadius:8,padding:'12px 16px',marginBottom:16,textAlign:'center'}}>
-              <div style={{color:'#2e7d32',fontWeight:700,fontSize:13}}>✓ Convocation sent to all parties!</div>
+              <div style={{color:'#2e7d32',fontWeight:700,fontSize:13}}>v Convocation sent to all parties!</div>
             </div>
           )}
 
@@ -144,7 +204,7 @@ export default function Convocation({ quote, user }) {
             </div>
             <div>
               <div style={{color:'#8fa8c0',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:4}}>Goods Description *</div>
-              <textarea placeholder="e.g. 3 x 40HC containers — Electronic components" value={goodsDesc} onChange={e=>setGoodsDesc(e.target.value)} rows={2}
+              <textarea placeholder="e.g. 3 x 40HC containers - Electronic components" value={goodsDesc} onChange={e=>setGoodsDesc(e.target.value)} rows={2}
                 style={{...inp,resize:'vertical'}}/>
             </div>
           </div>
@@ -206,63 +266,18 @@ export default function Convocation({ quote, user }) {
             </div>
           </div>
 
-          <div id="convocation-preview" style={{display:'none'}}>
-            <h2 style={{textAlign:'center',fontSize:'18px',fontWeight:900,borderBottom:'2px solid #333',paddingBottom:'12px',marginBottom:'24px'}}>
-              NOTIFICATION TO SURVEY MEETING
-            </h2>
-            <table style={{width:'100%',marginBottom:'20px',fontSize:'13px',borderCollapse:'collapse'}}>
-              <tbody>
-                <tr>
-                  <td style={{width:'50%',verticalAlign:'top',paddingRight:'20px',border:'none'}}>
-                    <p style={{margin:'0 0 8px'}}><strong>Date:</strong> {today}</p>
-                    <p style={{margin:'0 0 8px'}}><strong>Case:</strong> {caseDesc}</p>
-                    <p style={{margin:'0 0 8px'}}><strong>Goods:</strong> {goodsDesc}</p>
-                  </td>
-                  <td style={{width:'50%',verticalAlign:'top',border:'none'}}>
-                    <p style={{margin:'0 0 8px'}}><strong>Reference:</strong> {quote.missions?.reference}</p>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <table style={{width:'100%',borderCollapse:'collapse',marginBottom:'24px',fontSize:'13px'}}>
-              <thead>
-                <tr style={{background:'#f0f0f0'}}>
-                  <th style={{border:'1px solid #ccc',padding:'8px',textAlign:'left',width:'80px'}}></th>
-                  <th style={{border:'1px solid #ccc',padding:'8px',textAlign:'left'}}>Company</th>
-                  <th style={{border:'1px solid #ccc',padding:'8px',textAlign:'left'}}>Contact</th>
-                  <th style={{border:'1px solid #ccc',padding:'8px',textAlign:'left'}}>E-mail</th>
-                  <th style={{border:'1px solid #ccc',padding:'8px',textAlign:'left'}}>Reference</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recipients.filter(r=>r.company||r.contact||r.email).map((r,i)=>(
-                  <tr key={i}>
-                    <td style={{border:'1px solid #ccc',padding:'8px',fontWeight:700}}>{i===0?'To':''}</td>
-                    <td style={{border:'1px solid #ccc',padding:'8px'}}>{r.company}</td>
-                    <td style={{border:'1px solid #ccc',padding:'8px'}}>{r.contact}</td>
-                    <td style={{border:'1px solid #ccc',padding:'8px'}}>{r.email}</td>
-                    <td style={{border:'1px solid #ccc',padding:'8px'}}>{r.reference}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div style={{fontSize:'13px',lineHeight:'1.8'}}>
-              <p>Dear Sirs,</p>
-              <p>Following the above-mentioned case, we inform you that we have been appointed, without prejudice to the right of the parties, on the request of the company <strong>{quote.missions?.client_name}</strong> and their insurer.</p>
-              <p>We inform you that we will proceed to survey operations, on:</p>
-              <p style={{textAlign:'center',fontWeight:'bold',fontSize:'15px',margin:'16px 0'}}>{surveyDateFormatted}</p>
-              <p>In the premises of the company:</p>
-              <p style={{textAlign:'center',fontWeight:'bold',fontSize:'15px',margin:'16px 0'}}>{surveyLocation}</p>
-              <p>We invite you to be present and/or represented to this survey and to convoke to this meeting your subcontractors or any other third party implied. Failing that, the conclusions of the survey will be considered as effective against parties.</p>
-              <br/>
-              <p>Kind regards.</p>
-              <p><em>Issued without prejudice to the right of the parties.</em></p>
-            </div>
-          </div>
-
           <div style={{display:'flex',gap:10,marginTop:8}}>
             <button onClick={handlePrint}
               style={{flex:1,background:'transparent',color:C,border:`1px solid ${C}`,borderRadius:7,padding:'10px',cursor:'pointer',fontWeight:700,fontSize:12}}>
-              📄 Download PDF
+              Download PDF
             </button>
-            <button onClick={handleSend} disabled={sending||!caseDesc||!goodsDesc||!surveyDate||!surveyLocation||!recipients.some(r=>r.email)}​​​​​​​​​​​​​​​​
+            <button onClick={handleSend} disabled={sending||!isValid}
+              style={{flex:2,background:(!isValid||sending)?'rgba(90,106,138,0.45)':C,color:'#fff',border:'none',borderRadius:7,padding:'10px',cursor:(!isValid||sending)?'not-allowed':'pointer',fontWeight:700,fontSize:12}}>
+              {sending?'Sending...':'Send to All Parties'}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
