@@ -98,7 +98,7 @@ function InsurerDashboard({user}) {
   const loadQuotes = async (missionId) => {
     const { data } = await supabase
       .from('quotes')
-      .select('*, profiles(first_name, last_name, city, country)')
+      .select('*, profiles(first_name, last_name, city, country, average_rating, total_ratings)')
       .eq('mission_id', missionId)
       .order('created_at', {ascending: false})
     setQuotes(data || [])
@@ -314,7 +314,18 @@ function InsurerDashboard({user}) {
                         </div>
                         <div style={{flex:1}}>
                           <div style={{color:'#fff',fontWeight:700}}>{q.profiles?.first_name} {q.profiles?.last_name}</div>
-                          <div style={{color:'#4a6880',fontSize:11}}>{q.profiles?.city}, {q.profiles?.country}</div>
+                          <div style={{display:'flex',alignItems:'center',gap:10,marginTop:2}}>
+                            <span style={{color:'#4a6880',fontSize:11}}>{q.profiles?.city}, {q.profiles?.country}</span>
+                            {q.profiles?.average_rating>0?(
+                              <span style={{display:'flex',alignItems:'center',gap:4}}>
+                                <span style={{color:'#f0a500',fontSize:12}}>★</span>
+                                <span style={{color:'#f0a500',fontSize:12,fontWeight:700}}>{q.profiles.average_rating.toFixed(1)}</span>
+                                <span style={{color:'#4a6880',fontSize:10}}>({q.profiles.total_ratings})</span>
+                              </span>
+                            ):(
+                              <span style={{color:'#4a6880',fontSize:10,fontStyle:'italic'}}>No rating yet</span>
+                            )}
+                          </div>
                         </div>
                         {q.status==='accepted'&&(
                           <div style={{display:'flex',alignItems:'center',gap:8}}>
@@ -546,7 +557,6 @@ function ExpertDashboard({user}) {
       .select('*, missions(*)')
       .eq('expert_id', user.id)
       .eq('status', 'accepted')
-      .eq('missions.status', 'completed')
       .order('created_at', {ascending: false})
     setHistory((hist||[]).filter(q=>q.missions?.status==='completed'))
 
