@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { sendEmail, emailTemplates } from '../../lib/emails'
 import FileUpload from '../components/FileUpload'
 import Convocation from '../components/Convocation'
+import Rating from '../components/Rating'
 
 export default function Dashboard() {
   const [user, setUser] = useState(null)
@@ -47,11 +48,13 @@ function InsurerDashboard({user}) {
   const [counterText, setCounterText] = useState('')
   const [declineId, setDeclineId] = useState(null)
   const [toast, setToast] = useState(null)
+  const [ratedMissions, setRatedMissions] = useState([])
 
   const showToast = (msg) => { setToast(msg); setTimeout(()=>setToast(null),3000) }
 
   useEffect(() => {
     getMissions()
+    loadRatings()
     const channel = supabase
       .channel('missions-insurer')
       .on('postgres_changes', {event:'*',schema:'public',table:'missions'}, getMissions)
@@ -68,6 +71,14 @@ function InsurerDashboard({user}) {
       .order('created_at', {ascending: false})
     setMissions(data || [])
     setLoading(false)
+  }
+
+  const loadRatings = async () => {
+    const { data } = await supabase
+      .from('ratings')
+      .select('mission_id')
+      .eq('insurer_id', user.id)
+    setRatedMissions((data||[]).map(r=>r.mission_id))
   }
 
   const loadQuotes = async (missionId) => {
@@ -313,7 +324,7 @@ function InsurerDashboard({user}) {
                       <div style={{background:'rgba(240,165,0,0.08)',border:'1px solid #f0a500',borderRadius:8,padding:'10px 14px',marginBottom:10}}>
                         <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
                           <span style={{color:'#f0a500',fontSize:11,fontWeight:700}}>Deposit paid (20%)</span>
-                          <span style={{color:'#2e7d32',fontSize:11,fontWeight:700}}>EUR {Math.round(q.amount*0.20).toLocaleString()} ✓</span>
+                          <span style={{color:'#2e7d32',fontSize:11,fontWeight:700}}>EUR {Math.round(q.amount*0.20).toLocaleString()} v</span>
                         </div>
                         <div style={{display:'flex',justifyContent:'space-between'}}>
                           <span style={{color:'#8fa8c0',fontSize:11}}>Balance on final report (80%)</span>
@@ -340,6 +351,23 @@ function InsurerDashboard({user}) {
                       <div style={{background:'rgba(221,46,30,0.08)',border:'1px solid #700300',borderRadius:6,padding:'8px 12px',marginBottom:10}}>
                         <div style={{color:'#dd2e1e',fontSize:9,marginBottom:2,fontWeight:700}}>DECLINE REASON</div>
                         <div style={{color:'#8fa8c0',fontSize:12}}>{q.decline_reason}</div>
+                      </div>
+                    )}
+
+                    {selected.status==='completed'&&q.status==='accepted'&&!ratedMissions.includes(selected.id)&&(
+                      <div style={{marginTop:10}}>
+                        <Rating
+                          missionId={selected.id}
+                          expertId={q.expert_id}
+                          insurerId={user.id}
+                          onRated={()=>{loadRatings();showToast('Rating submitted — thank you!');}}
+                        />
+                      </div>
+                    )}
+
+                    {selected.status==='completed'&&q.status==='accepted'&&ratedMissions.includes(selected.id)&&(
+                      <div style={{marginTop:10,background:'rgba(46,125,50,0.08)',border:'1px solid #2e7d32',borderRadius:8,padding:'10px 14px',textAlign:'center'}}>
+                        <span style={{color:'#2e7d32',fontSize:12,fontWeight:700}}>v Mission rated — thank you!</span>
                       </div>
                     )}
 
@@ -686,7 +714,7 @@ function ExpertDashboard({user}) {
                       <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
                         <span style={{color:'#f0a500',fontSize:11,fontWeight:700}}>Deposit (20%)</span>
                         <span style={{color:q.deposit_paid?'#2e7d32':'#f0a500',fontSize:11,fontWeight:700}}>
-                          EUR {Math.round(q.amount*0.20).toLocaleString()} {q.deposit_paid?'✓ Received':'— Pending'}
+                          EUR {Math.round(q.amount*0.20).toLocaleString()} {q.deposit_paid?'v Received':'— Pending'}
                         </span>
                       </div>
                       <div style={{display:'flex',justifyContent:'space-between'}}>
@@ -886,7 +914,6 @@ function ExpertDashboard({user}) {
                         )
                       })}
                     </div>
-
                     <Convocation quote={q} user={user}/>
                   </div>
                 </div>
