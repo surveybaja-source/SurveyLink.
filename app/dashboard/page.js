@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabase'
 import { useRouter } from 'next/navigation'
 import { sendEmail, emailTemplates } from '../../lib/emails'
 import FileUpload from '../components/FileUpload'
+import Convocation from '../components/Convocation'
 
 export default function Dashboard() {
   const [user, setUser] = useState(null)
@@ -885,6 +886,8 @@ function ExpertDashboard({user}) {
                         )
                       })}
                     </div>
+
+                    <Convocation quote={q} user={user}/>
                   </div>
                 </div>
               ))}
