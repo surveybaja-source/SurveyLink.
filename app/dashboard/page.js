@@ -29,8 +29,8 @@ export default function Dashboard() {
   }, [])
 
   if (!user || !role) return (
-    <div style={{background:'#0c1a27',minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center'}}>
-      <p style={{color:'#8fa8c0'}}>Loading...</p>
+    <div style={{background:'#4a4640',minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center'}}>
+      <p style={{color:'#9a9490'}}>Loading...</p>
     </div>
   )
 
@@ -169,26 +169,26 @@ function InsurerDashboard({user}) {
   }
 
   const sLabel = {searching:'Searching...',quoting:'Quotes received',accepted:'Surveyor assigned',completed:'Completed',cancelled:'Cancelled'}
-  const sColor = {searching:'#8fa8c0',quoting:'#f0a500',accepted:'#2e7d32',completed:'#5a9eff',cancelled:'#dd2e1e'}
+  const sColor = {searching:'#8a8480',quoting:'#8B6F47',accepted:'#4a7a5a',completed:'#4a7a5a',cancelled:'#C4503A'}
   const DECLINE_REASONS = ['Mission cancelled','Price too high','Quote already validated with another provider']
 
   return (
-    <div style={{background:'#0c1a27',minHeight:'100vh'}}>
-      {toast&&<div style={{position:'fixed',top:70,left:'50%',transform:'translateX(-50%)',background:'#2e7d32',color:'#fff',padding:'12px 24px',borderRadius:8,fontWeight:700,zIndex:999,fontSize:13,boxShadow:'0 4px 24px rgba(0,0,0,0.3)'}}>{toast}</div>}
+    <div style={{background:'#4a4640',minHeight:'100vh'}}>
+      {toast&&<div style={{position:'fixed',top:70,left:'50%',transform:'translateX(-50%)',background:'#4a7a5a',color:'#fff',padding:'12px 24px',borderRadius:8,fontWeight:700,zIndex:999,fontSize:13,boxShadow:'0 4px 24px rgba(0,0,0,0.3)'}}>{toast}</div>}
 
-      <nav style={{background:'#0f1e2e',borderBottom:'1px solid #1e3a52',padding:'0 32px',height:58,display:'flex',alignItems:'center',justifyContent:'space-between',position:'sticky',top:0,zIndex:100}}>
+      <nav style={{background:'#3a3630',borderBottom:'1px solid #5a5450',padding:'0 32px',height:58,display:'flex',alignItems:'center',justifyContent:'space-between',position:'sticky',top:0,zIndex:100}}>
         <div style={{display:'flex',alignItems:'center',gap:20}}>
-          <span style={{color:'#fff',fontWeight:900,fontSize:22}}>SurveyLink</span>
-          <button onClick={()=>router.push('/missions/new')} style={{background:'#dd2e1e',color:'#fff',border:'none',borderRadius:6,padding:'6px 14px',fontSize:12,cursor:'pointer',fontWeight:700}}>
+          <span style={{color:'#fff',fontWeight:900,fontSize:22,letterSpacing:'0.05em'}}>INSPE<span style={{color:'#C4503A'}}>LINK</span></span>
+          <button onClick={()=>router.push('/missions/new')} style={{background:'#C4503A',color:'#fff',border:'none',borderRadius:6,padding:'6px 14px',fontSize:12,cursor:'pointer',fontWeight:700}}>
             + New Request
           </button>
         </div>
         <div style={{display:'flex',gap:8}}>
-          <button onClick={()=>router.push('/profile')} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:6,padding:'6px 16px',cursor:'pointer',fontSize:12}}>
+          <button onClick={()=>router.push('/profile')} style={{background:'transparent',color:'#9a9490',border:'1px solid #5a5450',borderRadius:6,padding:'6px 16px',cursor:'pointer',fontSize:12}}>
             My Profile
           </button>
           <button onClick={()=>supabase.auth.signOut().then(()=>router.push('/auth'))}
-            style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:6,padding:'6px 16px',cursor:'pointer'}}>
+            style={{background:'transparent',color:'#9a9490',border:'1px solid #5a5450',borderRadius:6,padding:'6px 16px',cursor:'pointer'}}>
             Sign Out
           </button>
         </div>
@@ -197,15 +197,15 @@ function InsurerDashboard({user}) {
       <div style={{maxWidth:1200,margin:'0 auto',padding:'32px 24px'}}>
         <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:16,marginBottom:32}}>
           {[
-            ['Active Requests',missions.filter(m=>m.status!=='completed'&&m.status!=='cancelled').length,'','#f0a500'],
-            ['Quotes Received',missions.filter(m=>m.status==='quoting').length,'awaiting review','#5a9eff'],
-            ['Surveyors Assigned',missions.filter(m=>m.status==='accepted').length,'in progress','#2e7d32'],
-            ['Completed',history.filter(m=>m.status==='completed').length,'all time','#8fa8c0']
+            ['Active Requests',missions.filter(m=>m.status!=='completed'&&m.status!=='cancelled').length,'','#C4503A'],
+            ['Quotes Received',missions.filter(m=>m.status==='quoting').length,'awaiting review','#8B6F47'],
+            ['Surveyors Assigned',missions.filter(m=>m.status==='accepted').length,'in progress','#4a7a5a'],
+            ['Completed',history.filter(m=>m.status==='completed').length,'all time','#8a8480']
           ].map(([label,val,sub,color])=>(
-            <div key={label} style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:12,padding:'16px 20px'}}>
-              <div style={{color:'#8fa8c0',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>{label}</div>
+            <div key={label} style={{background:'#EDE9E4',border:'1px solid #d8d4ce',borderRadius:12,padding:'16px 20px',boxShadow:'0 2px 8px rgba(0,0,0,0.15)'}}>
+              <div style={{color:'#8a8480',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>{label}</div>
               <div style={{color,fontSize:26,fontWeight:800}}>{val}</div>
-              <div style={{color:'#4a6880',fontSize:11,marginTop:4}}>{sub}</div>
+              <div style={{color:'#9a9490',fontSize:11,marginTop:4}}>{sub}</div>
             </div>
           ))}
         </div>
@@ -216,7 +216,7 @@ function InsurerDashboard({user}) {
             {k:'history',l:`History (${history.length})`},
           ].map(tab=>(
             <button key={tab.k} onClick={()=>{setActiveTab(tab.k);setSelected(null)}}
-              style={{background:activeTab===tab.k?'#dd2e1e':'transparent',color:activeTab===tab.k?'#fff':'#8fa8c0',border:`1px solid ${activeTab===tab.k?'#dd2e1e':'#1e3a52'}`,borderRadius:6,padding:'7px 18px',fontSize:12,cursor:'pointer',fontWeight:700}}>
+              style={{background:activeTab===tab.k?'#C4503A':'transparent',color:activeTab===tab.k?'#fff':'#9a9490',border:`1px solid ${activeTab===tab.k?'#C4503A':'#5a5450'}`,borderRadius:6,padding:'7px 18px',fontSize:12,cursor:'pointer',fontWeight:700}}>
               {tab.l}
             </button>
           ))}
@@ -225,13 +225,13 @@ function InsurerDashboard({user}) {
         {activeTab==='missions'&&(
           <div style={{display:'grid',gridTemplateColumns:selected?'1fr 1fr':'1fr',gap:24}}>
             <div>
-              <h2 style={{color:'#fff',fontSize:22,fontWeight:800,marginBottom:16}}>My Requests</h2>
-              {loading&&<p style={{color:'#8fa8c0'}}>Loading...</p>}
+              <h2 style={{color:'#EDE9E4',fontSize:22,fontWeight:800,marginBottom:16}}>My Requests</h2>
+              {loading&&<p style={{color:'#9a9490'}}>Loading...</p>}
               {!loading&&missions.length===0&&(
-                <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:12,padding:36,textAlign:'center'}}>
+                <div style={{background:'#EDE9E4',border:'1px solid #d8d4ce',borderRadius:12,padding:36,textAlign:'center',boxShadow:'0 2px 8px rgba(0,0,0,0.15)'}}>
                   <div style={{fontSize:32,marginBottom:12}}>📋</div>
-                  <div style={{color:'#8fa8c0',fontSize:14}}>No active requests</div>
-                  <button onClick={()=>router.push('/missions/new')} style={{background:'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'11px 24px',cursor:'pointer',fontWeight:700,marginTop:16}}>
+                  <div style={{color:'#6a6460',fontSize:14}}>No active requests</div>
+                  <button onClick={()=>router.push('/missions/new')} style={{background:'#C4503A',color:'#fff',border:'none',borderRadius:7,padding:'11px 24px',cursor:'pointer',fontWeight:700,marginTop:16}}>
                     + New Request
                   </button>
                 </div>
@@ -239,22 +239,20 @@ function InsurerDashboard({user}) {
               <div style={{display:'flex',flexDirection:'column',gap:12}}>
                 {missions.map(m=>(
                   <div key={m.id} onClick={()=>selectMission(m)}
-                    style={{background:'#132030',border:selected?.id===m.id?'1px solid #dd2e1e':'1px solid #1e3a52',borderRadius:12,padding:18,cursor:'pointer'}}
-                    onMouseEnter={e=>e.currentTarget.style.borderColor='#dd2e1e'}
-                    onMouseLeave={e=>e.currentTarget.style.borderColor=selected?.id===m.id?'#dd2e1e':'#1e3a52'}>
+                    style={{background:'#EDE9E4',border:selected?.id===m.id?'1px solid #C4503A':'1px solid #d8d4ce',borderLeft:selected?.id===m.id?'3px solid #C4503A':`3px solid ${m.urgency==='critical'?'#C4503A':m.urgency==='urgent'?'#8B6F47':'#d8d4ce'}`,borderRadius:12,padding:18,cursor:'pointer',boxShadow:'0 2px 8px rgba(0,0,0,0.1)'}}>
                     <div style={{display:'flex',justifyContent:'space-between',marginBottom:10}}>
                       <div>
                         <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:6,flexWrap:'wrap'}}>
-                          <span style={{color:'#4a6880',fontSize:10}}>{m.reference}</span>
-                          <span style={{background:m.urgency==='critical'?'rgba(221,46,30,0.12)':m.urgency==='urgent'?'rgba(240,165,0,0.12)':'rgba(26,108,240,0.12)',color:m.urgency==='critical'?'#dd2e1e':m.urgency==='urgent'?'#f0a500':'#5a9eff',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700,textTransform:'uppercase'}}>{m.urgency}</span>
-                          <span style={{background:'#1e3a52',color:sColor[m.status]||'#8fa8c0',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700}}>{sLabel[m.status]||m.status}</span>
+                          <span style={{color:'#9a9490',fontSize:10}}>{m.reference}</span>
+                          <span style={{background:m.urgency==='critical'?'rgba(196,80,58,0.12)':m.urgency==='urgent'?'rgba(139,111,71,0.12)':'rgba(138,132,128,0.15)',color:m.urgency==='critical'?'#C4503A':m.urgency==='urgent'?'#8B6F47':'#6a6460',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700,textTransform:'uppercase',border:`1px solid ${m.urgency==='critical'?'#C4503A':m.urgency==='urgent'?'#8B6F47':'#9a9490'}`}}>{m.urgency}</span>
+                          <span style={{background:'rgba(138,132,128,0.15)',color:sColor[m.status]||'#8a8480',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700,border:`1px solid ${sColor[m.status]||'#9a9490'}`}}>{sLabel[m.status]||m.status}</span>
                         </div>
-                        <div style={{color:'#fff',fontWeight:700,fontSize:18}}>{m.cargo_type}</div>
-                        <div style={{color:'#8fa8c0',fontSize:12,marginTop:2}}>{m.damage_types?.join(', ')} - {m.client_name}</div>
+                        <div style={{color:'#1a1410',fontWeight:700,fontSize:18}}>{m.cargo_type}</div>
+                        <div style={{color:'#6a6460',fontSize:12,marginTop:2}}>{m.damage_types?.join(', ')} - {m.client_name}</div>
                       </div>
-                      <span style={{color:'#4a6880',fontSize:11}}>{new Date(m.created_at).toLocaleDateString('en-GB')}</span>
+                      <span style={{color:'#9a9490',fontSize:11}}>{new Date(m.created_at).toLocaleDateString('en-GB')}</span>
                     </div>
-                    <div style={{color:'#8fa8c0',fontSize:12}}>📍 {m.location_text}</div>
+                    <div style={{color:'#8a8480',fontSize:12}}>📍 {m.location_text}</div>
                   </div>
                 ))}
               </div>
@@ -263,26 +261,26 @@ function InsurerDashboard({user}) {
             {selected&&(
               <div>
                 <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
-                  <h2 style={{color:'#fff',fontSize:20,fontWeight:800,margin:0}}>Quotes - {selected.reference}</h2>
+                  <h2 style={{color:'#EDE9E4',fontSize:20,fontWeight:800,margin:0}}>Quotes - {selected.reference}</h2>
                   <div style={{display:'flex',gap:8}}>
                     {!selected.cancelled&&selected.status!=='completed'&&(
                       <button onClick={()=>{if(window.confirm('Cancel this mission?'))cancelMission(selected.id)}}
-                        style={{background:'transparent',color:'#dd2e1e',border:'1px solid #dd2e1e',borderRadius:6,padding:'5px 12px',cursor:'pointer',fontSize:11,fontWeight:700}}>
+                        style={{background:'transparent',color:'#C4503A',border:'1px solid #C4503A',borderRadius:6,padding:'5px 12px',cursor:'pointer',fontSize:11,fontWeight:700}}>
                         Cancel
                       </button>
                     )}
-                    <button onClick={()=>setSelected(null)} style={{background:'none',border:'none',color:'#8fa8c0',cursor:'pointer',fontSize:20}}>x</button>
+                    <button onClick={()=>setSelected(null)} style={{background:'none',border:'none',color:'#9a9490',cursor:'pointer',fontSize:20}}>x</button>
                   </div>
                 </div>
 
-                <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:8,padding:'10px 14px',marginBottom:14}}>
-                  <div style={{color:'#4a6880',fontSize:9,marginBottom:2}}>LOCATION</div>
-                  <div style={{color:'#8fa8c0',fontSize:12}}>📍 {selected.location_text}</div>
+                <div style={{background:'#EDE9E4',border:'1px solid #d8d4ce',borderRadius:8,padding:'10px 14px',marginBottom:14,boxShadow:'0 1px 4px rgba(0,0,0,0.1)'}}>
+                  <div style={{color:'#9a9490',fontSize:9,marginBottom:2}}>LOCATION</div>
+                  <div style={{color:'#6a6460',fontSize:12}}>📍 {selected.location_text}</div>
                 </div>
 
                 {selected.documents&&selected.documents.length>0&&(
-                  <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:8,padding:'10px 14px',marginBottom:14}}>
-                    <div style={{color:'#4a6880',fontSize:9,marginBottom:8,letterSpacing:'0.1em',textTransform:'uppercase'}}>MISSION DOCUMENTS</div>
+                  <div style={{background:'#EDE9E4',border:'1px solid #d8d4ce',borderRadius:8,padding:'10px 14px',marginBottom:14,boxShadow:'0 1px 4px rgba(0,0,0,0.1)'}}>
+                    <div style={{color:'#9a9490',fontSize:9,marginBottom:8,letterSpacing:'0.1em',textTransform:'uppercase'}}>MISSION DOCUMENTS</div>
                     <div style={{display:'flex',flexDirection:'column',gap:6}}>
                       {selected.documents.map((path,i)=>(
                         <div key={i} style={{display:'flex',alignItems:'center',gap:8,cursor:'pointer'}}
@@ -291,7 +289,7 @@ function InsurerDashboard({user}) {
                             if(data?.signedUrl) window.open(data.signedUrl,'_blank')
                           }}>
                           <span>📄</span>
-                          <span style={{color:'#5a9eff',fontSize:12,textDecoration:'underline'}}>{path.split('/').pop()}</span>
+                          <span style={{color:'#C4503A',fontSize:12,textDecoration:'underline'}}>{path.split('/').pop()}</span>
                         </div>
                       ))}
                     </div>
@@ -299,95 +297,95 @@ function InsurerDashboard({user}) {
                 )}
 
                 {quotes.length===0&&(
-                  <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:12,padding:36,textAlign:'center'}}>
+                  <div style={{background:'#EDE9E4',border:'1px solid #d8d4ce',borderRadius:12,padding:36,textAlign:'center',boxShadow:'0 2px 8px rgba(0,0,0,0.1)'}}>
                     <div style={{fontSize:32,marginBottom:12}}>⏳</div>
-                    <div style={{color:'#8fa8c0',fontSize:13}}>Notifying nearby surveyors...</div>
+                    <div style={{color:'#6a6460',fontSize:13}}>Notifying nearby surveyors...</div>
                   </div>
                 )}
 
                 <div style={{display:'flex',flexDirection:'column',gap:12}}>
                   {quotes.map(q=>(
-                    <div key={q.id} style={{background:'#132030',border:q.status==='accepted'?'1px solid #2e7d32':q.status==='declined'?'1px solid #700300':q.status==='negotiating'?'1px solid #f0a500':'1px solid #1e3a52',borderRadius:12,padding:16}}>
+                    <div key={q.id} style={{background:'#EDE9E4',border:q.status==='accepted'?'1px solid #4a7a5a':q.status==='declined'?'1px solid #C4503A':q.status==='negotiating'?'1px solid #8B6F47':'1px solid #d8d4ce',borderRadius:12,padding:16,boxShadow:'0 2px 8px rgba(0,0,0,0.1)'}}>
                       <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:12}}>
-                        <div style={{width:42,height:42,borderRadius:'50%',background:'linear-gradient(135deg,#182e44,#dd2e1e)',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:800,fontSize:13}}>
+                        <div style={{width:42,height:42,borderRadius:'50%',background:'linear-gradient(135deg,#9a9690,#C4503A)',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:800,fontSize:13}}>
                           {q.profiles?.first_name?.[0]}{q.profiles?.last_name?.[0]}
                         </div>
                         <div style={{flex:1}}>
-                          <div style={{color:'#fff',fontWeight:700}}>{q.profiles?.first_name} {q.profiles?.last_name}</div>
+                          <div style={{color:'#1a1410',fontWeight:700}}>{q.profiles?.first_name} {q.profiles?.last_name}</div>
                           <div style={{display:'flex',alignItems:'center',gap:10,marginTop:2}}>
-                            <span style={{color:'#4a6880',fontSize:11}}>{q.profiles?.city}, {q.profiles?.country}</span>
+                            <span style={{color:'#8a8480',fontSize:11}}>{q.profiles?.city}, {q.profiles?.country}</span>
                             {q.profiles?.average_rating>0?(
                               <span style={{display:'flex',alignItems:'center',gap:4}}>
-                                <span style={{color:'#f0a500',fontSize:12}}>★</span>
-                                <span style={{color:'#f0a500',fontSize:12,fontWeight:700}}>{q.profiles.average_rating.toFixed(1)}</span>
-                                <span style={{color:'#4a6880',fontSize:10}}>({q.profiles.total_ratings})</span>
+                                <span style={{color:'#8B6F47',fontSize:12}}>★</span>
+                                <span style={{color:'#8B6F47',fontSize:12,fontWeight:700}}>{q.profiles.average_rating.toFixed(1)}</span>
+                                <span style={{color:'#9a9490',fontSize:10}}>({q.profiles.total_ratings})</span>
                               </span>
                             ):(
-                              <span style={{color:'#4a6880',fontSize:10,fontStyle:'italic'}}>No rating yet</span>
+                              <span style={{color:'#9a9490',fontSize:10,fontStyle:'italic'}}>No rating yet</span>
                             )}
                           </div>
                         </div>
                         {q.status==='accepted'&&(
                           <div style={{display:'flex',alignItems:'center',gap:8}}>
-                            <span style={{background:'rgba(46,125,50,0.12)',border:'1px solid #2e7d32',color:'#81c784',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700}}>ACCEPTED</span>
+                            <span style={{background:'rgba(74,122,90,0.12)',border:'1px solid #4a7a5a',color:'#4a7a5a',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700}}>ACCEPTED</span>
                             {!q.deposit_paid&&(
                               <button onClick={(e)=>{e.stopPropagation();router.push(`/payment?quote=${q.id}`)}}
-                                style={{background:'#f0a500',color:'#000',border:'none',borderRadius:6,padding:'4px 12px',cursor:'pointer',fontSize:11,fontWeight:700}}>
+                                style={{background:'#8B6F47',color:'#fff',border:'none',borderRadius:6,padding:'4px 12px',cursor:'pointer',fontSize:11,fontWeight:700}}>
                                 Pay Deposit 20%
                               </button>
                             )}
                             {q.deposit_paid&&(
-                              <span style={{background:'rgba(240,165,0,0.12)',border:'1px solid #f0a500',color:'#f0a500',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700}}>DEPOSIT PAID</span>
+                              <span style={{background:'rgba(139,111,71,0.12)',border:'1px solid #8B6F47',color:'#8B6F47',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700}}>DEPOSIT PAID</span>
                             )}
                           </div>
                         )}
-                        {q.status==='declined'&&<span style={{background:'rgba(221,46,30,0.12)',border:'1px solid #dd2e1e',color:'#ef9a9a',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700}}>DECLINED</span>}
-                        {q.status==='negotiating'&&<span style={{background:'rgba(240,165,0,0.12)',border:'1px solid #f0a500',color:'#f0a500',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700}}>NEGOTIATING</span>}
-                        {q.status==='pending'&&<span style={{background:'rgba(107,127,163,0.1)',border:'1px solid #1e3a52',color:'#8fa8c0',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700}}>PENDING</span>}
+                        {q.status==='declined'&&<span style={{background:'rgba(196,80,58,0.12)',border:'1px solid #C4503A',color:'#C4503A',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700}}>DECLINED</span>}
+                        {q.status==='negotiating'&&<span style={{background:'rgba(139,111,71,0.12)',border:'1px solid #8B6F47',color:'#8B6F47',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700}}>NEGOTIATING</span>}
+                        {q.status==='pending'&&<span style={{background:'rgba(138,132,128,0.2)',border:'1px solid #b8b4ae',color:'#6a6460',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700}}>PENDING</span>}
                       </div>
 
                       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:10}}>
-                        <div style={{background:'#0f1e2e',borderRadius:8,padding:'10px 14px'}}>
-                          <div style={{color:'#4a6880',fontSize:9,marginBottom:3}}>QUOTED RATE</div>
-                          <div style={{color:'#f0a500',fontSize:20,fontWeight:800}}>{q.currency} {q.amount?.toLocaleString()}</div>
+                        <div style={{background:'#f5f2ee',borderRadius:8,padding:'10px 14px',border:'1px solid #d8d4ce'}}>
+                          <div style={{color:'#9a9490',fontSize:9,marginBottom:3}}>QUOTED RATE</div>
+                          <div style={{color:'#C4503A',fontSize:20,fontWeight:800}}>{q.currency} {q.amount?.toLocaleString()}</div>
                         </div>
-                        <div style={{background:'#0f1e2e',borderRadius:8,padding:'10px 14px'}}>
-                          <div style={{color:'#4a6880',fontSize:9,marginBottom:3}}>PROPOSED DATE</div>
-                          <div style={{color:'#fff',fontSize:13,fontWeight:700}}>{q.proposed_datetime?new Date(q.proposed_datetime).toLocaleString('en-GB'):'Not specified'}</div>
+                        <div style={{background:'#f5f2ee',borderRadius:8,padding:'10px 14px',border:'1px solid #d8d4ce'}}>
+                          <div style={{color:'#9a9490',fontSize:9,marginBottom:3}}>PROPOSED DATE</div>
+                          <div style={{color:'#1a1410',fontSize:13,fontWeight:700}}>{q.proposed_datetime?new Date(q.proposed_datetime).toLocaleString('en-GB'):'Not specified'}</div>
                         </div>
                       </div>
 
                       {q.status==='accepted'&&q.deposit_paid&&(
-                        <div style={{background:'rgba(240,165,0,0.08)',border:'1px solid #f0a500',borderRadius:8,padding:'10px 14px',marginBottom:10}}>
+                        <div style={{background:'rgba(139,111,71,0.1)',border:'1px solid #8B6F47',borderRadius:8,padding:'10px 14px',marginBottom:10}}>
                           <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
-                            <span style={{color:'#f0a500',fontSize:11,fontWeight:700}}>Deposit paid (20%)</span>
-                            <span style={{color:'#2e7d32',fontSize:11,fontWeight:700}}>EUR {Math.round(q.amount*0.20).toLocaleString()} ✓</span>
+                            <span style={{color:'#8B6F47',fontSize:11,fontWeight:700}}>Deposit paid (20%)</span>
+                            <span style={{color:'#4a7a5a',fontSize:11,fontWeight:700}}>EUR {Math.round(q.amount*0.20).toLocaleString()} ✓</span>
                           </div>
                           <div style={{display:'flex',justifyContent:'space-between'}}>
-                            <span style={{color:'#8fa8c0',fontSize:11}}>Balance on final report (80%)</span>
-                            <span style={{color:'#8fa8c0',fontSize:11}}>EUR {Math.round(q.amount*0.80).toLocaleString()}</span>
+                            <span style={{color:'#8a8480',fontSize:11}}>Balance on final report (80%)</span>
+                            <span style={{color:'#8a8480',fontSize:11}}>EUR {Math.round(q.amount*0.80).toLocaleString()}</span>
                           </div>
                         </div>
                       )}
 
                       {q.note&&(
-                        <div style={{background:'#0f1e2e',borderRadius:6,padding:'8px 12px',marginBottom:10}}>
-                          <div style={{color:'#4a6880',fontSize:9,marginBottom:2}}>NOTE FROM SURVEYOR</div>
-                          <div style={{color:'#8fa8c0',fontSize:12,lineHeight:1.5}}>{q.note}</div>
+                        <div style={{background:'#f5f2ee',borderRadius:6,padding:'8px 12px',marginBottom:10,border:'1px solid #d8d4ce'}}>
+                          <div style={{color:'#9a9490',fontSize:9,marginBottom:2}}>NOTE FROM SURVEYOR</div>
+                          <div style={{color:'#6a6460',fontSize:12,lineHeight:1.5}}>{q.note}</div>
                         </div>
                       )}
 
                       {q.counter_proposal&&(
-                        <div style={{background:'rgba(240,165,0,0.08)',border:'1px solid #f0a500',borderRadius:6,padding:'8px 12px',marginBottom:10}}>
-                          <div style={{color:'#f0a500',fontSize:9,marginBottom:2,fontWeight:700}}>YOUR COUNTER-PROPOSAL</div>
-                          <div style={{color:'#8fa8c0',fontSize:12,lineHeight:1.5}}>{q.counter_proposal}</div>
+                        <div style={{background:'rgba(139,111,71,0.08)',border:'1px solid #8B6F47',borderRadius:6,padding:'8px 12px',marginBottom:10}}>
+                          <div style={{color:'#8B6F47',fontSize:9,marginBottom:2,fontWeight:700}}>YOUR COUNTER-PROPOSAL</div>
+                          <div style={{color:'#6a6460',fontSize:12,lineHeight:1.5}}>{q.counter_proposal}</div>
                         </div>
                       )}
 
                       {q.decline_reason&&(
-                        <div style={{background:'rgba(221,46,30,0.08)',border:'1px solid #700300',borderRadius:6,padding:'8px 12px',marginBottom:10}}>
-                          <div style={{color:'#dd2e1e',fontSize:9,marginBottom:2,fontWeight:700}}>DECLINE REASON</div>
-                          <div style={{color:'#8fa8c0',fontSize:12}}>{q.decline_reason}</div>
+                        <div style={{background:'rgba(196,80,58,0.08)',border:'1px solid #C4503A',borderRadius:6,padding:'8px 12px',marginBottom:10}}>
+                          <div style={{color:'#C4503A',fontSize:9,marginBottom:2,fontWeight:700}}>DECLINE REASON</div>
+                          <div style={{color:'#6a6460',fontSize:12}}>{q.decline_reason}</div>
                         </div>
                       )}
 
@@ -398,41 +396,41 @@ function InsurerDashboard({user}) {
                       )}
 
                       {selected.status==='completed'&&q.status==='accepted'&&ratedMissions.includes(selected.id)&&(
-                        <div style={{marginTop:10,background:'rgba(46,125,50,0.08)',border:'1px solid #2e7d32',borderRadius:8,padding:'10px 14px',textAlign:'center'}}>
-                          <span style={{color:'#2e7d32',fontSize:12,fontWeight:700}}>✓ Mission rated — thank you!</span>
+                        <div style={{marginTop:10,background:'rgba(74,122,90,0.08)',border:'1px solid #4a7a5a',borderRadius:8,padding:'10px 14px',textAlign:'center'}}>
+                          <span style={{color:'#4a7a5a',fontSize:12,fontWeight:700}}>✓ Mission rated — thank you!</span>
                         </div>
                       )}
 
                       {q.status==='pending'&&negotiateId!==q.id&&declineId!==q.id&&(
                         <div style={{display:'flex',gap:8}}>
-                          <button onClick={()=>{setDeclineId(q.id);setNegotiateId(null)}} style={{flex:1,background:'transparent',color:'#dd2e1e',border:'1px solid #dd2e1e',borderRadius:7,padding:'9px',cursor:'pointer',fontWeight:700,fontSize:12}}>Decline</button>
-                          <button onClick={()=>{setNegotiateId(q.id);setDeclineId(null)}} style={{flex:1,background:'transparent',color:'#f0a500',border:'1px solid #f0a500',borderRadius:7,padding:'9px',cursor:'pointer',fontWeight:700,fontSize:12}}>Negotiate</button>
-                          <button onClick={()=>acceptQuote(q.id, selected.id)} style={{flex:1,background:'#2e7d32',color:'#fff',border:'none',borderRadius:7,padding:'9px',cursor:'pointer',fontWeight:700,fontSize:12}}>Accept</button>
+                          <button onClick={()=>{setDeclineId(q.id);setNegotiateId(null)}} style={{flex:1,background:'transparent',color:'#C4503A',border:'1px solid #C4503A',borderRadius:7,padding:'9px',cursor:'pointer',fontWeight:700,fontSize:12}}>Decline</button>
+                          <button onClick={()=>{setNegotiateId(q.id);setDeclineId(null)}} style={{flex:1,background:'transparent',color:'#8B6F47',border:'1px solid #8B6F47',borderRadius:7,padding:'9px',cursor:'pointer',fontWeight:700,fontSize:12}}>Negotiate</button>
+                          <button onClick={()=>acceptQuote(q.id, selected.id)} style={{flex:1,background:'#4a7a5a',color:'#fff',border:'none',borderRadius:7,padding:'9px',cursor:'pointer',fontWeight:700,fontSize:12}}>Accept</button>
                         </div>
                       )}
 
                       {declineId===q.id&&(
                         <div style={{marginTop:8}}>
-                          <div style={{color:'#8fa8c0',fontSize:11,marginBottom:8,fontWeight:700}}>Select reason for declining:</div>
+                          <div style={{color:'#6a6460',fontSize:11,marginBottom:8,fontWeight:700}}>Select reason for declining:</div>
                           {DECLINE_REASONS.map(r=>(
                             <button key={r} onClick={()=>declineQuote(q.id, r)}
-                              style={{display:'block',width:'100%',background:'rgba(221,46,30,0.08)',color:'#ef9a9a',border:'1px solid #700300',borderRadius:6,padding:'9px 14px',cursor:'pointer',marginBottom:6,textAlign:'left',fontSize:12}}>
+                              style={{display:'block',width:'100%',background:'rgba(196,80,58,0.08)',color:'#C4503A',border:'1px solid #C4503A',borderRadius:6,padding:'9px 14px',cursor:'pointer',marginBottom:6,textAlign:'left',fontSize:12}}>
                               {r}
                             </button>
                           ))}
-                          <button onClick={()=>setDeclineId(null)} style={{background:'transparent',color:'#8fa8c0',border:'none',cursor:'pointer',fontSize:11,marginTop:4}}>Cancel</button>
+                          <button onClick={()=>setDeclineId(null)} style={{background:'transparent',color:'#9a9490',border:'none',cursor:'pointer',fontSize:11,marginTop:4}}>Cancel</button>
                         </div>
                       )}
 
                       {negotiateId===q.id&&(
                         <div style={{marginTop:8}}>
-                          <div style={{color:'#8fa8c0',fontSize:11,marginBottom:8,fontWeight:700}}>Your counter-proposal:</div>
+                          <div style={{color:'#6a6460',fontSize:11,marginBottom:8,fontWeight:700}}>Your counter-proposal:</div>
                           <textarea placeholder="Explain your counter-proposal..." value={counterText} onChange={e=>setCounterText(e.target.value)} rows={3}
-                            style={{width:'100%',background:'#0f1e2e',border:'1px solid #f0a500',borderRadius:6,padding:'10px 14px',color:'#fff',boxSizing:'border-box',fontSize:12,resize:'vertical',marginBottom:8}}/>
+                            style={{width:'100%',background:'#f5f2ee',border:'1px solid #8B6F47',borderRadius:6,padding:'10px 14px',color:'#1a1410',boxSizing:'border-box',fontSize:12,resize:'vertical',marginBottom:8}}/>
                           <div style={{display:'flex',gap:8}}>
-                            <button onClick={()=>{setNegotiateId(null);setCounterText('')}} style={{flex:1,background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:6,padding:'8px',cursor:'pointer',fontSize:12}}>Cancel</button>
+                            <button onClick={()=>{setNegotiateId(null);setCounterText('')}} style={{flex:1,background:'transparent',color:'#8a8480',border:'1px solid #d8d4ce',borderRadius:6,padding:'8px',cursor:'pointer',fontSize:12}}>Cancel</button>
                             <button onClick={()=>sendCounter(q.id, selected.id)} disabled={!counterText}
-                              style={{flex:2,background:!counterText?'rgba(240,165,0,0.45)':'#f0a500',color:'#000',border:'none',borderRadius:6,padding:'8px',cursor:'pointer',fontWeight:700,fontSize:12}}>
+                              style={{flex:2,background:!counterText?'rgba(139,111,71,0.45)':'#8B6F47',color:'#fff',border:'none',borderRadius:6,padding:'8px',cursor:'pointer',fontWeight:700,fontSize:12}}>
                               Send Counter-Proposal
                             </button>
                           </div>
@@ -448,20 +446,20 @@ function InsurerDashboard({user}) {
 
         {activeTab==='history'&&(
           <div>
-            <h2 style={{color:'#fff',fontSize:22,fontWeight:800,marginBottom:16}}>Mission History</h2>
+            <h2 style={{color:'#EDE9E4',fontSize:22,fontWeight:800,marginBottom:16}}>Mission History</h2>
             {history.length===0&&(
-              <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:12,padding:36,textAlign:'center'}}>
+              <div style={{background:'#EDE9E4',border:'1px solid #d8d4ce',borderRadius:12,padding:36,textAlign:'center',boxShadow:'0 2px 8px rgba(0,0,0,0.15)'}}>
                 <div style={{fontSize:32,marginBottom:12}}>📂</div>
-                <div style={{color:'#8fa8c0',fontSize:14}}>No completed missions yet</div>
+                <div style={{color:'#6a6460',fontSize:14}}>No completed missions yet</div>
               </div>
             )}
             {history.length>0&&(
-              <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:12,overflow:'hidden'}}>
+              <div style={{background:'#EDE9E4',border:'1px solid #d8d4ce',borderRadius:12,overflow:'hidden',boxShadow:'0 2px 8px rgba(0,0,0,0.15)'}}>
                 <table style={{width:'100%',borderCollapse:'collapse'}}>
                   <thead>
-                    <tr style={{background:'#0f1e2e'}}>
+                    <tr style={{background:'#3a3630'}}>
                       {['Reference','Date','Client','Cargo','Location','Amount','Status'].map(h=>(
-                        <th key={h} style={{padding:'10px 14px',color:'#4a6880',fontSize:10,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',textAlign:'left',borderBottom:'1px solid #1e3a52'}}>
+                        <th key={h} style={{padding:'10px 14px',color:'#9a9490',fontSize:10,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',textAlign:'left',borderBottom:'1px solid #5a5450'}}>
                           {h}
                         </th>
                       ))}
@@ -471,15 +469,15 @@ function InsurerDashboard({user}) {
                     {history.map((m,i)=>{
                       const acceptedQuote = m.quotes?.find(q=>q.status==='accepted')
                       return (
-                        <tr key={m.id} style={{borderBottom:'1px solid #1e3a52',background:i%2===0?'transparent':'rgba(255,255,255,0.01)'}}>
-                          <td style={{padding:'10px 14px',color:'#5a9eff',fontSize:12,fontFamily:'monospace'}}>{m.reference}</td>
-                          <td style={{padding:'10px 14px',color:'#8fa8c0',fontSize:12}}>{new Date(m.created_at).toLocaleDateString('en-GB')}</td>
-                          <td style={{padding:'10px 14px',color:'#fff',fontSize:12,fontWeight:600}}>{m.client_name||'—'}</td>
-                          <td style={{padding:'10px 14px',color:'#8fa8c0',fontSize:12}}>{m.cargo_type||'—'}</td>
-                          <td style={{padding:'10px 14px',color:'#8fa8c0',fontSize:12}}>{m.location_place||m.location_text?.split(',')[0]||'—'}</td>
-                          <td style={{padding:'10px 14px',color:'#f0a500',fontSize:12,fontWeight:700}}>{acceptedQuote?`EUR ${acceptedQuote.amount?.toLocaleString()}`:'—'}</td>
+                        <tr key={m.id} style={{borderBottom:'1px solid #d8d4ce',background:i%2===0?'#EDE9E4':'#f5f2ee'}}>
+                          <td style={{padding:'10px 14px',color:'#C4503A',fontSize:12,fontFamily:'monospace'}}>{m.reference}</td>
+                          <td style={{padding:'10px 14px',color:'#6a6460',fontSize:12}}>{new Date(m.created_at).toLocaleDateString('en-GB')}</td>
+                          <td style={{padding:'10px 14px',color:'#1a1410',fontSize:12,fontWeight:600}}>{m.client_name||'—'}</td>
+                          <td style={{padding:'10px 14px',color:'#6a6460',fontSize:12}}>{m.cargo_type||'—'}</td>
+                          <td style={{padding:'10px 14px',color:'#6a6460',fontSize:12}}>{m.location_place||m.location_text?.split(',')[0]||'—'}</td>
+                          <td style={{padding:'10px 14px',color:'#8B6F47',fontSize:12,fontWeight:700}}>{acceptedQuote?`EUR ${acceptedQuote.amount?.toLocaleString()}`:'—'}</td>
                           <td style={{padding:'10px 14px'}}>
-                            <span style={{background:m.status==='completed'?'rgba(46,125,50,0.12)':'rgba(221,46,30,0.12)',border:`1px solid ${m.status==='completed'?'#2e7d32':'#dd2e1e'}`,color:m.status==='completed'?'#81c784':'#ef9a9a',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700,textTransform:'uppercase'}}>
+                            <span style={{background:m.status==='completed'?'rgba(74,122,90,0.12)':'rgba(196,80,58,0.12)',border:`1px solid ${m.status==='completed'?'#4a7a5a':'#C4503A'}`,color:m.status==='completed'?'#4a7a5a':'#C4503A',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700,textTransform:'uppercase'}}>
                               {m.status}
                             </span>
                           </td>
@@ -590,7 +588,7 @@ function ExpertDashboard({user}) {
       setAmount('')
       setProposedDatetime('')
       setNote('')
-      showToast('Quote submitted — insurer notified by email!')
+      showToast('Quote submitted — insurer notified!')
       loadAll()
     }
   }
@@ -613,16 +611,16 @@ function ExpertDashboard({user}) {
   const acceptedQuotes = myQuotes.filter(q=>q.status==='accepted'&&q.missions?.status!=='completed')
   const pendingQuotes = myQuotes.filter(q=>q.status==='pending'||q.status==='negotiating')
 
-  const statusColor = {pending:'#8fa8c0',negotiating:'#f0a500',accepted:'#2e7d32',declined:'#dd2e1e'}
+  const statusColor = {pending:'#8a8480',negotiating:'#8B6F47',accepted:'#4a7a5a',declined:'#C4503A'}
   const statusLabel = {pending:'Pending',negotiating:'Counter-Proposal Received',accepted:'Accepted',declined:'Declined'}
 
   return (
-    <div style={{background:'#0c1a27',minHeight:'100vh'}}>
-      {toast&&<div style={{position:'fixed',top:70,left:'50%',transform:'translateX(-50%)',background:'#2e7d32',color:'#fff',padding:'12px 24px',borderRadius:8,fontWeight:700,zIndex:999,fontSize:13,boxShadow:'0 4px 24px rgba(0,0,0,0.3)'}}>{toast}</div>}
+    <div style={{background:'#4a4640',minHeight:'100vh'}}>
+      {toast&&<div style={{position:'fixed',top:70,left:'50%',transform:'translateX(-50%)',background:'#4a7a5a',color:'#fff',padding:'12px 24px',borderRadius:8,fontWeight:700,zIndex:999,fontSize:13,boxShadow:'0 4px 24px rgba(0,0,0,0.3)'}}>{toast}</div>}
 
-      <nav style={{background:'#0f1e2e',borderBottom:'1px solid #1e3a52',padding:'0 32px',height:58,display:'flex',alignItems:'center',justifyContent:'space-between',position:'sticky',top:0,zIndex:100}}>
+      <nav style={{background:'#3a3630',borderBottom:'1px solid #5a5450',padding:'0 32px',height:58,display:'flex',alignItems:'center',justifyContent:'space-between',position:'sticky',top:0,zIndex:100}}>
         <div style={{display:'flex',alignItems:'center',gap:20}}>
-          <span style={{color:'#fff',fontWeight:900,fontSize:22}}>SurveyLink</span>
+          <span style={{color:'#fff',fontWeight:900,fontSize:22,letterSpacing:'0.05em'}}>INSPE<span style={{color:'#C4503A'}}>LINK</span></span>
           <div style={{display:'flex',gap:4}}>
             {[
               {k:'available',l:'Available Missions'},
@@ -631,18 +629,18 @@ function ExpertDashboard({user}) {
               {k:'history',l:history.length>0?`History (${history.length})`:'History'},
             ].map(tab=>(
               <button key={tab.k} onClick={()=>setActiveTab(tab.k)}
-                style={{background:activeTab===tab.k?'#dd2e1e':'transparent',color:activeTab===tab.k?'#fff':'#8fa8c0',border:`1px solid ${activeTab===tab.k?'#dd2e1e':'#1e3a52'}`,borderRadius:6,padding:'5px 12px',fontSize:11,cursor:'pointer',fontWeight:700}}>
+                style={{background:activeTab===tab.k?'#C4503A':'transparent',color:activeTab===tab.k?'#fff':'#9a9490',border:`1px solid ${activeTab===tab.k?'#C4503A':'#5a5450'}`,borderRadius:6,padding:'5px 12px',fontSize:11,cursor:'pointer',fontWeight:700}}>
                 {tab.l}
               </button>
             ))}
           </div>
         </div>
         <div style={{display:'flex',gap:8}}>
-          <button onClick={()=>router.push('/profile')} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:6,padding:'6px 16px',cursor:'pointer',fontSize:12}}>
+          <button onClick={()=>router.push('/profile')} style={{background:'transparent',color:'#9a9490',border:'1px solid #5a5450',borderRadius:6,padding:'6px 16px',cursor:'pointer',fontSize:12}}>
             My Profile
           </button>
           <button onClick={()=>supabase.auth.signOut().then(()=>router.push('/auth'))}
-            style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:6,padding:'6px 16px',cursor:'pointer'}}>
+            style={{background:'transparent',color:'#9a9490',border:'1px solid #5a5450',borderRadius:6,padding:'6px 16px',cursor:'pointer'}}>
             Sign Out
           </button>
         </div>
@@ -651,15 +649,15 @@ function ExpertDashboard({user}) {
       <div style={{maxWidth:1200,margin:'0 auto',padding:'32px 24px'}}>
         <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:16,marginBottom:32}}>
           {[
-            ['Available',availableMissions.length,'new requests','#f0a500'],
-            ['Quotes Sent',myQuotes.filter(q=>q.status==='pending').length,'awaiting response','#5a9eff'],
-            ['Active Missions',acceptedQuotes.length,'in progress','#2e7d32'],
-            ['Completed',history.length,'all time','#8fa8c0']
+            ['Available',availableMissions.length,'new requests','#C4503A'],
+            ['Quotes Sent',myQuotes.filter(q=>q.status==='pending').length,'awaiting response','#8B6F47'],
+            ['Active Missions',acceptedQuotes.length,'in progress','#4a7a5a'],
+            ['Completed',history.length,'all time','#8a8480']
           ].map(([label,val,sub,color])=>(
-            <div key={label} style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:12,padding:'16px 20px'}}>
-              <div style={{color:'#8fa8c0',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>{label}</div>
+            <div key={label} style={{background:'#EDE9E4',border:'1px solid #d8d4ce',borderRadius:12,padding:'16px 20px',boxShadow:'0 2px 8px rgba(0,0,0,0.15)'}}>
+              <div style={{color:'#8a8480',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>{label}</div>
               <div style={{color,fontSize:26,fontWeight:800}}>{val}</div>
-              <div style={{color:'#4a6880',fontSize:11,marginTop:4}}>{sub}</div>
+              <div style={{color:'#9a9490',fontSize:11,marginTop:4}}>{sub}</div>
             </div>
           ))}
         </div>
@@ -667,39 +665,39 @@ function ExpertDashboard({user}) {
         {activeTab==='available'&&(
           <div style={{display:'grid',gridTemplateColumns:quoting?'1fr 1fr':'1fr',gap:24}}>
             <div>
-              <h2 style={{color:'#fff',fontSize:22,fontWeight:800,marginBottom:16}}>Available Requests</h2>
-              {loading&&<p style={{color:'#8fa8c0'}}>Loading...</p>}
+              <h2 style={{color:'#EDE9E4',fontSize:22,fontWeight:800,marginBottom:16}}>Available Requests</h2>
+              {loading&&<p style={{color:'#9a9490'}}>Loading...</p>}
               {!loading&&availableMissions.length===0&&(
-                <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:12,padding:36,textAlign:'center'}}>
+                <div style={{background:'#EDE9E4',border:'1px solid #d8d4ce',borderRadius:12,padding:36,textAlign:'center',boxShadow:'0 2px 8px rgba(0,0,0,0.15)'}}>
                   <div style={{fontSize:32,marginBottom:12}}>📭</div>
-                  <div style={{color:'#8fa8c0',fontSize:14}}>No requests available at the moment</div>
+                  <div style={{color:'#6a6460',fontSize:14}}>No requests available at the moment</div>
                 </div>
               )}
               <div style={{display:'flex',flexDirection:'column',gap:12}}>
                 {availableMissions.map(m=>(
-                  <div key={m.id} style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:12,padding:20}}>
+                  <div key={m.id} style={{background:'#EDE9E4',border:'1px solid #d8d4ce',borderLeft:`3px solid ${m.urgency==='critical'?'#C4503A':m.urgency==='urgent'?'#8B6F47':'#d8d4ce'}`,borderRadius:12,padding:20,boxShadow:'0 2px 8px rgba(0,0,0,0.1)'}}>
                     <div style={{display:'flex',justifyContent:'space-between',marginBottom:12}}>
                       <div>
                         <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:6}}>
-                          <span style={{color:'#4a6880',fontSize:10}}>{m.reference}</span>
-                          <span style={{background:m.urgency==='critical'?'rgba(221,46,30,0.12)':m.urgency==='urgent'?'rgba(240,165,0,0.12)':'rgba(26,108,240,0.12)',color:m.urgency==='critical'?'#dd2e1e':m.urgency==='urgent'?'#f0a500':'#5a9eff',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700,textTransform:'uppercase'}}>{m.urgency}</span>
+                          <span style={{color:'#9a9490',fontSize:10}}>{m.reference}</span>
+                          <span style={{background:m.urgency==='critical'?'rgba(196,80,58,0.12)':m.urgency==='urgent'?'rgba(139,111,71,0.12)':'rgba(138,132,128,0.15)',color:m.urgency==='critical'?'#C4503A':m.urgency==='urgent'?'#8B6F47':'#6a6460',padding:'2px 10px',borderRadius:4,fontSize:10,fontWeight:700,textTransform:'uppercase',border:`1px solid ${m.urgency==='critical'?'#C4503A':m.urgency==='urgent'?'#8B6F47':'#9a9490'}`}}>{m.urgency}</span>
                         </div>
-                        <div style={{color:'#fff',fontWeight:700,fontSize:18}}>{m.cargo_type}</div>
-                        <div style={{color:'#8fa8c0',fontSize:12,marginTop:2}}>{m.damage_types?.join(', ')}</div>
+                        <div style={{color:'#1a1410',fontWeight:700,fontSize:18}}>{m.cargo_type}</div>
+                        <div style={{color:'#6a6460',fontSize:12,marginTop:2}}>{m.damage_types?.join(', ')}</div>
                       </div>
                     </div>
                     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:14}}>
-                      <div style={{background:'#0f1e2e',borderRadius:7,padding:'8px 12px'}}>
-                        <div style={{color:'#4a6880',fontSize:9,marginBottom:2}}>PORT / CITY</div>
-                        <div style={{color:'#e8edf5',fontSize:11}}>{m.location_place||m.location_text?.split(',')[0]||m.location_text}</div>
+                      <div style={{background:'#f5f2ee',borderRadius:7,padding:'8px 12px',border:'1px solid #d8d4ce'}}>
+                        <div style={{color:'#9a9490',fontSize:9,marginBottom:2}}>PORT / CITY</div>
+                        <div style={{color:'#1a1410',fontSize:11}}>{m.location_place||m.location_text?.split(',')[0]||m.location_text}</div>
                       </div>
-                      <div style={{background:'#0f1e2e',borderRadius:7,padding:'8px 12px'}}>
-                        <div style={{color:'#4a6880',fontSize:9,marginBottom:2}}>LOADING UNIT</div>
-                        <div style={{color:'#e8edf5',fontSize:11}}>{m.loading_unit?`${m.loading_unit}${m.tc_type?` - ${m.tc_type}`:''}${m.loading_quantity?` - ${m.loading_quantity}`:''}`:'-'}</div>
+                      <div style={{background:'#f5f2ee',borderRadius:7,padding:'8px 12px',border:'1px solid #d8d4ce'}}>
+                        <div style={{color:'#9a9490',fontSize:9,marginBottom:2}}>LOADING UNIT</div>
+                        <div style={{color:'#1a1410',fontSize:11}}>{m.loading_unit?(m.loading_unit+(m.tc_type?` - ${m.tc_type}`:'')):'—'}</div>
                       </div>
                     </div>
                     <button onClick={()=>{setQuoting(m);setAmount('');setProposedDatetime('');setNote('');}}
-                      style={{width:'100%',background:'#2e7d32',color:'#fff',border:'none',borderRadius:7,padding:'10px',cursor:'pointer',fontWeight:700}}>
+                      style={{width:'100%',background:'#4a7a5a',color:'#fff',border:'none',borderRadius:7,padding:'10px',cursor:'pointer',fontWeight:700}}>
                       Submit a Quote
                     </button>
                   </div>
@@ -710,54 +708,54 @@ function ExpertDashboard({user}) {
             {quoting&&(
               <div>
                 <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
-                  <h2 style={{color:'#fff',fontSize:22,fontWeight:800,margin:0}}>Submit Quote</h2>
-                  <button onClick={()=>setQuoting(null)} style={{background:'none',border:'none',color:'#8fa8c0',cursor:'pointer',fontSize:20}}>x</button>
+                  <h2 style={{color:'#EDE9E4',fontSize:22,fontWeight:800,margin:0}}>Submit Quote</h2>
+                  <button onClick={()=>setQuoting(null)} style={{background:'none',border:'none',color:'#9a9490',cursor:'pointer',fontSize:20}}>x</button>
                 </div>
-                <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:12,padding:24}}>
-                  <div style={{background:'#0f1e2e',borderRadius:7,padding:'10px 14px',marginBottom:18}}>
-                    <div style={{color:'#4a6880',fontSize:9,marginBottom:3}}>MISSION</div>
-                    <div style={{color:'#dd2e1e',fontWeight:700}}>{quoting.reference}</div>
-                    <div style={{color:'#8fa8c0',fontSize:12,marginTop:2}}>{quoting.cargo_type} - {quoting.location_place||quoting.location_text?.split(',')[0]}</div>
+                <div style={{background:'#EDE9E4',border:'1px solid #d8d4ce',borderRadius:12,padding:24,boxShadow:'0 2px 8px rgba(0,0,0,0.15)'}}>
+                  <div style={{background:'#f5f2ee',borderRadius:7,padding:'10px 14px',marginBottom:18,border:'1px solid #d8d4ce'}}>
+                    <div style={{color:'#9a9490',fontSize:9,marginBottom:3}}>MISSION</div>
+                    <div style={{color:'#C4503A',fontWeight:700}}>{quoting.reference}</div>
+                    <div style={{color:'#6a6460',fontSize:12,marginTop:2}}>{quoting.cargo_type} - {quoting.location_place||quoting.location_text?.split(',')[0]}</div>
                   </div>
                   <div style={{marginBottom:16}}>
-                    <div style={{color:'#8fa8c0',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>Lump Sum Fee (EUR) *</div>
+                    <div style={{color:'#6a6460',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>Lump Sum Fee (EUR) *</div>
                     <div style={{position:'relative'}}>
-                      <div style={{position:'absolute',left:0,top:0,bottom:0,width:50,background:'#1e3a52',display:'flex',alignItems:'center',justifyContent:'center',borderRadius:'6px 0 0 6px',color:'#8fa8c0',fontWeight:700,fontSize:13}}>EUR</div>
+                      <div style={{position:'absolute',left:0,top:0,bottom:0,width:50,background:'#d8d4ce',display:'flex',alignItems:'center',justifyContent:'center',borderRadius:'6px 0 0 6px',color:'#6a6460',fontWeight:700,fontSize:13}}>EUR</div>
                       <input type="number" placeholder="0" value={amount} onChange={e=>setAmount(e.target.value)}
-                        style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:7,padding:'14px 14px 14px 64px',color:'#f0a500',fontSize:26,fontWeight:800,outline:'none',boxSizing:'border-box'}}/>
+                        style={{width:'100%',background:'#f5f2ee',border:'1px solid #d8d4ce',borderRadius:7,padding:'14px 14px 14px 64px',color:'#C4503A',fontSize:26,fontWeight:800,outline:'none',boxSizing:'border-box'}}/>
                     </div>
                   </div>
                   <div style={{marginBottom:12}}>
-                    <div style={{color:'#8fa8c0',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>Proposed Date & Time *</div>
+                    <div style={{color:'#6a6460',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>Proposed Date & Time *</div>
                     <input type="datetime-local" value={proposedDatetime} onChange={e=>setProposedDatetime(e.target.value)}
-                      style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:'#fff',boxSizing:'border-box',fontSize:13}}/>
+                      style={{width:'100%',background:'#f5f2ee',border:'1px solid #d8d4ce',borderRadius:6,padding:'10px 14px',color:'#1a1410',boxSizing:'border-box',fontSize:13}}/>
                   </div>
                   <div style={{marginBottom:12}}>
                     <textarea placeholder="Note to insurer..." value={note} onChange={e=>setNote(e.target.value)} rows={3}
-                      style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:'#fff',boxSizing:'border-box',fontSize:13,resize:'vertical'}}/>
+                      style={{width:'100%',background:'#f5f2ee',border:'1px solid #d8d4ce',borderRadius:6,padding:'10px 14px',color:'#1a1410',boxSizing:'border-box',fontSize:13,resize:'vertical'}}/>
                   </div>
                   {amount&&(
-                    <div style={{marginBottom:14,padding:'10px 14px',background:'rgba(240,165,0,0.12)',border:'1px solid #f0a500',borderRadius:7}}>
+                    <div style={{marginBottom:14,padding:'10px 14px',background:'rgba(139,111,71,0.1)',border:'1px solid #8B6F47',borderRadius:7}}>
                       <div style={{display:'flex',justifyContent:'space-between',marginBottom:6}}>
-                        <span style={{color:'#8fa8c0',fontSize:12}}>Total Quote</span>
-                        <span style={{color:'#f0a500',fontWeight:800,fontSize:20}}>EUR {parseInt(amount).toLocaleString()}</span>
+                        <span style={{color:'#6a6460',fontSize:12}}>Total Quote</span>
+                        <span style={{color:'#C4503A',fontWeight:800,fontSize:20}}>EUR {parseInt(amount).toLocaleString()}</span>
                       </div>
                       <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
-                        <span style={{color:'#4a6880',fontSize:11}}>Deposit (20%) — on acceptance</span>
-                        <span style={{color:'#4a6880',fontSize:11}}>EUR {Math.round(parseInt(amount)*0.20).toLocaleString()}</span>
+                        <span style={{color:'#9a9490',fontSize:11}}>Deposit (20%) — on acceptance</span>
+                        <span style={{color:'#9a9490',fontSize:11}}>EUR {Math.round(parseInt(amount)*0.20).toLocaleString()}</span>
                       </div>
                       <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
-                        <span style={{color:'#4a6880',fontSize:11}}>Balance (80%) — on final report</span>
-                        <span style={{color:'#4a6880',fontSize:11}}>EUR {Math.round(parseInt(amount)*0.80).toLocaleString()}</span>
+                        <span style={{color:'#9a9490',fontSize:11}}>Balance (80%) — on final report</span>
+                        <span style={{color:'#9a9490',fontSize:11}}>EUR {Math.round(parseInt(amount)*0.80).toLocaleString()}</span>
                       </div>
                       <div style={{display:'flex',justifyContent:'space-between'}}>
-                        <span style={{color:'#4a6880',fontSize:11}}>Platform fee (1%)</span>
-                        <span style={{color:'#4a6880',fontSize:11}}>- EUR {Math.round(parseInt(amount)*0.01).toLocaleString()}</span>
+                        <span style={{color:'#9a9490',fontSize:11}}>Platform fee (1%)</span>
+                        <span style={{color:'#9a9490',fontSize:11}}>- EUR {Math.round(parseInt(amount)*0.01).toLocaleString()}</span>
                       </div>
                     </div>
                   )}
                   <button onClick={()=>submitQuote(quoting.id)} disabled={!amount||!proposedDatetime}
-                    style={{width:'100%',background:(!amount||!proposedDatetime)?'rgba(221,46,30,0.45)':'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'14px',cursor:'pointer',fontWeight:700,fontSize:14}}>
+                    style={{width:'100%',background:(!amount||!proposedDatetime)?'rgba(196,80,58,0.45)':'#C4503A',color:'#fff',border:'none',borderRadius:7,padding:'14px',cursor:'pointer',fontWeight:700,fontSize:14}}>
                     Send Quote
                   </button>
                 </div>
@@ -768,67 +766,67 @@ function ExpertDashboard({user}) {
 
         {activeTab==='myquotes'&&(
           <div>
-            <h2 style={{color:'#fff',fontSize:22,fontWeight:800,marginBottom:16}}>My Quotes</h2>
+            <h2 style={{color:'#EDE9E4',fontSize:22,fontWeight:800,marginBottom:16}}>My Quotes</h2>
             {myQuotes.filter(q=>q.missions?.status!=='completed').length===0&&(
-              <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:12,padding:36,textAlign:'center'}}>
+              <div style={{background:'#EDE9E4',border:'1px solid #d8d4ce',borderRadius:12,padding:36,textAlign:'center',boxShadow:'0 2px 8px rgba(0,0,0,0.15)'}}>
                 <div style={{fontSize:32,marginBottom:12}}>📝</div>
-                <div style={{color:'#8fa8c0',fontSize:14}}>No quotes submitted yet</div>
+                <div style={{color:'#6a6460',fontSize:14}}>No quotes submitted yet</div>
               </div>
             )}
             <div style={{display:'flex',flexDirection:'column',gap:12}}>
               {myQuotes.filter(q=>q.missions?.status!=='completed').map(q=>(
-                <div key={q.id} style={{background:'#132030',border:q.status==='accepted'?'1px solid #2e7d32':q.status==='negotiating'?'1px solid #f0a500':q.status==='declined'?'1px solid #700300':'1px solid #1e3a52',borderRadius:12,padding:20}}>
+                <div key={q.id} style={{background:'#EDE9E4',border:q.status==='accepted'?'1px solid #4a7a5a':q.status==='negotiating'?'1px solid #8B6F47':q.status==='declined'?'1px solid #C4503A':'1px solid #d8d4ce',borderRadius:12,padding:20,boxShadow:'0 2px 8px rgba(0,0,0,0.1)'}}>
                   <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:12}}>
                     <div>
-                      <div style={{color:'#4a6880',fontSize:10,marginBottom:4}}>{q.missions?.reference}</div>
-                      <div style={{color:'#fff',fontWeight:700,fontSize:16}}>{q.missions?.cargo_type}</div>
-                      <div style={{color:'#8fa8c0',fontSize:12,marginTop:2}}>{q.missions?.location_place||q.missions?.location_text?.split(',')[0]}</div>
+                      <div style={{color:'#9a9490',fontSize:10,marginBottom:4}}>{q.missions?.reference}</div>
+                      <div style={{color:'#1a1410',fontWeight:700,fontSize:16}}>{q.missions?.cargo_type}</div>
+                      <div style={{color:'#6a6460',fontSize:12,marginTop:2}}>{q.missions?.location_place||q.missions?.location_text?.split(',')[0]}</div>
                     </div>
-                    <span style={{background:'#1e3a52',color:statusColor[q.status]||'#8fa8c0',padding:'3px 12px',borderRadius:4,fontSize:10,fontWeight:700,textTransform:'uppercase'}}>
+                    <span style={{background:'rgba(138,132,128,0.15)',color:statusColor[q.status]||'#8a8480',padding:'3px 12px',borderRadius:4,fontSize:10,fontWeight:700,textTransform:'uppercase',border:`1px solid ${statusColor[q.status]||'#9a9490'}`}}>
                       {statusLabel[q.status]||q.status}
                     </span>
                   </div>
                   <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:12}}>
-                    <div style={{background:'#0f1e2e',borderRadius:7,padding:'8px 12px'}}>
-                      <div style={{color:'#4a6880',fontSize:9,marginBottom:2}}>YOUR QUOTE</div>
-                      <div style={{color:'#f0a500',fontSize:16,fontWeight:800}}>EUR {q.amount?.toLocaleString()}</div>
+                    <div style={{background:'#f5f2ee',borderRadius:7,padding:'8px 12px',border:'1px solid #d8d4ce'}}>
+                      <div style={{color:'#9a9490',fontSize:9,marginBottom:2}}>YOUR QUOTE</div>
+                      <div style={{color:'#C4503A',fontSize:16,fontWeight:800}}>EUR {q.amount?.toLocaleString()}</div>
                     </div>
-                    <div style={{background:'#0f1e2e',borderRadius:7,padding:'8px 12px'}}>
-                      <div style={{color:'#4a6880',fontSize:9,marginBottom:2}}>PROPOSED DATE</div>
-                      <div style={{color:'#fff',fontSize:11}}>{q.proposed_datetime?new Date(q.proposed_datetime).toLocaleString('en-GB'):'Not specified'}</div>
+                    <div style={{background:'#f5f2ee',borderRadius:7,padding:'8px 12px',border:'1px solid #d8d4ce'}}>
+                      <div style={{color:'#9a9490',fontSize:9,marginBottom:2}}>PROPOSED DATE</div>
+                      <div style={{color:'#1a1410',fontSize:11}}>{q.proposed_datetime?new Date(q.proposed_datetime).toLocaleString('en-GB'):'Not specified'}</div>
                     </div>
                   </div>
 
                   {q.status==='accepted'&&(
-                    <div style={{background:'rgba(240,165,0,0.08)',border:'1px solid #f0a500',borderRadius:8,padding:'10px 14px',marginBottom:10}}>
+                    <div style={{background:'rgba(139,111,71,0.1)',border:'1px solid #8B6F47',borderRadius:8,padding:'10px 14px',marginBottom:10}}>
                       <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
-                        <span style={{color:'#f0a500',fontSize:11,fontWeight:700}}>Deposit (20%)</span>
-                        <span style={{color:q.deposit_paid?'#2e7d32':'#f0a500',fontSize:11,fontWeight:700}}>
+                        <span style={{color:'#8B6F47',fontSize:11,fontWeight:700}}>Deposit (20%)</span>
+                        <span style={{color:q.deposit_paid?'#4a7a5a':'#8B6F47',fontSize:11,fontWeight:700}}>
                           EUR {Math.round(q.amount*0.20).toLocaleString()} {q.deposit_paid?'✓ Received':'— Pending'}
                         </span>
                       </div>
                       <div style={{display:'flex',justifyContent:'space-between'}}>
-                        <span style={{color:'#8fa8c0',fontSize:11}}>Balance (80%)</span>
-                        <span style={{color:'#8fa8c0',fontSize:11}}>EUR {Math.round(q.amount*0.80).toLocaleString()} — on final report</span>
+                        <span style={{color:'#8a8480',fontSize:11}}>Balance (80%)</span>
+                        <span style={{color:'#8a8480',fontSize:11}}>EUR {Math.round(q.amount*0.80).toLocaleString()} — on final report</span>
                       </div>
                     </div>
                   )}
 
                   {q.status==='negotiating'&&q.counter_proposal&&(
-                    <div style={{background:'rgba(240,165,0,0.08)',border:'1px solid #f0a500',borderRadius:8,padding:'12px 14px',marginBottom:12}}>
-                      <div style={{color:'#f0a500',fontSize:10,fontWeight:700,marginBottom:6}}>COUNTER-PROPOSAL FROM INSURER</div>
-                      <div style={{color:'#8fa8c0',fontSize:12,lineHeight:1.5,marginBottom:12}}>{q.counter_proposal}</div>
+                    <div style={{background:'rgba(139,111,71,0.08)',border:'1px solid #8B6F47',borderRadius:8,padding:'12px 14px',marginBottom:12}}>
+                      <div style={{color:'#8B6F47',fontSize:10,fontWeight:700,marginBottom:6}}>COUNTER-PROPOSAL FROM INSURER</div>
+                      <div style={{color:'#6a6460',fontSize:12,lineHeight:1.5,marginBottom:12}}>{q.counter_proposal}</div>
                       <div style={{display:'flex',gap:8}}>
-                        <button onClick={()=>respondToCounter(q.id, false)} style={{flex:1,background:'transparent',color:'#dd2e1e',border:'1px solid #dd2e1e',borderRadius:6,padding:'9px',cursor:'pointer',fontWeight:700,fontSize:12}}>Decline</button>
-                        <button onClick={()=>respondToCounter(q.id, true)} style={{flex:1,background:'#2e7d32',color:'#fff',border:'none',borderRadius:6,padding:'9px',cursor:'pointer',fontWeight:700,fontSize:12}}>Accept Counter-Proposal</button>
+                        <button onClick={()=>respondToCounter(q.id, false)} style={{flex:1,background:'transparent',color:'#C4503A',border:'1px solid #C4503A',borderRadius:6,padding:'9px',cursor:'pointer',fontWeight:700,fontSize:12}}>Decline</button>
+                        <button onClick={()=>respondToCounter(q.id, true)} style={{flex:1,background:'#4a7a5a',color:'#fff',border:'none',borderRadius:6,padding:'9px',cursor:'pointer',fontWeight:700,fontSize:12}}>Accept Counter-Proposal</button>
                       </div>
                     </div>
                   )}
 
                   {q.status==='declined'&&q.decline_reason&&(
-                    <div style={{background:'rgba(221,46,30,0.08)',border:'1px solid #700300',borderRadius:6,padding:'8px 12px'}}>
-                      <div style={{color:'#dd2e1e',fontSize:9,fontWeight:700,marginBottom:2}}>REASON FOR DECLINE</div>
-                      <div style={{color:'#8fa8c0',fontSize:12}}>{q.decline_reason}</div>
+                    <div style={{background:'rgba(196,80,58,0.08)',border:'1px solid #C4503A',borderRadius:6,padding:'8px 12px'}}>
+                      <div style={{color:'#C4503A',fontSize:9,fontWeight:700,marginBottom:2}}>REASON FOR DECLINE</div>
+                      <div style={{color:'#6a6460',fontSize:12}}>{q.decline_reason}</div>
                     </div>
                   )}
                 </div>
@@ -839,23 +837,23 @@ function ExpertDashboard({user}) {
 
         {activeTab==='active'&&(
           <div>
-            <h2 style={{color:'#fff',fontSize:22,fontWeight:800,marginBottom:16}}>Active Missions</h2>
+            <h2 style={{color:'#EDE9E4',fontSize:22,fontWeight:800,marginBottom:16}}>Active Missions</h2>
             {acceptedQuotes.length===0&&(
-              <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:12,padding:36,textAlign:'center'}}>
+              <div style={{background:'#EDE9E4',border:'1px solid #d8d4ce',borderRadius:12,padding:36,textAlign:'center',boxShadow:'0 2px 8px rgba(0,0,0,0.15)'}}>
                 <div style={{fontSize:32,marginBottom:12}}>🗂️</div>
-                <div style={{color:'#8fa8c0',fontSize:14}}>No active missions yet</div>
+                <div style={{color:'#6a6460',fontSize:14}}>No active missions yet</div>
               </div>
             )}
             <div style={{display:'flex',flexDirection:'column',gap:16}}>
               {acceptedQuotes.map(q=>(
-                <div key={q.id} style={{background:'#132030',border:'1px solid #2e7d32',borderRadius:12,padding:24}}>
+                <div key={q.id} style={{background:'#EDE9E4',border:'1px solid #4a7a5a',borderRadius:12,padding:24,boxShadow:'0 2px 8px rgba(0,0,0,0.15)'}}>
                   <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:16}}>
                     <div>
-                      <div style={{color:'#2e7d32',fontSize:10,fontWeight:700,marginBottom:4}}>MISSION ACCEPTED</div>
-                      <div style={{color:'#fff',fontWeight:700,fontSize:20}}>{q.missions?.cargo_type}</div>
-                      <div style={{color:'#8fa8c0',fontSize:12,marginTop:2}}>{q.missions?.reference}</div>
+                      <div style={{color:'#4a7a5a',fontSize:10,fontWeight:700,marginBottom:4}}>MISSION ACCEPTED</div>
+                      <div style={{color:'#1a1410',fontWeight:700,fontSize:20}}>{q.missions?.cargo_type}</div>
+                      <div style={{color:'#8a8480',fontSize:12,marginTop:2}}>{q.missions?.reference}</div>
                     </div>
-                    <span style={{background:'rgba(46,125,50,0.12)',border:'1px solid #2e7d32',color:'#81c784',padding:'3px 12px',borderRadius:4,fontSize:10,fontWeight:700}}>IN PROGRESS</span>
+                    <span style={{background:'rgba(74,122,90,0.12)',border:'1px solid #4a7a5a',color:'#4a7a5a',padding:'3px 12px',borderRadius:4,fontSize:10,fontWeight:700}}>IN PROGRESS</span>
                   </div>
 
                   <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:16}}>
@@ -873,16 +871,16 @@ function ExpertDashboard({user}) {
                       ['Contact Job',q.missions?.contact_job||'-'],
                       ['Your Fee',`EUR ${q.amount?.toLocaleString()}`],
                     ].map(([k,v])=>(
-                      <div key={k} style={{background:'#0f1e2e',borderRadius:7,padding:'8px 12px'}}>
-                        <div style={{color:'#4a6880',fontSize:9,marginBottom:2}}>{k}</div>
-                        <div style={{color:'#e8edf5',fontSize:11}}>{v}</div>
+                      <div key={k} style={{background:'#f5f2ee',borderRadius:7,padding:'8px 12px',border:'1px solid #d8d4ce'}}>
+                        <div style={{color:'#9a9490',fontSize:9,marginBottom:2}}>{k}</div>
+                        <div style={{color:'#1a1410',fontSize:11,fontWeight: k==='Your Fee'?700:400}}>{k==='Your Fee'?<span style={{color:'#C4503A'}}>{v}</span>:v}</div>
                       </div>
                     ))}
                   </div>
 
                   {q.missions?.documents&&q.missions.documents.length>0&&(
-                    <div style={{background:'#0f1e2e',borderRadius:7,padding:'10px 14px',marginBottom:16}}>
-                      <div style={{color:'#4a6880',fontSize:9,marginBottom:8,letterSpacing:'0.1em',textTransform:'uppercase'}}>MISSION DOCUMENTS</div>
+                    <div style={{background:'#f5f2ee',borderRadius:7,padding:'10px 14px',marginBottom:16,border:'1px solid #d8d4ce'}}>
+                      <div style={{color:'#9a9490',fontSize:9,marginBottom:8,letterSpacing:'0.1em',textTransform:'uppercase'}}>MISSION DOCUMENTS</div>
                       <div style={{display:'flex',flexDirection:'column',gap:6}}>
                         {q.missions.documents.map((path,i)=>(
                           <div key={i} style={{display:'flex',alignItems:'center',gap:8,cursor:'pointer'}}
@@ -891,7 +889,7 @@ function ExpertDashboard({user}) {
                               if(data?.signedUrl) window.open(data.signedUrl,'_blank')
                             }}>
                             <span>📄</span>
-                            <span style={{color:'#5a9eff',fontSize:12,textDecoration:'underline'}}>{path.split('/').pop()}</span>
+                            <span style={{color:'#C4503A',fontSize:12,textDecoration:'underline'}}>{path.split('/').pop()}</span>
                           </div>
                         ))}
                       </div>
@@ -899,29 +897,29 @@ function ExpertDashboard({user}) {
                   )}
 
                   {q.missions?.notes&&(
-                    <div style={{background:'#0f1e2e',borderRadius:7,padding:'10px 14px',marginBottom:16}}>
-                      <div style={{color:'#4a6880',fontSize:9,marginBottom:4}}>NOTES FROM INSURER</div>
-                      <div style={{color:'#8fa8c0',fontSize:12,lineHeight:1.5}}>{q.missions.notes}</div>
+                    <div style={{background:'#f5f2ee',borderRadius:7,padding:'10px 14px',marginBottom:16,border:'1px solid #d8d4ce'}}>
+                      <div style={{color:'#9a9490',fontSize:9,marginBottom:4}}>NOTES FROM INSURER</div>
+                      <div style={{color:'#6a6460',fontSize:12,lineHeight:1.5}}>{q.missions.notes}</div>
                     </div>
                   )}
 
-                  <div style={{borderTop:'1px solid #1e3a52',paddingTop:16}}>
-                    <div style={{color:'#fff',fontWeight:700,fontSize:12,letterSpacing:'0.08em',textTransform:'uppercase',marginBottom:12}}>Survey Reports</div>
+                  <div style={{borderTop:'1px solid #d8d4ce',paddingTop:16}}>
+                    <div style={{color:'#1a1410',fontWeight:700,fontSize:12,letterSpacing:'0.08em',textTransform:'uppercase',marginBottom:12}}>Survey Reports</div>
                     <div style={{display:'flex',flexDirection:'column',gap:12}}>
                       {[
-                        {type:'memo',label:'Memo Report',sub:'Within 24h — photos, observations, preliminary findings',color:'#f0a500'},
-                        {type:'preliminary',label:'Preliminary Report',sub:'Detailed preliminary assessment',color:'#5a9eff'},
-                        {type:'final',label:'Final Report',sub:'Closes the file — triggers final payment',color:'#2e7d32'},
+                        {type:'memo',label:'Memo Report',sub:'Within 24h — photos, observations, preliminary findings',color:'#8B6F47'},
+                        {type:'preliminary',label:'Preliminary Report',sub:'Detailed preliminary assessment',color:'#6a6460'},
+                        {type:'final',label:'Final Report',sub:'Closes the file — triggers final payment',color:'#4a7a5a'},
                       ].map(r=>{
                         const existingReport = q.missions?.survey_reports?.find(sr=>sr.report_type===r.type)
                         return (
-                          <div key={r.type} style={{background:'#0f1e2e',border:`1px solid ${existingReport?r.color:'#1e3a52'}`,borderRadius:8,padding:'12px 16px'}}>
+                          <div key={r.type} style={{background:'#f5f2ee',border:`1px solid ${existingReport?r.color:'#d8d4ce'}`,borderRadius:8,padding:'12px 16px'}}>
                             <div style={{marginBottom:8}}>
                               <div style={{display:'flex',alignItems:'center',gap:8}}>
                                 <div style={{color:r.color,fontWeight:700,fontSize:13}}>{r.label}</div>
-                                {existingReport&&<span style={{background:'rgba(46,125,50,0.12)',border:'1px solid #2e7d32',color:'#81c784',padding:'1px 8px',borderRadius:4,fontSize:9,fontWeight:700}}>UPLOADED</span>}
+                                {existingReport&&<span style={{background:'rgba(74,122,90,0.12)',border:'1px solid #4a7a5a',color:'#4a7a5a',padding:'1px 8px',borderRadius:4,fontSize:9,fontWeight:700}}>UPLOADED</span>}
                               </div>
-                              <div style={{color:'#4a6880',fontSize:11,marginTop:2}}>{r.sub}</div>
+                              <div style={{color:'#9a9490',fontSize:11,marginTop:2}}>{r.sub}</div>
                             </div>
                             {existingReport&&(
                               <div style={{marginBottom:8,display:'flex',alignItems:'center',gap:8,cursor:'pointer'}}
@@ -930,7 +928,7 @@ function ExpertDashboard({user}) {
                                   if(data?.signedUrl) window.open(data.signedUrl,'_blank')
                                 }}>
                                 <span>📄</span>
-                                <span style={{color:'#5a9eff',fontSize:12,textDecoration:'underline'}}>View uploaded report</span>
+                                <span style={{color:'#C4503A',fontSize:12,textDecoration:'underline'}}>View uploaded report</span>
                               </div>
                             )}
                             <FileUpload
@@ -1007,20 +1005,20 @@ function ExpertDashboard({user}) {
 
         {activeTab==='history'&&(
           <div>
-            <h2 style={{color:'#fff',fontSize:22,fontWeight:800,marginBottom:16}}>Mission History</h2>
+            <h2 style={{color:'#EDE9E4',fontSize:22,fontWeight:800,marginBottom:16}}>Mission History</h2>
             {history.length===0&&(
-              <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:12,padding:36,textAlign:'center'}}>
+              <div style={{background:'#EDE9E4',border:'1px solid #d8d4ce',borderRadius:12,padding:36,textAlign:'center',boxShadow:'0 2px 8px rgba(0,0,0,0.15)'}}>
                 <div style={{fontSize:32,marginBottom:12}}>📂</div>
-                <div style={{color:'#8fa8c0',fontSize:14}}>No completed missions yet</div>
+                <div style={{color:'#6a6460',fontSize:14}}>No completed missions yet</div>
               </div>
             )}
             {history.length>0&&(
-              <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:12,overflow:'hidden'}}>
+              <div style={{background:'#EDE9E4',border:'1px solid #d8d4ce',borderRadius:12,overflow:'hidden',boxShadow:'0 2px 8px rgba(0,0,0,0.15)'}}>
                 <table style={{width:'100%',borderCollapse:'collapse'}}>
                   <thead>
-                    <tr style={{background:'#0f1e2e'}}>
+                    <tr style={{background:'#3a3630'}}>
                       {['Reference','Date','Cargo','Location','Amount received'].map(h=>(
-                        <th key={h} style={{padding:'10px 14px',color:'#4a6880',fontSize:10,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',textAlign:'left',borderBottom:'1px solid #1e3a52'}}>
+                        <th key={h} style={{padding:'10px 14px',color:'#9a9490',fontSize:10,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',textAlign:'left',borderBottom:'1px solid #5a5450'}}>
                           {h}
                         </th>
                       ))}
@@ -1028,12 +1026,12 @@ function ExpertDashboard({user}) {
                   </thead>
                   <tbody>
                     {history.map((q,i)=>(
-                      <tr key={q.id} style={{borderBottom:'1px solid #1e3a52',background:i%2===0?'transparent':'rgba(255,255,255,0.01)'}}>
-                        <td style={{padding:'10px 14px',color:'#5a9eff',fontSize:12,fontFamily:'monospace'}}>{q.missions?.reference}</td>
-                        <td style={{padding:'10px 14px',color:'#8fa8c0',fontSize:12}}>{new Date(q.missions?.created_at).toLocaleDateString('en-GB')}</td>
-                        <td style={{padding:'10px 14px',color:'#fff',fontSize:12,fontWeight:600}}>{q.missions?.cargo_type||'—'}</td>
-                        <td style={{padding:'10px 14px',color:'#8fa8c0',fontSize:12}}>{q.missions?.location_place||q.missions?.location_text?.split(',')[0]||'—'}</td>
-                        <td style={{padding:'10px 14px',color:'#2e7d32',fontSize:12,fontWeight:700}}>EUR {Math.round(q.amount*0.99).toLocaleString()}</td>
+                      <tr key={q.id} style={{borderBottom:'1px solid #d8d4ce',background:i%2===0?'#EDE9E4':'#f5f2ee'}}>
+                        <td style={{padding:'10px 14px',color:'#C4503A',fontSize:12,fontFamily:'monospace'}}>{q.missions?.reference}</td>
+                        <td style={{padding:'10px 14px',color:'#6a6460',fontSize:12}}>{new Date(q.missions?.created_at).toLocaleDateString('en-GB')}</td>
+                        <td style={{padding:'10px 14px',color:'#1a1410',fontSize:12,fontWeight:600}}>{q.missions?.cargo_type||'—'}</td>
+                        <td style={{padding:'10px 14px',color:'#6a6460',fontSize:12}}>{q.missions?.location_place||q.missions?.location_text?.split(',')[0]||'—'}</td>
+                        <td style={{padding:'10px 14px',color:'#4a7a5a',fontSize:12,fontWeight:700}}>EUR {Math.round(q.amount*0.99).toLocaleString()}</td>
                       </tr>
                     ))}
                   </tbody>
