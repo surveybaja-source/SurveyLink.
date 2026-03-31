@@ -7,7 +7,6 @@ export default function Rating({ missionId, expertId, insurerId, onRated }) {
   const [hover, setHover] = useState(0)
   const [comment, setComment] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [done, setDone] = useState(false)
 
   const handleSubmit = async () => {
     if (!rating) return
@@ -19,53 +18,60 @@ export default function Rating({ missionId, expertId, insurerId, onRated }) {
       rating,
       comment,
     })
-    const { data: ratings } = await supabase
+
+    const { data: allRatings } = await supabase
       .from('ratings')
       .select('rating')
       .eq('expert_id', expertId)
-    if (ratings) {
-      const avg = ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length
+
+    if (allRatings && allRatings.length > 0) {
+      const avg = allRatings.reduce((sum, r) => sum + r.rating, 0) / allRatings.length
       await supabase.from('profiles').update({
         average_rating: Math.round(avg * 10) / 10,
-        total_ratings: ratings.length,
+        total_ratings: allRatings.length,
       }).eq('id', expertId)
     }
-    setDone(true)
+
     setSubmitting(false)
     if (onRated) onRated()
   }
 
-  if (done) return (
-    <div style={{background:'rgba(46,125,50,0.1)',border:'1px solid #2e7d32',borderRadius:8,padding:'12px 16px',textAlign:'center'}}>
-      <div style={{color:'#2e7d32',fontWeight:700,fontSize:13}}>v Thank you for your rating!</div>
-    </div>
-  )
+  const labels = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent']
 
   return (
-    <div style={{background:'#0f1e2e',border:'1px solid #f0a500',borderRadius:8,padding:'16px'}}>
-      <div style={{color:'#f0a500',fontWeight:700,fontSize:13,marginBottom:4}}>Rate this Surveyor</div>
-      <div style={{color:'#4a6880',fontSize:11,marginBottom:12}}>Mission completed — share your experience</div>
+    <div style={{background:'#f5f2ee',border:'1px solid #d8d4ce',borderRadius:12,padding:'16px 20px'}}>
+      <div style={{color:'#1a1410',fontWeight:700,fontSize:13,marginBottom:4}}>Rate this Surveyor</div>
+      <div style={{color:'#8a8480',fontSize:11,marginBottom:14}}>Mission completed — share your experience</div>
 
-      <div style={{display:'flex',gap:6,marginBottom:12}}>
+      <div style={{display:'flex',alignItems:'center',gap:4,marginBottom:12}}>
         {[1,2,3,4,5].map(star=>(
           <span key={star}
             onClick={()=>setRating(star)}
             onMouseEnter={()=>setHover(star)}
             onMouseLeave={()=>setHover(0)}
-            style={{fontSize:28,cursor:'pointer',color:(hover||rating)>=star?'#f0a500':'#1e3a52',transition:'color 0.15s'}}>
+            style={{fontSize:32,cursor:'pointer',color:(hover||rating)>=star?'#8B6F47':'#d8d4ce',transition:'color 0.1s'}}>
             ★
           </span>
         ))}
-        {rating>0&&<span style={{color:'#f0a500',fontSize:12,alignSelf:'center',marginLeft:6,fontWeight:700}}>
-          {['','Poor','Fair','Good','Very Good','Excellent'][rating]}
-        </span>}
+        {(hover||rating)>0&&(
+          <span style={{color:'#8B6F47',fontSize:12,fontWeight:700,marginLeft:8}}>
+            {labels[hover||rating]}
+          </span>
+        )}
       </div>
 
-      <textarea placeholder="Comment (optional) — describe your experience with this surveyor..." value={comment} onChange={e=>setComment(e.target.value)} rows={2}
-        style={{width:'100%',background:'#0a1520',border:'1px solid #1e3a52',borderRadius:6,padding:'8px 12px',color:'#fff',boxSizing:'border-box',fontSize:12,resize:'vertical',marginBottom:10,outline:'none'}}/>
+      <textarea
+        placeholder="Share your experience with this surveyor (optional)..."
+        value={comment}
+        onChange={e=>setComment(e.target.value)}
+        rows={2}
+        style={{width:'100%',background:'#EDE9E4',border:'1px solid #d8d4ce',borderRadius:6,padding:'9px 12px',color:'#1a1410',fontSize:12,boxSizing:'border-box',resize:'vertical',marginBottom:10}}
+      />
 
-      <button onClick={handleSubmit} disabled={!rating||submitting}
-        style={{width:'100%',background:(!rating||submitting)?'rgba(240,165,0,0.45)':'#f0a500',color:'#000',border:'none',borderRadius:7,padding:'10px',cursor:(!rating||submitting)?'not-allowed':'pointer',fontWeight:700,fontSize:12}}>
+      <button
+        onClick={handleSubmit}
+        disabled={!rating||submitting}
+        style={{width:'100%',background:(!rating||submitting)?'rgba(196,80,58,0.45)':'#C4503A',color:'#fff',border:'none',borderRadius:7,padding:'10px',cursor:'pointer',fontWeight:700,fontSize:13}}>
         {submitting?'Submitting...':'Submit Rating'}
       </button>
     </div>
