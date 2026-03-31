@@ -48,43 +48,43 @@ export default function RegisterInsurer() {
 
   const Inp = ({label,ph,val,set,type='text'}) => (
     <div style={{marginBottom:14}}>
-      <label style={{display:'block',color:'#6a6460',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>{label}</label>
+      <label style={{display:'block',color:'#8fa8c0',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>{label}</label>
       <input type={type} placeholder={ph} value={val} onChange={e=>set(e.target.value)}
-        style={{width:'100%',background:'#f5f2ee',border:'1px solid #d8d4ce',borderRadius:7,padding:'11px 14px',color:'#1a1410',fontSize:14,boxSizing:'border-box',outline:'none'}}/>
+        style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 14px',color:'#fff',fontSize:14,boxSizing:'border-box',outline:'none'}}/>
     </div>
   )
 
   const steps = ['Account','Identity','Location','Banking']
 
   return (
-    <div style={{background:'#4a4640',minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
+    <div style={{background:'#0c1a27',minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
       <div style={{width:'100%',maxWidth:480}}>
 
         <div style={{textAlign:'center',marginBottom:32}}>
           <div style={{color:'#fff',fontWeight:900,fontSize:36,letterSpacing:'0.05em'}}>
-            INSPE<span style={{color:'#C4503A'}}>LINK</span>
+            INSPE<span style={{color:'#dd2e1e'}}>LINK</span>
           </div>
-          <div style={{color:'#9a9490',fontSize:13,marginTop:6}}>Register as Insurer / P&I</div>
+          <div style={{color:'#8fa8c0',fontSize:13,marginTop:6}}>Register as Insurer / P&I</div>
         </div>
 
         <div style={{display:'flex',gap:4,marginBottom:24,justifyContent:'center'}}>
           {steps.map((s,i)=>(
             <div key={s} style={{display:'flex',alignItems:'center',gap:4}}>
-              <div style={{width:28,height:28,borderRadius:'50%',background:step>i+1?'#4a7a5a':step===i+1?'#C4503A':'#5a5450',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:'#fff'}}>
+              <div style={{width:28,height:28,borderRadius:'50%',background:step>i+1?'#2e7d32':step===i+1?'#dd2e1e':'#1e3a52',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:'#fff'}}>
                 {step>i+1?'✓':i+1}
               </div>
-              <span style={{color:step===i+1?'#EDE9E4':'#6a6460',fontSize:10,fontWeight:step===i+1?700:400}}>{s}</span>
-              {i<steps.length-1&&<div style={{width:20,height:1,background:'#5a5450',margin:'0 4px'}}/>}
+              <span style={{color:step===i+1?'#fff':'#4a6880',fontSize:10,fontWeight:step===i+1?700:400}}>{s}</span>
+              {i<steps.length-1&&<div style={{width:20,height:1,background:'#1e3a52',margin:'0 4px'}}/>}
             </div>
           ))}
         </div>
 
-        <div style={{background:'#EDE9E4',borderRadius:16,padding:28,boxShadow:'0 8px 32px rgba(0,0,0,0.2)'}}>
-          {error&&<div style={{background:'rgba(196,80,58,0.1)',border:'1px solid #C4503A',borderRadius:8,padding:'10px 14px',marginBottom:16,color:'#C4503A',fontSize:13}}>{error}</div>}
+        <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:16,padding:28,boxShadow:'0 8px 32px rgba(0,0,0,0.3)'}}>
+          {error&&<div style={{background:'rgba(221,46,30,0.1)',border:'1px solid #dd2e1e',borderRadius:8,padding:'10px 14px',marginBottom:16,color:'#dd2e1e',fontSize:13}}>{error}</div>}
 
           {step===1&&(
             <div>
-              <h3 style={{color:'#1a1410',fontWeight:800,fontSize:18,marginTop:0,marginBottom:20}}>Account Details</h3>
+              <h3 style={{color:'#fff',fontWeight:800,fontSize:18,marginTop:0,marginBottom:20}}>Account Details</h3>
               <Inp label="Email" ph="your@email.com" val={form.email} set={u('email')} type="email"/>
               <Inp label="Password" ph="Min. 8 characters" val={form.password} set={u('password')} type="password"/>
               <Inp label="Confirm Password" ph="Repeat password" val={form.confirm} set={u('confirm')} type="password"/>
@@ -93,7 +93,7 @@ export default function RegisterInsurer() {
 
           {step===2&&(
             <div>
-              <h3 style={{color:'#1a1410',fontWeight:800,fontSize:18,marginTop:0,marginBottom:20}}>Your Identity</h3>
+              <h3 style={{color:'#fff',fontWeight:800,fontSize:18,marginTop:0,marginBottom:20}}>Your Identity</h3>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
                 <Inp label="First Name" ph="John" val={form.first_name} set={u('first_name')}/>
                 <Inp label="Last Name" ph="Smith" val={form.last_name} set={u('last_name')}/>
@@ -105,11 +105,11 @@ export default function RegisterInsurer() {
 
           {step===3&&(
             <div>
-              <h3 style={{color:'#1a1410',fontWeight:800,fontSize:18,marginTop:0,marginBottom:20}}>Location</h3>
+              <h3 style={{color:'#fff',fontWeight:800,fontSize:18,marginTop:0,marginBottom:20}}>Location</h3>
               <div style={{marginBottom:14}}>
-                <label style={{display:'block',color:'#6a6460',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>Country</label>
+                <label style={{display:'block',color:'#8fa8c0',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>Country</label>
                 <select value={form.country} onChange={e=>u('country')(e.target.value)}
-                  style={{width:'100%',background:'#f5f2ee',border:'1px solid #d8d4ce',borderRadius:7,padding:'11px 14px',color:form.country?'#1a1410':'#9a9490',fontSize:14,boxSizing:'border-box'}}>
+                  style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 14px',color:form.country?'#fff':'#4a6880',fontSize:14,boxSizing:'border-box'}}>
                   <option value="">Select country...</option>
                   {COUNTRIES.map(c=><option key={c} value={c}>{c}</option>)}
                 </select>
@@ -120,8 +120,8 @@ export default function RegisterInsurer() {
 
           {step===4&&(
             <div>
-              <h3 style={{color:'#1a1410',fontWeight:800,fontSize:18,marginTop:0,marginBottom:8}}>Banking Information</h3>
-              <p style={{color:'#8a8480',fontSize:12,marginBottom:20,lineHeight:1.6}}>Optional — used for potential refunds or platform transactions.</p>
+              <h3 style={{color:'#fff',fontWeight:800,fontSize:18,marginTop:0,marginBottom:8}}>Banking Information</h3>
+              <p style={{color:'#8fa8c0',fontSize:12,marginBottom:20,lineHeight:1.6}}>Optional — used for potential refunds or platform transactions.</p>
               <Inp label="IBAN" ph="IBAN (optional)" val={form.iban} set={u('iban')}/>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
                 <Inp label="BIC / SWIFT" ph="BIC" val={form.bic} set={u('bic')}/>
@@ -133,30 +133,30 @@ export default function RegisterInsurer() {
           <div style={{display:'flex',gap:10,marginTop:20}}>
             {step>1&&(
               <button onClick={()=>setStep(s=>s-1)}
-                style={{flex:1,background:'transparent',color:'#6a6460',border:'1px solid #d8d4ce',borderRadius:7,padding:'12px',cursor:'pointer',fontWeight:600,fontSize:14}}>
+                style={{flex:1,background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:7,padding:'12px',cursor:'pointer',fontWeight:600,fontSize:14}}>
                 Back
               </button>
             )}
             {step<4?(
               <button onClick={()=>{setError(null);setStep(s=>s+1)}}
-                style={{flex:2,background:'#C4503A',color:'#fff',border:'none',borderRadius:7,padding:'12px',cursor:'pointer',fontWeight:700,fontSize:14}}>
+                style={{flex:2,background:'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'12px',cursor:'pointer',fontWeight:700,fontSize:14}}>
                 Continue
               </button>
             ):(
               <button onClick={handleRegister} disabled={loading}
-                style={{flex:2,background:loading?'rgba(74,122,90,0.45)':'#4a7a5a',color:'#fff',border:'none',borderRadius:7,padding:'12px',cursor:'pointer',fontWeight:700,fontSize:14}}>
+                style={{flex:2,background:loading?'rgba(46,125,50,0.45)':'#2e7d32',color:'#fff',border:'none',borderRadius:7,padding:'12px',cursor:'pointer',fontWeight:700,fontSize:14}}>
                 {loading?'Creating account...':'Create Account'}
               </button>
             )}
           </div>
 
-          <div style={{marginTop:20,paddingTop:16,borderTop:'1px solid #d8d4ce',textAlign:'center'}}>
-            <span style={{color:'#8a8480',fontSize:12}}>Already have an account? </span>
-            <button onClick={()=>router.push('/auth')} style={{background:'none',border:'none',color:'#C4503A',cursor:'pointer',fontSize:12,fontWeight:700}}>Sign In</button>
+          <div style={{marginTop:20,paddingTop:16,borderTop:'1px solid #1e3a52',textAlign:'center'}}>
+            <span style={{color:'#8fa8c0',fontSize:12}}>Already have an account? </span>
+            <button onClick={()=>router.push('/auth')} style={{background:'none',border:'none',color:'#dd2e1e',cursor:'pointer',fontSize:12,fontWeight:700}}>Sign In</button>
           </div>
         </div>
 
-        <p style={{color:'#6a6460',fontSize:11,textAlign:'center',marginTop:16}}>
+        <p style={{color:'#4a6880',fontSize:11,textAlign:'center',marginTop:16}}>
           © 2026 INSPELINK — Marine Cargo Survey Platform
         </p>
       </div>
