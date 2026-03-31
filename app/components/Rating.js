@@ -39,9 +39,9 @@ export default function Rating({ missionId, expertId, insurerId, onRated }) {
   const labels = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent']
 
   return (
-    <div style={{background:'#f5f2ee',border:'1px solid #d8d4ce',borderRadius:12,padding:'16px 20px'}}>
-      <div style={{color:'#1a1410',fontWeight:700,fontSize:13,marginBottom:4}}>Rate this Surveyor</div>
-      <div style={{color:'#8a8480',fontSize:11,marginBottom:14}}>Mission completed — share your experience</div>
+    <div style={{background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:12,padding:'16px 20px'}}>
+      <div style={{color:'#fff',fontWeight:700,fontSize:13,marginBottom:4}}>Rate this Surveyor</div>
+      <div style={{color:'#4a6880',fontSize:11,marginBottom:14}}>Mission completed — share your experience</div>
 
       <div style={{display:'flex',alignItems:'center',gap:4,marginBottom:12}}>
         {[1,2,3,4,5].map(star=>(
@@ -49,12 +49,12 @@ export default function Rating({ missionId, expertId, insurerId, onRated }) {
             onClick={()=>setRating(star)}
             onMouseEnter={()=>setHover(star)}
             onMouseLeave={()=>setHover(0)}
-            style={{fontSize:32,cursor:'pointer',color:(hover||rating)>=star?'#8B6F47':'#d8d4ce',transition:'color 0.1s'}}>
+            style={{fontSize:32,cursor:'pointer',color:(hover||rating)>=star?'#f0a500':'#1e3a52',transition:'color 0.1s'}}>
             ★
           </span>
         ))}
         {(hover||rating)>0&&(
-          <span style={{color:'#8B6F47',fontSize:12,fontWeight:700,marginLeft:8}}>
+          <span style={{color:'#f0a500',fontSize:12,fontWeight:700,marginLeft:8}}>
             {labels[hover||rating]}
           </span>
         )}
@@ -65,13 +65,13 @@ export default function Rating({ missionId, expertId, insurerId, onRated }) {
         value={comment}
         onChange={e=>setComment(e.target.value)}
         rows={2}
-        style={{width:'100%',background:'#EDE9E4',border:'1px solid #d8d4ce',borderRadius:6,padding:'9px 12px',color:'#1a1410',fontSize:12,boxSizing:'border-box',resize:'vertical',marginBottom:10}}
+        style={{width:'100%',background:'#132030',border:'1px solid #1e3a52',borderRadius:6,padding:'9px 12px',color:'#fff',fontSize:12,boxSizing:'border-box',resize:'vertical',marginBottom:10}}
       />
 
       <button
         onClick={handleSubmit}
         disabled={!rating||submitting}
-        style={{width:'100%',background:(!rating||submitting)?'rgba(196,80,58,0.45)':'#C4503A',color:'#fff',border:'none',borderRadius:7,padding:'10px',cursor:'pointer',fontWeight:700,fontSize:13}}>
+        style={{width:'100%',background:(!rating||submitting)?'rgba(221,46,30,0.45)':'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'10px',cursor:'pointer',fontWeight:700,fontSize:13}}>
         {submitting?'Submitting...':'Submit Rating'}
       </button>
     </div>
