@@ -2,206 +2,163 @@
 import { useState } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { useRouter } from 'next/navigation'
+import { COUNTRIES } from '../../../lib/locations'
 
-export default function InsurerRegister() {
-  const [step, setStep] = useState(0)
+export default function RegisterInsurer() {
+  const router = useRouter()
+  const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const router = useRouter()
 
-  const [f, setF] = useState({
-    company:'',country:'',city:'',zip:'',address:'',regNum:'',vatNum:'',website:'',activityType:'',
-    firstName:'',lastName:'',email:'',phone:'',jobTitle:'',password:'',password2:'',
-    iban:'',bic:'',bankName:'',accountHolder:'',agreed:false
+  const [form, setForm] = useState({
+    email: '', password: '', confirm: '',
+    first_name: '', last_name: '', company: '',
+    country: '', city: '', phone: '',
+    iban: '', bic: '', bank_name: '',
   })
 
-  const u = k => v => setF(p => ({...p,[k]:v}))
+  const u = k => v => setForm(p => ({...p,[k]:v}))
 
-  const STEPS = ['Company','Contact','Documents','Banking']
-  const COUNTRIES = ['France','Belgium','Netherlands','Germany','United Kingdom','Spain','Italy','Singapore','UAE','China','United States','Other']
-  const ACTIVITIES = ['Marine Insurer','P&I Club','Lloyd\'s Syndicate','Insurance Broker','Reinsurer','Average Adjuster','Other']
-
-  const handleSubmit = async () => {
+  const handleRegister = async () => {
+    if (form.password !== form.confirm) { setError('Passwords do not match'); return }
     setLoading(true)
     setError(null)
-    const { data, error } = await supabase.auth.signUp({email:f.email,password:f.password})
-    if (error) { setError(error.message); setLoading(false); return }
-    await supabase.from('profiles').insert({
-      id:data.user.id,role:'insurer',email:f.email,
-      company:f.company,first_name:f.firstName,last_name:f.lastName,
-      phone:f.phone,country:f.country,city:f.city,
-      iban:f.iban,bic:f.bic,bank_name:f.bankName,verified:false
-    })
-    router.push('/pending-insurer')
+    const { data, error: signUpError } = await supabase.auth.signUp({ email: form.email, password: form.password })
+    if (signUpError) { setError(signUpError.message); setLoading(false); return }
+    if (data.user) {
+      await supabase.from('profiles').insert({
+        id: data.user.id,
+        role: 'insurer',
+        email: form.email,
+        first_name: form.first_name,
+        last_name: form.last_name,
+        company: form.company,
+        country: form.country,
+        city: form.city,
+        phone: form.phone,
+        iban: form.iban,
+        bic: form.bic,
+        bank_name: form.bank_name,
+        verified: false,
+      })
+      router.push('/pending-insurer')
+    }
     setLoading(false)
   }
 
-  const Inp = ({id,ph,val,set,type='text'}) => (
-    <div style={{marginBottom:12}}>
-      <input id={id} name={id} type={type} placeholder={ph} value={val} onChange={e=>set(e.target.value)}
-        style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:'#fff',boxSizing:'border-box',fontSize:13}}/>
+  const Inp = ({label,ph,val,set,type='text'}) => (
+    <div style={{marginBottom:14}}>
+      <label style={{display:'block',color:'#6a6460',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>{label}</label>
+      <input type={type} placeholder={ph} value={val} onChange={e=>set(e.target.value)}
+        style={{width:'100%',background:'#f5f2ee',border:'1px solid #d8d4ce',borderRadius:7,padding:'11px 14px',color:'#1a1410',fontSize:14,boxSizing:'border-box',outline:'none'}}/>
     </div>
   )
 
-  const Sel = ({id,opts,val,set}) => (
-    <div style={{marginBottom:12}}>
-      <select id={id} value={val} onChange={e=>set(e.target.value)}
-        style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'10px 14px',color:val?'#fff':'#4a6880',boxSizing:'border-box',fontSize:13}}>
-        <option value="">Select...</option>
-        {opts.map(o=><option key={o} value={o}>{o}</option>)}
-      </select>
-    </div>
-  )
-
-  const SecT = ({text}) => (
-    <div style={{color:'#fff',fontWeight:700,fontSize:13,letterSpacing:'0.08em',textTransform:'uppercase',margin:'20px 0 12px',paddingBottom:8,borderBottom:'1px solid #1e3a52'}}>{text}</div>
-  )
+  const steps = ['Account','Identity','Location','Banking']
 
   return (
-    <div style={{background:'#0c1a27',minHeight:'100vh',padding:'32px 24px'}}>
-      <div style={{maxWidth:640,margin:'0 auto'}}>
-        <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:28}}>
-          <button onClick={()=>step>0?setStep(s=>s-1):router.push('/auth')}
-            style={{background:'none',border:'1px solid #1e3a52',borderRadius:6,padding:'6px 12px',color:'#8fa8c0',cursor:'pointer',fontSize:11}}>
-            Back
-          </button>
-          <div>
-            <div style={{color:'#4a6880',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase'}}>Registration - Insurer / Broker</div>
-            <div style={{color:'#fff',fontWeight:800,fontSize:22}}>Create your company account</div>
+    <div style={{background:'#4a4640',minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
+      <div style={{width:'100%',maxWidth:480}}>
+
+        <div style={{textAlign:'center',marginBottom:32}}>
+          <div style={{color:'#fff',fontWeight:900,fontSize:36,letterSpacing:'0.05em'}}>
+            INSPE<span style={{color:'#C4503A'}}>LINK</span>
           </div>
+          <div style={{color:'#9a9490',fontSize:13,marginTop:6}}>Register as Insurer / P&I</div>
         </div>
 
-        <div style={{display:'flex',alignItems:'center',marginBottom:28}}>
-          {STEPS.map((s,i)=>(
-            <div key={i} style={{display:'flex',alignItems:'center',flex:i<STEPS.length-1?1:0}}>
-              <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:4}}>
-                <div style={{width:28,height:28,borderRadius:'50%',background:i<step?'#2e7d32':i===step?'#dd2e1e':'#132030',border:i<step?'2px solid #2e7d32':i===step?'2px solid #dd2e1e':'2px solid #1e3a52',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:800,color:'#fff'}}>
-                  {i<step?'v':i+1}
-                </div>
-                <span style={{fontSize:9,color:i===step?'#dd2e1e':'#4a6880',textTransform:'uppercase',whiteSpace:'nowrap'}}>{s}</span>
+        <div style={{display:'flex',gap:4,marginBottom:24,justifyContent:'center'}}>
+          {steps.map((s,i)=>(
+            <div key={s} style={{display:'flex',alignItems:'center',gap:4}}>
+              <div style={{width:28,height:28,borderRadius:'50%',background:step>i+1?'#4a7a5a':step===i+1?'#C4503A':'#5a5450',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:'#fff'}}>
+                {step>i+1?'✓':i+1}
               </div>
-              {i<STEPS.length-1&&<div style={{flex:1,height:2,margin:'0 6px',marginTop:-16,background:i<step?'#2e7d32':'#1e3a52'}}/>}
+              <span style={{color:step===i+1?'#EDE9E4':'#6a6460',fontSize:10,fontWeight:step===i+1?700:400}}>{s}</span>
+              {i<steps.length-1&&<div style={{width:20,height:1,background:'#5a5450',margin:'0 4px'}}/>}
             </div>
           ))}
         </div>
 
-        <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:12,padding:28}}>
-          {step===0&&(
-            <div>
-              <SecT text="Company Information"/>
-              <Inp id="company" ph="Company / Firm Name" val={f.company} set={u('company')}/>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-                <Sel id="country" opts={COUNTRIES} val={f.country} set={u('country')}/>
-                <Inp id="city" ph="City" val={f.city} set={u('city')}/>
-              </div>
-              <div style={{display:'grid',gridTemplateColumns:'120px 1fr',gap:12}}>
-                <Inp id="zip" ph="Postal Code" val={f.zip} set={u('zip')}/>
-                <Inp id="address" ph="Street Address" val={f.address} set={u('address')}/>
-              </div>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-                <Inp id="regNum" ph="Company Registration No." val={f.regNum} set={u('regNum')}/>
-                <Inp id="vatNum" ph="VAT Number" val={f.vatNum} set={u('vatNum')}/>
-              </div>
-              <Inp id="website" ph="Website (e.g. https://www.company.com)" val={f.website} set={u('website')}/>
-              <Sel id="activity" opts={ACTIVITIES} val={f.activityType} set={u('activityType')}/>
-              <div style={{display:'flex',justifyContent:'flex-end',marginTop:16}}>
-                <button onClick={()=>setStep(1)} disabled={!f.company||!f.country||!f.city}
-                  style={{background:(!f.company||!f.country||!f.city)?'rgba(221,46,30,0.45)':'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'11px 28px',cursor:'pointer',fontWeight:700}}>
-                  Next
-                </button>
-              </div>
-            </div>
-          )}
+        <div style={{background:'#EDE9E4',borderRadius:16,padding:28,boxShadow:'0 8px 32px rgba(0,0,0,0.2)'}}>
+          {error&&<div style={{background:'rgba(196,80,58,0.1)',border:'1px solid #C4503A',borderRadius:8,padding:'10px 14px',marginBottom:16,color:'#C4503A',fontSize:13}}>{error}</div>}
 
           {step===1&&(
             <div>
-              <SecT text="Contact Person"/>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-                <Inp id="firstName" ph="First Name" val={f.firstName} set={u('firstName')}/>
-                <Inp id="lastName" ph="Last Name" val={f.lastName} set={u('lastName')}/>
-              </div>
-              <Inp id="jobTitle" ph="Job Title (e.g. Claims Manager)" val={f.jobTitle} set={u('jobTitle')}/>
-              <Inp id="email" ph="Professional Email" val={f.email} set={u('email')} type="email"/>
-              <Inp id="phone" ph="Phone Number" val={f.phone} set={u('phone')}/>
-              <SecT text="Account Security"/>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-                <Inp id="pw" ph="Password (min. 6 chars)" val={f.password} set={u('password')} type="password"/>
-                <Inp id="pw2" ph="Confirm Password" val={f.password2} set={u('password2')} type="password"/>
-              </div>
-              {f.password&&f.password2&&f.password!==f.password2&&(
-                <p style={{color:'#dd2e1e',fontSize:11,marginBottom:12}}>Passwords do not match</p>
-              )}
-              <div style={{display:'flex',justifyContent:'space-between',marginTop:16}}>
-                <button onClick={()=>setStep(0)} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 24px',cursor:'pointer',fontWeight:700}}>Back</button>
-                <button onClick={()=>setStep(2)} disabled={!f.firstName||!f.lastName||!f.email||!f.password||f.password!==f.password2}
-                  style={{background:(!f.firstName||!f.lastName||!f.email||!f.password||f.password!==f.password2)?'rgba(221,46,30,0.45)':'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'11px 28px',cursor:'pointer',fontWeight:700}}>
-                  Next
-                </button>
-              </div>
+              <h3 style={{color:'#1a1410',fontWeight:800,fontSize:18,marginTop:0,marginBottom:20}}>Account Details</h3>
+              <Inp label="Email" ph="your@email.com" val={form.email} set={u('email')} type="email"/>
+              <Inp label="Password" ph="Min. 8 characters" val={form.password} set={u('password')} type="password"/>
+              <Inp label="Confirm Password" ph="Repeat password" val={form.confirm} set={u('confirm')} type="password"/>
             </div>
           )}
 
           {step===2&&(
             <div>
-              <SecT text="Legal Documents"/>
-              <p style={{color:'#8fa8c0',fontSize:12,marginBottom:16,lineHeight:1.6}}>
-                Required for account verification. PDF, JPG, PNG - max 5 MB each.
-              </p>
-              {['Company Registration Certificate','Insurance License / Regulatory Authorization','ID / Passport of Contact Person'].map(doc=>(
-                <div key={doc} style={{marginBottom:10,background:'#0f1e2e',border:'2px dashed #1e3a52',borderRadius:8,padding:'12px 16px',display:'flex',alignItems:'center',gap:12,cursor:'pointer'}}>
-                  <span style={{fontSize:18}}>📎</span>
-                  <div>
-                    <div style={{color:'#8fa8c0',fontSize:12}}>{doc}</div>
-                    <div style={{color:'#4a6880',fontSize:10,marginTop:2}}>PDF, JPG or PNG - max 5 MB</div>
-                  </div>
-                </div>
-              ))}
-              <div style={{background:'rgba(221,46,30,0.08)',border:'1px solid #700300',borderRadius:8,padding:'11px 14px',marginTop:8,display:'flex',gap:10}}>
-                <span>ℹ️</span>
-                <span style={{color:'#8fa8c0',fontSize:11,lineHeight:1.5}}>Documents reviewed by our compliance team within 24 to 48 hours.</span>
+              <h3 style={{color:'#1a1410',fontWeight:800,fontSize:18,marginTop:0,marginBottom:20}}>Your Identity</h3>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+                <Inp label="First Name" ph="John" val={form.first_name} set={u('first_name')}/>
+                <Inp label="Last Name" ph="Smith" val={form.last_name} set={u('last_name')}/>
               </div>
-              <div style={{display:'flex',justifyContent:'space-between',marginTop:16}}>
-                <button onClick={()=>setStep(1)} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 24px',cursor:'pointer',fontWeight:700}}>Back</button>
-                <button onClick={()=>setStep(3)} style={{background:'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'11px 28px',cursor:'pointer',fontWeight:700}}>Next</button>
-              </div>
+              <Inp label="Company Name" ph="Your company" val={form.company} set={u('company')}/>
+              <Inp label="Phone / WhatsApp" ph="+1 234 567 8900" val={form.phone} set={u('phone')}/>
             </div>
           )}
 
           {step===3&&(
             <div>
-              <SecT text="Banking Information"/>
-              <Inp id="holder" ph="Account Holder Name" val={f.accountHolder} set={u('accountHolder')}/>
-              <Inp id="iban" ph="IBAN" val={f.iban} set={u('iban')}/>
+              <h3 style={{color:'#1a1410',fontWeight:800,fontSize:18,marginTop:0,marginBottom:20}}>Location</h3>
+              <div style={{marginBottom:14}}>
+                <label style={{display:'block',color:'#6a6460',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>Country</label>
+                <select value={form.country} onChange={e=>u('country')(e.target.value)}
+                  style={{width:'100%',background:'#f5f2ee',border:'1px solid #d8d4ce',borderRadius:7,padding:'11px 14px',color:form.country?'#1a1410':'#9a9490',fontSize:14,boxSizing:'border-box'}}>
+                  <option value="">Select country...</option>
+                  {COUNTRIES.map(c=><option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+              <Inp label="City" ph="City" val={form.city} set={u('city')}/>
+            </div>
+          )}
+
+          {step===4&&(
+            <div>
+              <h3 style={{color:'#1a1410',fontWeight:800,fontSize:18,marginTop:0,marginBottom:8}}>Banking Information</h3>
+              <p style={{color:'#8a8480',fontSize:12,marginBottom:20,lineHeight:1.6}}>Optional — used for potential refunds or platform transactions.</p>
+              <Inp label="IBAN" ph="IBAN (optional)" val={form.iban} set={u('iban')}/>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-                <Inp id="bic" ph="BIC / SWIFT Code" val={f.bic} set={u('bic')}/>
-                <Inp id="bankName" ph="Bank Name" val={f.bankName} set={u('bankName')}/>
-              </div>
-              <div style={{background:'rgba(221,46,30,0.08)',border:'1px solid #700300',borderRadius:8,padding:'11px 14px',marginBottom:14,display:'flex',gap:10}}>
-                <span>🔒</span>
-                <span style={{color:'#8fa8c0',fontSize:11,lineHeight:1.5}}>
-                  A 1% platform commission is applied to each validated mission. Payments via Stripe Connect.
-                </span>
-              </div>
-              <div onClick={()=>setF(p=>({...p,agreed:!p.agreed}))}
-                style={{display:'flex',alignItems:'flex-start',gap:12,cursor:'pointer',marginBottom:20,padding:'12px 16px',borderRadius:8,background:f.agreed?'rgba(46,125,50,0.1)':'transparent',border:f.agreed?'1px solid #2e7d32':'1px solid #1e3a52'}}>
-                <div style={{width:18,height:18,borderRadius:4,flexShrink:0,marginTop:1,background:f.agreed?'#2e7d32':'transparent',border:f.agreed?'2px solid #2e7d32':'2px solid #1e3a52',display:'flex',alignItems:'center',justifyContent:'center'}}>
-                  {f.agreed&&<span style={{color:'#fff',fontSize:11,fontWeight:900}}>v</span>}
-                </div>
-                <span style={{color:'#8fa8c0',fontSize:11,lineHeight:1.6}}>
-                  I agree to the SurveyLink Terms of Service and Privacy Policy, and acknowledge the 1% platform commission.
-                </span>
-              </div>
-              {error&&<p style={{color:'#dd2e1e',fontSize:12,marginBottom:12}}>{error}</p>}
-              <div style={{display:'flex',justifyContent:'space-between'}}>
-                <button onClick={()=>setStep(2)} style={{background:'transparent',color:'#8fa8c0',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 24px',cursor:'pointer',fontWeight:700}}>Back</button>
-                <button onClick={handleSubmit} disabled={!f.iban||!f.bic||!f.accountHolder||!f.agreed||loading}
-                  style={{background:(!f.iban||!f.bic||!f.accountHolder||!f.agreed||loading)?'rgba(46,125,50,0.45)':'#2e7d32',color:'#fff',border:'none',borderRadius:7,padding:'11px 28px',cursor:'pointer',fontWeight:700}}>
-                  {loading?'Creating...':'Create Account'}
-                </button>
+                <Inp label="BIC / SWIFT" ph="BIC" val={form.bic} set={u('bic')}/>
+                <Inp label="Bank Name" ph="Bank" val={form.bank_name} set={u('bank_name')}/>
               </div>
             </div>
           )}
+
+          <div style={{display:'flex',gap:10,marginTop:20}}>
+            {step>1&&(
+              <button onClick={()=>setStep(s=>s-1)}
+                style={{flex:1,background:'transparent',color:'#6a6460',border:'1px solid #d8d4ce',borderRadius:7,padding:'12px',cursor:'pointer',fontWeight:600,fontSize:14}}>
+                Back
+              </button>
+            )}
+            {step<4?(
+              <button onClick={()=>{setError(null);setStep(s=>s+1)}}
+                style={{flex:2,background:'#C4503A',color:'#fff',border:'none',borderRadius:7,padding:'12px',cursor:'pointer',fontWeight:700,fontSize:14}}>
+                Continue
+              </button>
+            ):(
+              <button onClick={handleRegister} disabled={loading}
+                style={{flex:2,background:loading?'rgba(74,122,90,0.45)':'#4a7a5a',color:'#fff',border:'none',borderRadius:7,padding:'12px',cursor:'pointer',fontWeight:700,fontSize:14}}>
+                {loading?'Creating account...':'Create Account'}
+              </button>
+            )}
+          </div>
+
+          <div style={{marginTop:20,paddingTop:16,borderTop:'1px solid #d8d4ce',textAlign:'center'}}>
+            <span style={{color:'#8a8480',fontSize:12}}>Already have an account? </span>
+            <button onClick={()=>router.push('/auth')} style={{background:'none',border:'none',color:'#C4503A',cursor:'pointer',fontSize:12,fontWeight:700}}>Sign In</button>
+          </div>
         </div>
+
+        <p style={{color:'#6a6460',fontSize:11,textAlign:'center',marginTop:16}}>
+          © 2026 INSPELINK — Marine Cargo Survey Platform
+        </p>
       </div>
     </div>
   )
