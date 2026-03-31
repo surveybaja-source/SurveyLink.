@@ -77,32 +77,32 @@ export default function Convocation({ quote, user }) {
 
   const Inp = ({label,ph,val,set,type='text'}) => (
     <div style={{marginBottom:12}}>
-      <label style={{display:'block',color:'#6a6460',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:4}}>{label}</label>
+      <label style={{display:'block',color:'#8fa8c0',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:4}}>{label}</label>
       <input type={type} placeholder={ph} value={val} onChange={e=>set(e.target.value)}
-        style={{width:'100%',background:'#f5f2ee',border:'1px solid #d8d4ce',borderRadius:6,padding:'9px 12px',color:'#1a1410',fontSize:13,boxSizing:'border-box'}}/>
+        style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'9px 12px',color:'#fff',fontSize:13,boxSizing:'border-box'}}/>
     </div>
   )
 
   if (sent) return (
-    <div style={{marginTop:12,background:'rgba(74,122,90,0.08)',border:'1px solid #4a7a5a',borderRadius:8,padding:'12px 16px',textAlign:'center'}}>
-      <div style={{color:'#4a7a5a',fontWeight:700,fontSize:13}}>✓ Survey Meeting Notice sent successfully</div>
-      <div style={{color:'#8a8480',fontSize:11,marginTop:4}}>All parties have been notified by email</div>
+    <div style={{marginTop:12,background:'rgba(46,125,50,0.08)',border:'1px solid #2e7d32',borderRadius:8,padding:'12px 16px',textAlign:'center'}}>
+      <div style={{color:'#2e7d32',fontWeight:700,fontSize:13}}>✓ Survey Meeting Notice sent successfully</div>
+      <div style={{color:'#4a6880',fontSize:11,marginTop:4}}>All parties have been notified by email</div>
     </div>
   )
 
   return (
     <div style={{marginTop:12}}>
       <div onClick={()=>setOpen(o=>!o)}
-        style={{background:'#f5f2ee',border:'1px solid #d8d4ce',borderRadius:8,padding:'12px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',cursor:'pointer'}}>
+        style={{background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:8,padding:'12px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',cursor:'pointer'}}>
         <div>
-          <div style={{color:'#6a6460',fontWeight:700,fontSize:13}}>Survey Meeting Notice</div>
-          <div style={{color:'#9a9490',fontSize:11,marginTop:2}}>Send formal convocation to all parties</div>
+          <div style={{color:'#8fa8c0',fontWeight:700,fontSize:13}}>Survey Meeting Notice</div>
+          <div style={{color:'#4a6880',fontSize:11,marginTop:2}}>Send formal convocation to all parties</div>
         </div>
-        <span style={{color:'#8a8480',fontSize:14,transform:open?'rotate(180deg)':'none',transition:'0.2s'}}>▼</span>
+        <span style={{color:'#4a6880',fontSize:14,transform:open?'rotate(180deg)':'none',transition:'0.2s'}}>▼</span>
       </div>
 
       {open&&(
-        <div style={{background:'#EDE9E4',border:'1px solid #d8d4ce',borderRadius:8,padding:20,marginTop:4}}>
+        <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:8,padding:20,marginTop:4}}>
           <Inp label="Case Description" ph="e.g. Container damage survey" val={form.caseDescription} set={u('caseDescription')}/>
           <Inp label="Goods Description" ph="e.g. 20x40' containers, electronics" val={form.goodsDescription} set={u('goodsDescription')}/>
           <Inp label="Survey Date & Time" ph="" val={form.surveyDate} set={u('surveyDate')} type="datetime-local"/>
@@ -110,24 +110,24 @@ export default function Convocation({ quote, user }) {
 
           <div style={{marginTop:16,marginBottom:8}}>
             <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:10}}>
-              <div style={{color:'#6a6460',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase'}}>Recipients</div>
+              <div style={{color:'#8fa8c0',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase'}}>Recipients</div>
               <button onClick={addRecipient}
-                style={{background:'transparent',color:'#C4503A',border:'1px solid #C4503A',borderRadius:5,padding:'4px 10px',cursor:'pointer',fontSize:11,fontWeight:700}}>
+                style={{background:'transparent',color:'#dd2e1e',border:'1px solid #dd2e1e',borderRadius:5,padding:'4px 10px',cursor:'pointer',fontSize:11,fontWeight:700}}>
                 + Add
               </button>
             </div>
             {recipients.map((r,i)=>(
-              <div key={i} style={{background:'#f5f2ee',border:'1px solid #d8d4ce',borderRadius:8,padding:12,marginBottom:8}}>
+              <div key={i} style={{background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:8,padding:12,marginBottom:8}}>
                 <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
-                  <span style={{color:'#8B6F47',fontSize:11,fontWeight:700}}>Recipient {i+1}</span>
-                  {i>0&&<button onClick={()=>removeRecipient(i)} style={{background:'transparent',border:'none',color:'#C4503A',cursor:'pointer',fontSize:11}}>Remove</button>}
+                  <span style={{color:'#f0a500',fontSize:11,fontWeight:700}}>Recipient {i+1}</span>
+                  {i>0&&<button onClick={()=>removeRecipient(i)} style={{background:'transparent',border:'none',color:'#dd2e1e',cursor:'pointer',fontSize:11}}>Remove</button>}
                 </div>
                 <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
                   {[['Company','company'],['Contact','contact'],['Email','email'],['Reference','reference']].map(([l,k])=>(
                     <div key={k}>
-                      <label style={{display:'block',color:'#9a9490',fontSize:9,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',marginBottom:3}}>{l}</label>
+                      <label style={{display:'block',color:'#4a6880',fontSize:9,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',marginBottom:3}}>{l}</label>
                       <input type={k==='email'?'email':'text'} placeholder={l} value={r[k]} onChange={e=>updateRecipient(i,k,e.target.value)}
-                        style={{width:'100%',background:'#EDE9E4',border:'1px solid #d8d4ce',borderRadius:5,padding:'7px 10px',color:'#1a1410',fontSize:12,boxSizing:'border-box'}}/>
+                        style={{width:'100%',background:'#132030',border:'1px solid #1e3a52',borderRadius:5,padding:'7px 10px',color:'#fff',fontSize:12,boxSizing:'border-box'}}/>
                     </div>
                   ))}
                 </div>
@@ -136,7 +136,7 @@ export default function Convocation({ quote, user }) {
           </div>
 
           <button onClick={handleSend} disabled={sending||!form.caseDescription||!form.surveyDate||!form.surveyLocation}
-            style={{width:'100%',background:(sending||!form.caseDescription||!form.surveyDate||!form.surveyLocation)?'rgba(196,80,58,0.45)':'#C4503A',color:'#fff',border:'none',borderRadius:7,padding:'12px',cursor:'pointer',fontWeight:700,fontSize:13,marginTop:4}}>
+            style={{width:'100%',background:(sending||!form.caseDescription||!form.surveyDate||!form.surveyLocation)?'rgba(221,46,30,0.45)':'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'12px',cursor:'pointer',fontWeight:700,fontSize:13,marginTop:4}}>
             {sending?'Sending...':'Send Survey Meeting Notice'}
           </button>
         </div>
