@@ -44,11 +44,11 @@ export default function LocationPicker({ value, onChange }) {
 
   const sel = {
     width: '100%',
-    background: '#f5f2ee',
-    border: '1px solid #d8d4ce',
+    background: '#0f1e2e',
+    border: '1px solid #1e3a52',
     borderRadius: 7,
     padding: '11px 14px',
-    color: '#1a1410',
+    color: '#fff',
     fontSize: 13,
     boxSizing: 'border-box',
     marginBottom: 12,
@@ -56,11 +56,11 @@ export default function LocationPicker({ value, onChange }) {
 
   const inp = {
     width: '100%',
-    background: '#f5f2ee',
-    border: '1px solid #d8d4ce',
+    background: '#0f1e2e',
+    border: '1px solid #1e3a52',
     borderRadius: 7,
     padding: '11px 14px',
-    color: '#1a1410',
+    color: '#fff',
     fontSize: 13,
     boxSizing: 'border-box',
     marginBottom: 12,
@@ -69,7 +69,7 @@ export default function LocationPicker({ value, onChange }) {
 
   const lbl = {
     display: 'block',
-    color: '#6a6460',
+    color: '#8fa8c0',
     fontSize: 10,
     fontWeight: 700,
     letterSpacing: '0.1em',
@@ -108,13 +108,13 @@ export default function LocationPicker({ value, onChange }) {
             style={inp}
           />
           {places.length > 0 && (
-            <div style={{background:'#EDE9E4',border:'1px solid #d8d4ce',borderRadius:8,maxHeight:200,overflowY:'auto',marginBottom:12}}>
+            <div style={{background:'#132030',border:'1px solid #1e3a52',borderRadius:8,maxHeight:200,overflowY:'auto',marginBottom:12}}>
               {places.map(place=>(
                 <div key={place}
                   onClick={()=>{ handlePlace(place); setSearch(place) }}
-                  style={{padding:'9px 14px',cursor:'pointer',color:value?.place===place?'#C4503A':'#1a1410',background:value?.place===place?'rgba(196,80,58,0.08)':'transparent',fontSize:13,borderBottom:'1px solid #d8d4ce'}}
-                  onMouseEnter={e=>e.currentTarget.style.background='rgba(196,80,58,0.06)'}
-                  onMouseLeave={e=>e.currentTarget.style.background=value?.place===place?'rgba(196,80,58,0.08)':'transparent'}>
+                  style={{padding:'9px 14px',cursor:'pointer',color:value?.place===place?'#dd2e1e':'#e8edf5',background:value?.place===place?'rgba(221,46,30,0.08)':'transparent',fontSize:13,borderBottom:'1px solid #1e3a52'}}
+                  onMouseEnter={e=>e.currentTarget.style.background='rgba(221,46,30,0.06)'}
+                  onMouseLeave={e=>e.currentTarget.style.background=value?.place===place?'rgba(221,46,30,0.08)':'transparent'}>
                   {place}
                 </div>
               ))}
@@ -137,9 +137,9 @@ export default function LocationPicker({ value, onChange }) {
       )}
 
       {value?.place && (
-        <div style={{background:'rgba(74,122,90,0.08)',border:'1px solid #4a7a5a',borderRadius:8,padding:'10px 14px',marginBottom:12}}>
-          <div style={{color:'#9a9490',fontSize:9,marginBottom:4,textTransform:'uppercase',letterSpacing:'0.1em'}}>Selected Location</div>
-          <div style={{color:'#1a1410',fontSize:13,fontWeight:600}}>
+        <div style={{background:'rgba(46,125,50,0.08)',border:'1px solid #2e7d32',borderRadius:8,padding:'10px 14px',marginBottom:12}}>
+          <div style={{color:'#4a6880',fontSize:9,marginBottom:4,textTransform:'uppercase',letterSpacing:'0.1em'}}>Selected Location</div>
+          <div style={{color:'#e8edf5',fontSize:13,fontWeight:600}}>
             📍 {value.place}{value.detail?` — ${value.detail}`:''}, {value.country}
           </div>
         </div>
