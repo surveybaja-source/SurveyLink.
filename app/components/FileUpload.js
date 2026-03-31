@@ -2,104 +2,73 @@
 import { useState } from 'react'
 import { supabase } from '../../lib/supabase'
 
-export default function FileUpload({ bucket, folder, onUpload, label, hint, multiple=true }) {
+export default function FileUpload({ bucket, folder, label, hint, multiple = true, onUpload }) {
   const [uploading, setUploading] = useState(false)
-  const [files, setFiles] = useState([])
+  const [uploaded, setUploaded] = useState([])
   const [error, setError] = useState(null)
 
   const handleUpload = async (e) => {
-    const selectedFiles = Array.from(e.target.files)
-    if (!selectedFiles.length) return
-
+    const files = Array.from(e.target.files)
+    if (!files.length) return
     setUploading(true)
     setError(null)
+    const results = []
 
-    const uploaded = []
-
-    for (const file of selectedFiles) {
+    for (const file of files) {
       const ext = file.name.split('.').pop()
-      const fileName = `${folder}/${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`
-
-      const { data, error } = await supabase.storage
+      const filename = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`
+      const { data, error: uploadError } = await supabase.storage
         .from(bucket)
-        .upload(fileName, file)
+        .upload(filename, file, { cacheControl: '3600', upsert: false })
 
-      if (error) {
-        setError(`Failed to upload ${file.name}`)
-        continue
+      if (uploadError) {
+        setError(uploadError.message)
+      } else {
+        results.push({ path: data.path, name: file.name })
       }
-
-      const { data: urlData } = supabase.storage
-        .from(bucket)
-        .getPublicUrl(fileName)
-
-      uploaded.push({
-        name: file.name,
-        size: (file.size / 1024).toFixed(0) + ' KB',
-        path: fileName,
-        url: urlData.publicUrl,
-      })
     }
 
-    const newFiles = [...files, ...uploaded]
-    setFiles(newFiles)
-    if (onUpload) onUpload(newFiles)
+    setUploaded(p => [...p, ...results])
     setUploading(false)
-  }
-
-  const removeFile = async (index) => {
-    const file = files[index]
-    await supabase.storage.from(bucket).remove([file.path])
-    const newFiles = files.filter((_, i) => i !== index)
-    setFiles(newFiles)
-    if (onUpload) onUpload(newFiles)
-  }
-
-  const getSignedUrl = async (path) => {
-    const { data } = await supabase.storage
-      .from(bucket)
-      .createSignedUrl(path, 3600)
-    if (data?.signedUrl) window.open(data.signedUrl, '_blank')
+    if (onUpload) onUpload(results)
   }
 
   return (
-    <div style={{marginBottom:16}}>
-      {label&&<div style={{color:'#8fa8c0',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:8}}>{label}</div>}
+    <div>
+      {label && (
+        <label style={{display:'block',color:'#6a6460',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>
+          {label}
+        </label>
+      )}
 
-      <label style={{display:'block',background:'#0f1e2e',border:'2px dashed #1e3a52',borderRadius:8,padding:20,textAlign:'center',cursor:'pointer'}}
-        onMouseEnter={e=>e.currentTarget.style.borderColor='#2a4f6e'}
-        onMouseLeave={e=>e.currentTarget.style.borderColor='#1e3a52'}>
+      <label style={{
+        display:'flex',alignItems:'center',justifyContent:'center',gap:8,
+        background:'#f5f2ee',border:'1px dashed #d8d4ce',borderRadius:8,
+        padding:'10px 16px',cursor:'pointer',
+        transition:'border-color 0.2s',
+      }}
+        onMouseEnter={e=>e.currentTarget.style.borderColor='#C4503A'}
+        onMouseLeave={e=>e.currentTarget.style.borderColor='#d8d4ce'}>
         <input type="file" multiple={multiple} onChange={handleUpload} style={{display:'none'}}
-          accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx"/>
-        {uploading ? (
-          <div>
-            <div style={{fontSize:24,marginBottom:6}}>⏳</div>
-            <div style={{color:'#8fa8c0',fontSize:12}}>Uploading...</div>
-          </div>
-        ) : (
-          <div>
-            <div style={{fontSize:24,marginBottom:6}}>📎</div>
-            <div style={{color:'#8fa8c0',fontSize:12}}>Drop files or <span style={{color:'#dd2e1e'}}>click to upload</span></div>
-            <div style={{color:'#4a6880',fontSize:10,marginTop:4}}>{hint||'PDF, JPG, PNG, DOC, XLS — max 10 MB'}</div>
-          </div>
-        )}
+          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xlsx,.xls"/>
+        <span style={{fontSize:16}}>{uploading ? '⏳' : '📎'}</span>
+        <span style={{color:'#8a8480',fontSize:12}}>
+          {uploading ? 'Uploading...' : 'Click to upload'}
+        </span>
+        {hint && <span style={{color:'#9a9490',fontSize:11}}>— {hint}</span>}
       </label>
 
-      {error&&<div style={{color:'#dd2e1e',fontSize:11,marginTop:6}}>{error}</div>}
+      {error && (
+        <div style={{color:'#C4503A',fontSize:11,marginTop:6}}>{error}</div>
+      )}
 
-      {files.length>0&&(
-        <div style={{display:'flex',flexDirection:'column',gap:6,marginTop:10}}>
-          {files.map((f,i)=>(
-            <div key={i} style={{display:'flex',alignItems:'center',gap:10,background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:6,padding:'8px 12px'}}>
-              <span style={{fontSize:16}}>
-                {f.name.endsWith('.pdf')?'📄':f.name.match(/\.(jpg|jpeg|png)$/i)?'🖼️':'📎'}
-              </span>
-              <span onClick={()=>getSignedUrl(f.path)}
-                style={{color:'#5a9eff',fontSize:12,flex:1,cursor:'pointer',textDecoration:'underline'}}>
-                {f.name}
-              </span>
-              <span style={{color:'#4a6880',fontSize:11}}>{f.size}</span>
-              <button onClick={()=>removeFile(i)} style={{background:'none',border:'none',color:'#dd2e1e',cursor:'pointer',fontSize:16}}>x</button>
+      {uploaded.length > 0 && (
+        <div style={{marginTop:8,display:'flex',flexDirection:'column',gap:4}}>
+          {uploaded.map((f, i) => (
+            <div key={i} style={{display:'flex',alignItems:'center',gap:6,background:'rgba(74,122,90,0.08)',border:'1px solid #4a7a5a',borderRadius:6,padding:'6px 10px'}}>
+              <span style={{fontSize:12}}>📄</span>
+              <span style={{color:'#4a7a5a',fontSize:12,fontWeight:600}}>{f.name}</span>
+              <span style={{color:'#9a9490',fontSize:10,marginLeft:'auto'}}>✓ Uploaded</span>
             </div>
           ))}
         </div>
