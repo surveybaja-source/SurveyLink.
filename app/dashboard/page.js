@@ -178,7 +178,7 @@ function InsurerDashboard({user}) {
 
       <nav style={{background:'#0f1e2e',borderBottom:'1px solid #1e3a52',padding:'0 32px',height:58,display:'flex',alignItems:'center',justifyContent:'space-between',position:'sticky',top:0,zIndex:100}}>
         <div style={{display:'flex',alignItems:'center',gap:20}}>
-          <span style={{color:'#fff',fontWeight:900,fontSize:22}}>INSPE<span style={{color:'#dd2e1e'}}>LINK</span></span>
+<span style={{color:'#fff',fontWeight:900,fontSize:22,fontFamily:'var(--font-raleway)',letterSpacing:'0.08em'}}>INSPE<span style={{color:'#dd2e1e'}}>LINK</span></span>
           <button onClick={()=>router.push('/missions/new')} style={{background:'#dd2e1e',color:'#fff',border:'none',borderRadius:6,padding:'6px 14px',fontSize:12,cursor:'pointer',fontWeight:700}}>
             + New Request
           </button>
@@ -622,7 +622,7 @@ function ExpertDashboard({user}) {
 
       <nav style={{background:'#0f1e2e',borderBottom:'1px solid #1e3a52',padding:'0 32px',height:58,display:'flex',alignItems:'center',justifyContent:'space-between',position:'sticky',top:0,zIndex:100}}>
         <div style={{display:'flex',alignItems:'center',gap:20}}>
-          <span style={{color:'#fff',fontWeight:900,fontSize:22}}>INSPE<span style={{color:'#dd2e1e'}}>LINK</span></span>
+<span style={{color:'#fff',fontWeight:900,fontSize:22,fontFamily:'var(--font-raleway)',letterSpacing:'0.08em'}}>INSPE<span style={{color:'#dd2e1e'}}>LINK</span></span>
           <div style={{display:'flex',gap:4}}>
             {[
               {k:'available',l:'Available Missions'},
