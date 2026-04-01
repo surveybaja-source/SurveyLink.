@@ -24,10 +24,10 @@ export default function Auth() {
     <div style={{background:'#0c1a27',minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
       <div style={{width:'100%',maxWidth:420}}>
 
-        <div style={{textAlign:'center',marginBottom:40}}>
-          <div style={{color:'#fff',fontWeight:900,fontSize:42,letterSpacing:'0.05em'}}>
-            INSPE<span style={{color:'#dd2e1e'}}>LINK</span>
-          </div>
+        <div style={{color:'#fff',fontWeight:900,fontSize:42,letterSpacing:'0.08em',fontFamily:'var(--font-raleway)'}}>
+  INSPE<span style={{color:'#dd2e1e'}}>LINK</span>
+</div>
+
           <div style={{color:'#8fa8c0',fontSize:14,marginTop:8}}>Marine Cargo Survey Platform</div>
         </div>
 
