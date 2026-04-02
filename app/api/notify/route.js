@@ -10,7 +10,7 @@ export async function POST(request) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'INSPELINK <onboarding@resend.dev>',
+      from: 'INSPELINK <noreply@inspelink.com>',
       to,
       subject,
       html,
