@@ -4,6 +4,28 @@ import { supabase } from '../../../lib/supabase'
 import { useRouter } from 'next/navigation'
 import { COUNTRIES } from '../../../lib/locations'
 
+const Inp = ({label, ph, val, set, type='text'}) => (
+  <div style={{marginBottom:14}}>
+    <label style={{display:'block',color:'#8fa8c0',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>{label}</label>
+    <input type={type} placeholder={ph} value={val} onChange={e=>set(e.target.value)}
+      style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 14px',color:'#fff',fontSize:14,boxSizing:'border-box',outline:'none'}}/>
+  </div>
+)
+
+const Chk = ({items, selected, toggle}) => (
+  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:6,marginBottom:8}}>
+    {items.map(item=>{
+      const a = selected.includes(item)
+      return (
+        <div key={item} onClick={()=>toggle(item)}
+          style={{background:a?'rgba(46,125,50,0.12)':'#0f1e2e',border:a?'1px solid #2e7d32':'1px solid #1e3a52',borderRadius:6,padding:'7px 10px',cursor:'pointer',color:a?'#81c784':'#8fa8c0',fontSize:11,display:'flex',alignItems:'center',gap:6,userSelect:'none'}}>
+          <span style={{fontSize:10,color:a?'#2e7d32':'#4a6880'}}>✓</span>{item}
+        </div>
+      )
+    })}
+  </div>
+)
+
 export default function RegisterExpert() {
   const router = useRouter()
   const [step, setStep] = useState(1)
@@ -65,28 +87,6 @@ export default function RegisterExpert() {
     }
     setLoading(false)
   }
-
-  const Inp = ({label,ph,val,set,type='text'}) => (
-    <div style={{marginBottom:14}}>
-      <label style={{display:'block',color:'#8fa8c0',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>{label}</label>
-      <input type={type} placeholder={ph} value={val} onChange={e=>set(e.target.value)}
-        style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 14px',color:'#fff',fontSize:14,boxSizing:'border-box',outline:'none'}}/>
-    </div>
-  )
-
-  const Chk = ({items,selected,toggle}) => (
-    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:6,marginBottom:8}}>
-      {items.map(item=>{
-        const a = selected.includes(item)
-        return (
-          <div key={item} onClick={()=>toggle(item)}
-            style={{background:a?'rgba(46,125,50,0.12)':'#0f1e2e',border:a?'1px solid #2e7d32':'1px solid #1e3a52',borderRadius:6,padding:'7px 10px',cursor:'pointer',color:a?'#81c784':'#8fa8c0',fontSize:11,display:'flex',alignItems:'center',gap:6,userSelect:'none'}}>
-            <span style={{fontSize:10,color:a?'#2e7d32':'#4a6880'}}>✓</span>{item}
-          </div>
-        )
-      })}
-    </div>
-  )
 
   const steps = ['Account','Identity','Expertise','Coverage','Banking']
 
