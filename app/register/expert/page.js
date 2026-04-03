@@ -31,6 +31,8 @@ export default function RegisterExpert() {
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [uploadedDocs, setUploadedDocs] = useState([])
+  const [uploading, setUploading] = useState(false)
 
   const [form, setForm] = useState({
     email: '', password: '', confirm: '',
@@ -52,8 +54,26 @@ export default function RegisterExpert() {
   const CERTIFICATIONS = ['CESAM','Lloyds Accredited','IFIA','FOSFA','GAFTA','ISO 17020','Bureau Veritas','SGS','Intertek','P&I Club Panel','IMO IMSBC','STCW']
   const SPECIALTIES = ['Bulk Cargo Surveys','Container FCL Surveys','Container LCL Surveys','Reefer / Cold Chain Surveys','Tanker / Liquid Bulk Surveys','Petroleum & Oil Surveys','Chemical Tanker Surveys','Heavy Lift Surveys','Project Cargo Surveys','Dangerous Goods (IMDG)','RoRo Cargo Surveys','Breakbulk Surveys','Fumigation Supervision','Sampling & Analysis','Draft / Weight Surveys','On-Hire / Off-Hire Surveys']
 
+  const handleDocUpload = async (e) => {
+    const files = Array.from(e.target.files)
+    if (!files.length) return
+    setUploading(true)
+    const results = []
+    for (const file of files) {
+      const ext = file.name.split('.').pop()
+      const filename = `pending/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`
+      const { data, error: uploadError } = await supabase.storage
+        .from('expert-docs')
+        .upload(filename, file, { cacheControl: '3600', upsert: false })
+      if (!uploadError) {
+        results.push({ path: data.path, name: file.name })
+      }
+    }
+    setUploadedDocs(p => [...p, ...results])
+    setUploading(false)
+  }
+
   const handleRegister = async () => {
-    if (form.password !== form.confirm) { setError('Passwords do not match'); return }
     setLoading(true)
     setError(null)
     const { data, error: signUpError } = await supabase.auth.signUp({ email: form.email, password: form.password })
@@ -82,13 +102,14 @@ export default function RegisterExpert() {
         verified: false,
         average_rating: 0,
         total_ratings: 0,
+        certification_docs: uploadedDocs.map(d => d.path),
       })
       router.push('/pending')
     }
     setLoading(false)
   }
 
-  const steps = ['Account','Identity','Expertise','Coverage','Banking']
+  const steps = ['Account','Identity','Expertise','Coverage','Banking','Documents']
 
   return (
     <div style={{background:'#0c1a27',minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
@@ -108,7 +129,7 @@ export default function RegisterExpert() {
                 {step>i+1?'✓':i+1}
               </div>
               <span style={{color:step===i+1?'#fff':'#4a6880',fontSize:10,fontWeight:step===i+1?700:400}}>{s}</span>
-              {i<steps.length-1&&<div style={{width:16,height:1,background:'#1e3a52',margin:'0 2px'}}/>}
+              {i<steps.length-1&&<div style={{width:12,height:1,background:'#1e3a52',margin:'0 2px'}}/>}
             </div>
           ))}
         </div>
@@ -216,6 +237,56 @@ export default function RegisterExpert() {
             </div>
           )}
 
+          {step===6&&(
+            <div>
+              <h3 style={{color:'#fff',fontWeight:800,fontSize:18,marginTop:0,marginBottom:8}}>Certification Documents</h3>
+              <p style={{color:'#8fa8c0',fontSize:12,marginBottom:20,lineHeight:1.6}}>
+                Upload your certifications, licenses and any professional documents. Our team will review them to activate your account.
+              </p>
+
+              <div style={{background:'rgba(240,165,0,0.08)',border:'1px solid #f0a500',borderRadius:8,padding:'11px 14px',marginBottom:20,display:'flex',gap:10}}>
+                <span>ℹ️</span>
+                <span style={{color:'#8fa8c0',fontSize:11,lineHeight:1.5}}>
+                  Accepted formats: PDF, JPG, PNG — Max 10MB per file. Examples: CESAM certificate, Lloyd's accreditation, IFIA membership, ID document.
+                </span>
+              </div>
+
+              <label style={{
+                display:'flex',alignItems:'center',justifyContent:'center',gap:10,
+                background:'#0f1e2e',border:'2px dashed #1e3a52',borderRadius:8,
+                padding:'20px 16px',cursor:'pointer',marginBottom:16,
+              }}
+                onMouseEnter={e=>e.currentTarget.style.borderColor='#dd2e1e'}
+                onMouseLeave={e=>e.currentTarget.style.borderColor='#1e3a52'}>
+                <input type="file" multiple onChange={handleDocUpload} style={{display:'none'}}
+                  accept=".pdf,.jpg,.jpeg,.png"/>
+                <span style={{fontSize:24}}>{uploading?'⏳':'📎'}</span>
+                <div>
+                  <div style={{color:'#fff',fontSize:13,fontWeight:700}}>{uploading?'Uploading...':'Click to upload documents'}</div>
+                  <div style={{color:'#4a6880',fontSize:11,marginTop:2}}>PDF, JPG, PNG — max 10MB each</div>
+                </div>
+              </label>
+
+              {uploadedDocs.length > 0 && (
+                <div style={{display:'flex',flexDirection:'column',gap:6,marginBottom:16}}>
+                  {uploadedDocs.map((doc, i) => (
+                    <div key={i} style={{display:'flex',alignItems:'center',gap:8,background:'rgba(46,125,50,0.08)',border:'1px solid #2e7d32',borderRadius:6,padding:'8px 12px'}}>
+                      <span>📄</span>
+                      <span style={{color:'#81c784',fontSize:12,fontWeight:600,flex:1}}>{doc.name}</span>
+                      <span style={{color:'#2e7d32',fontSize:10,fontWeight:700}}>✓ Uploaded</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {uploadedDocs.length === 0 && (
+                <div style={{background:'rgba(221,46,30,0.08)',border:'1px solid #1e3a52',borderRadius:8,padding:'11px 14px',textAlign:'center'}}>
+                  <span style={{color:'#8fa8c0',fontSize:12}}>No documents uploaded yet — you can skip this step and add them later from your profile.</span>
+                </div>
+              )}
+            </div>
+          )}
+
           <div style={{display:'flex',gap:10,marginTop:20}}>
             {step>1&&(
               <button onClick={()=>setStep(s=>s-1)}
@@ -223,7 +294,7 @@ export default function RegisterExpert() {
                 Back
               </button>
             )}
-            {step<5?(
+            {step<6?(
               <button onClick={()=>{setError(null);setStep(s=>s+1)}}
                 style={{flex:2,background:'#dd2e1e',color:'#fff',border:'none',borderRadius:7,padding:'12px',cursor:'pointer',fontWeight:700,fontSize:14}}>
                 Continue
