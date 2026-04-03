@@ -4,6 +4,14 @@ import { supabase } from '../../../lib/supabase'
 import { useRouter } from 'next/navigation'
 import { COUNTRIES } from '../../../lib/locations'
 
+const Inp = ({label, ph, val, set, type='text'}) => (
+  <div style={{marginBottom:14}}>
+    <label style={{display:'block',color:'#8fa8c0',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>{label}</label>
+    <input type={type} placeholder={ph} value={val} onChange={e=>set(e.target.value)}
+      style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 14px',color:'#fff',fontSize:14,boxSizing:'border-box',outline:'none'}}/>
+  </div>
+)
+
 export default function RegisterInsurer() {
   const router = useRouter()
   const [step, setStep] = useState(1)
@@ -45,14 +53,6 @@ export default function RegisterInsurer() {
     }
     setLoading(false)
   }
-
-  const Inp = ({label,ph,val,set,type='text'}) => (
-    <div style={{marginBottom:14}}>
-      <label style={{display:'block',color:'#8fa8c0',fontSize:10,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>{label}</label>
-      <input type={type} placeholder={ph} value={val} onChange={e=>set(e.target.value)}
-        style={{width:'100%',background:'#0f1e2e',border:'1px solid #1e3a52',borderRadius:7,padding:'11px 14px',color:'#fff',fontSize:14,boxSizing:'border-box',outline:'none'}}/>
-    </div>
-  )
 
   const steps = ['Account','Identity','Location','Banking']
 
