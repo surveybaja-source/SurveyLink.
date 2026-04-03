@@ -92,11 +92,10 @@ export default function RegisterExpert() {
 
   return (
     <div style={{background:'#0c1a27',minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
-      <div style={{width:'100%',maxWidth:520}}>
+      <div style={{width:'100%',maxWidth:520}}><div style={{color:'#fff',fontWeight:900,fontSize:36,letterSpacing:'0.08em',fontFamily:'var(--font-raleway)'}}>
+  INSPE<span style={{color:'#dd2e1e'}}>LINK</span>
+</div>
 
-        <div style={{textAlign:'center',marginBottom:32}}>
-          <div style={{color:'#fff',fontWeight:900,fontSize:36,letterSpacing:'0.05em'}}>
-            INSPE<span style={{color:'#dd2e1e'}}>LINK</span>
           </div>
           <div style={{color:'#8fa8c0',fontSize:13,marginTop:6}}>Register as Cargo Surveyor</div>
         </div>
