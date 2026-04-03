@@ -61,7 +61,7 @@ export default function RegisterInsurer() {
       <div style={{width:'100%',maxWidth:480}}>
 
         <div style={{textAlign:'center',marginBottom:32}}>
-          <div style={{color:'#fff',fontWeight:900,fontSize:36,letterSpacing:'0.05em'}}>
+          <div style={{color:'#fff',fontWeight:900,fontSize:36,letterSpacing:'0.08em',fontFamily:'var(--font-raleway)'}}>
             INSPE<span style={{color:'#dd2e1e'}}>LINK</span>
           </div>
           <div style={{color:'#8fa8c0',fontSize:13,marginTop:6}}>Register as Insurer / P&I</div>
