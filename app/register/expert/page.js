@@ -74,38 +74,58 @@ export default function RegisterExpert() {
   }
 
   const handleRegister = async () => {
+    if (form.password !== form.confirm) { setError('Passwords do not match'); return }
     setLoading(true)
     setError(null)
-    const { data, error: signUpError } = await supabase.auth.signUp({ email: form.email, password: form.password })
-    if (signUpError) { setError(signUpError.message); setLoading(false); return }
+
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email: form.email,
+      password: form.password
+    })
+
+    if (signUpError) {
+      setError(signUpError.message)
+      setLoading(false)
+      return
+    }
+
     if (data.user) {
-      await supabase.from('profiles').insert({
+      const { error: profileError } = await supabase.from('profiles').insert({
         id: data.user.id,
         role: 'expert',
         email: form.email,
         first_name: form.first_name,
         last_name: form.last_name,
-        company: form.company,
-        country: form.country,
-        city: form.city,
-        phone: form.phone,
-        bio: form.bio,
+        company: form.company || '',
+        country: form.country || '',
+        city: form.city || '',
+        phone: form.phone || '',
+        bio: form.bio || '',
         day_rate: form.day_rate ? parseFloat(form.day_rate) : null,
-        currency: form.currency,
-        iban: form.iban,
-        bic: form.bic,
-        bank_name: form.bank_name,
-        languages,
-        certifications,
-        specialties,
-        coverage_countries: coverage,
+        currency: form.currency || 'EUR',
+        iban: form.iban || '',
+        bic: form.bic || '',
+        bank_name: form.bank_name || '',
+        languages: languages || [],
+        certifications: certifications || [],
+        specialties: specialties || [],
+        coverage_countries: coverage || [],
         verified: false,
+        rejected: false,
         average_rating: 0,
         total_ratings: 0,
         certification_docs: uploadedDocs.map(d => d.path),
       })
+
+      if (profileError) {
+        setError('Profile error: ' + profileError.message)
+        setLoading(false)
+        return
+      }
+
       router.push('/pending')
     }
+
     setLoading(false)
   }
 
